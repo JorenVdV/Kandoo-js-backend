@@ -4,7 +4,8 @@
   "description": "backend for KandooJS - TeamJS",
   "main": "app.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "start": "nodejs app.js"
   },
   "repository": {
     "type": "git",
