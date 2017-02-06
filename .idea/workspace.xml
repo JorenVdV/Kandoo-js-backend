@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c915ccbc-30f4-4847-b36f-815768337cbd" name="Default" comment="">
+    <list default="true" id="c915ccbc-30f4-4847-b36f-815768337cbd" name="Default" comment="Added our first test using Mocha">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/test.js" afterPath="$PROJECT_DIR$/test/test.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/testRoutes.js" afterPath="$PROJECT_DIR$/test/testRoutes.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -288,7 +286,7 @@
       <workItem from="1486329632222" duration="43000" />
       <workItem from="1486369650720" duration="78000" />
       <workItem from="1486369946082" duration="4676000" />
-      <workItem from="1486375519588" duration="81000" />
+      <workItem from="1486375519588" duration="237000" />
     </task>
     <task id="LOCAL-00001" summary="Test">
       <created>1486370233342</created>
@@ -346,11 +344,18 @@
       <option name="project" value="LOCAL" />
       <updated>1486375525747</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Added our first test using Mocha">
+      <created>1486375604270</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1486375604270</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="9914000" />
+    <option name="totallyTimeSpent" value="10070000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="-2" width="1922" height="1035" extended-state="6" />
