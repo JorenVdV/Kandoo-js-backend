@@ -17,3 +17,6 @@ app.use(express.static(path.join(__dirname)));
 server.listen(port, function () {
     console.log("App is running on port " + port);
 });
+
+
+module.exports = app;
