@@ -9,10 +9,10 @@ var port = process.env.PORT || 8000;
 
 app.use(express.static(path.join(__dirname)));
 
-app.get('/', function(req, res, next){
-    res.sendStatus(200);
+app.get('/', function (req, res, next) {
+    res.send("This is a test to see if it compiles!")
 });
 
-server.listen(port, function() {
+server.listen(port, function () {
     console.log("App is running on port " + port);
 });
