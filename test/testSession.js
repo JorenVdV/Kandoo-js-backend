@@ -4,10 +4,10 @@
 var assert = require('assert');
 
 //Require the dev-dependencies
-let chai = require('chai');
-let chaiHttp = require('chai-http');
-let app = require('../app');
-let should = chai.should();
+var chai = require('chai');
+var chaiHttp = require('chai-http');
+var app = require('../app');
+var should = chai.should();
 
 
 chai.use(chaiHttp);
