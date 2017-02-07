@@ -1,7 +1,7 @@
 {
   "name": "Kandoo-js-backend",
   "scripts": {
-    "test": "mocha"
+    "prepublish": "mocha"
   },
   "env": {
   },
