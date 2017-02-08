@@ -14,16 +14,18 @@ var SessionSchema = new Schema({
         max: Number
     },
     cards: [{type:Schema.ObjectId, ref:'Card'}],
+    canReview: Boolean,
+    canAddCards : Boolean,
     participants: [{type: Schema.ObjectId, ref:'User'}],
     startDate: Date,
-    created: {
-        type: Date, default: Date.now
-    },
     theme: {
         type: Schema.ObjectId, ref: 'Theme'
     },
     creator: {
         type: Schema.ObjectId, ref: 'User'
+    },
+    created: {
+        type: Date, default: Date.now
     }
 });
 
