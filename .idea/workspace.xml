@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
+<<<<<<< HEAD
     <list default="true" id="c915ccbc-30f4-4847-b36f-815768337cbd" name="Default" comment="Directory structure changes">
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/models/card.js" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/models/session.js" />
@@ -13,6 +14,11 @@
       <change type="DELETED" beforePath="$PROJECT_DIR$/repositories/SessionRepository.js" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+=======
+    <list default="true" id="c915ccbc-30f4-4847-b36f-815768337cbd" name="Default" comment="Added start script">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/testSession.js" afterPath="$PROJECT_DIR$/test/testSession.js" />
+>>>>>>> b02d6b7eda9e51635c8e6f0ed3846d39552dda34
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -33,11 +39,17 @@
       <file leaf-file-name="theme.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/models/theme.js">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
             <state relative-caret-position="561">
               <caret line="19" column="6" lean-forward="false" selection-start-line="19" selection-start-column="6" selection-end-line="19" selection-end-column="6" />
               <folding>
                 <element signature="e#0#40#0" expanded="false" />
               </folding>
+=======
+            <state relative-caret-position="144">
+              <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+              <folding />
+>>>>>>> b02d6b7eda9e51635c8e6f0ed3846d39552dda34
             </state>
           </provider>
         </entry>
@@ -45,11 +57,17 @@
       <file leaf-file-name="card.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/models/card.js">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
             <state relative-caret-position="33">
               <caret line="3" column="0" lean-forward="false" selection-start-line="3" selection-start-column="0" selection-end-line="4" selection-end-column="29" />
               <folding>
                 <element signature="e#0#40#0" expanded="false" />
               </folding>
+=======
+            <state relative-caret-position="18">
+              <caret line="3" column="0" lean-forward="false" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+              <folding />
+>>>>>>> b02d6b7eda9e51635c8e6f0ed3846d39552dda34
             </state>
           </provider>
         </entry>
@@ -67,13 +85,19 @@
       <file leaf-file-name="session-service.spec.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/test/session-service.spec.js">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
             <state relative-caret-position="33">
               <caret line="3" column="0" lean-forward="true" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+=======
+            <state relative-caret-position="162">
+              <caret line="9" column="3" lean-forward="false" selection-start-line="9" selection-start-column="3" selection-end-line="9" selection-end-column="3" />
+>>>>>>> b02d6b7eda9e51635c8e6f0ed3846d39552dda34
               <folding />
             </state>
           </provider>
         </entry>
       </file>
+<<<<<<< HEAD
       <file leaf-file-name="user.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/models/user.js">
           <provider selected="true" editor-type-id="text-editor">
@@ -82,6 +106,14 @@
               <folding>
                 <element signature="e#0#40#0" expanded="false" />
               </folding>
+=======
+      <file leaf-file-name="package.json" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/package.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="126">
+              <caret line="7" column="27" lean-forward="false" selection-start-line="7" selection-start-column="27" selection-end-line="7" selection-end-column="27" />
+              <folding />
+>>>>>>> b02d6b7eda9e51635c8e6f0ed3846d39552dda34
             </state>
           </provider>
         </entry>
@@ -89,8 +121,13 @@
       <file leaf-file-name="user-repository.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/repositories/user-repository.js">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
             <state relative-caret-position="693">
               <caret line="23" column="41" lean-forward="false" selection-start-line="23" selection-start-column="41" selection-end-line="23" selection-end-column="41" />
+=======
+            <state relative-caret-position="216">
+              <caret line="14" column="2" lean-forward="false" selection-start-line="14" selection-start-column="2" selection-end-line="14" selection-end-column="2" />
+>>>>>>> b02d6b7eda9e51635c8e6f0ed3846d39552dda34
               <folding>
                 <element signature="e#0#40#0" expanded="false" />
               </folding>
@@ -110,10 +147,17 @@
           </provider>
         </entry>
       </file>
+<<<<<<< HEAD
       <file leaf-file-name="test.spec.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test/test.spec.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="264">
+=======
+      <file leaf-file-name="test.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/test/test.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="144">
+>>>>>>> b02d6b7eda9e51635c8e6f0ed3846d39552dda34
               <caret line="10" column="3" lean-forward="false" selection-start-line="10" selection-start-column="3" selection-end-line="10" selection-end-column="3" />
               <folding>
                 <element signature="e#0#39#0" expanded="false" />
@@ -168,10 +212,10 @@
         <option value="$PROJECT_DIR$/test/test.js" />
         <option value="$PROJECT_DIR$/test/testRoutes.js" />
         <option value="$PROJECT_DIR$/app.js" />
-        <option value="$PROJECT_DIR$/test/testSession.js" />
         <option value="$PROJECT_DIR$/routes.js" />
         <option value="$PROJECT_DIR$/repositories/SessionRepository.js" />
         <option value="$PROJECT_DIR$/package.json" />
+<<<<<<< HEAD
         <option value="$PROJECT_DIR$/models/.theme.js" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/models/card.js" />
@@ -182,6 +226,9 @@
         <option value="$PROJECT_DIR$/repositories/theme-repository.js" />
         <option value="$PROJECT_DIR$/models/user.js" />
         <option value="$PROJECT_DIR$/repositories/user-repository.js" />
+=======
+        <option value="$PROJECT_DIR$/test/testSession.js" />
+>>>>>>> b02d6b7eda9e51635c8e6f0ed3846d39552dda34
       </list>
     </option>
   </component>
@@ -366,10 +413,14 @@
       <workItem from="1486329632222" duration="43000" />
       <workItem from="1486369650720" duration="78000" />
       <workItem from="1486369946082" duration="4676000" />
+<<<<<<< HEAD
       <workItem from="1486375519588" duration="2246000" />
       <workItem from="1486377822644" duration="883000" />
       <workItem from="1486494979601" duration="25000" />
       <workItem from="1486542290672" duration="5514000" />
+=======
+      <workItem from="1486375519588" duration="3182000" />
+>>>>>>> b02d6b7eda9e51635c8e6f0ed3846d39552dda34
     </task>
     <task id="LOCAL-00001" summary="Test">
       <created>1486370233342</created>
@@ -463,6 +514,7 @@
       <updated>1486377488976</updated>
     </task>
     <task id="LOCAL-00014" summary="Directory structure changes">
+<<<<<<< HEAD
       <created>1486377964100</created>
       <option name="number" value="00014" />
       <option name="presentableId" value="LOCAL-00014" />
@@ -474,6 +526,26 @@
   </component>
   <component name="TimeTrackingManager">
     <option name="totallyTimeSpent" value="18501000" />
+=======
+      <created>1486377768515</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1486377768515</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Added start script">
+      <created>1486378154756</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1486378154756</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="13015000" />
+>>>>>>> b02d6b7eda9e51635c8e6f0ed3846d39552dda34
   </component>
   <component name="ToolWindowManager">
     <frame x="-11" y="0" width="2176" height="2091" extended-state="0" />
@@ -513,7 +585,8 @@
     <MESSAGE value="Added our first test using Mocha" />
     <MESSAGE value="/session gives 200 status" />
     <MESSAGE value="Directory structure changes" />
-    <option name="LAST_COMMIT_MESSAGE" value="Directory structure changes" />
+    <MESSAGE value="Added start script" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added start script" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -769,6 +842,7 @@
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/models/.theme.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -785,6 +859,8 @@
         </state>
       </provider>
     </entry>
+=======
+>>>>>>> b02d6b7eda9e51635c8e6f0ed3846d39552dda34
     <entry file="file://$PROJECT_DIR$/app.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="264">
@@ -793,6 +869,7 @@
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/repositories/SessionRepository.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="33">
@@ -805,6 +882,12 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="561">
           <caret line="19" column="6" lean-forward="false" selection-start-line="19" selection-start-column="6" selection-end-line="19" selection-end-column="6" />
+=======
+    <entry file="file://$PROJECT_DIR$/routes.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="14" column="2" lean-forward="false" selection-start-line="14" selection-start-column="2" selection-end-line="14" selection-end-column="2" />
+>>>>>>> b02d6b7eda9e51635c8e6f0ed3846d39552dda34
           <folding>
             <element signature="e#0#40#0" expanded="false" />
           </folding>
@@ -813,6 +896,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/models/session.js">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="495">
           <caret line="17" column="13" lean-forward="true" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
           <folding>
@@ -865,12 +949,17 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="456">
           <caret line="26" column="25" lean-forward="true" selection-start-line="26" selection-start-column="25" selection-end-line="26" selection-end-column="25" />
+=======
+        <state relative-caret-position="144">
+          <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+>>>>>>> b02d6b7eda9e51635c8e6f0ed3846d39552dda34
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/models/card.js">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="33">
           <caret line="3" column="0" lean-forward="false" selection-start-line="3" selection-start-column="0" selection-end-line="4" selection-end-column="29" />
           <folding>
@@ -893,15 +982,42 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="231">
           <caret line="7" column="17" lean-forward="false" selection-start-line="7" selection-start-column="17" selection-end-line="7" selection-end-column="17" />
+=======
+        <state relative-caret-position="18">
+          <caret line="3" column="0" lean-forward="false" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+>>>>>>> b02d6b7eda9e51635c8e6f0ed3846d39552dda34
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test/session-service.spec.js">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="33">
           <caret line="3" column="0" lean-forward="true" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+=======
+        <state relative-caret-position="126">
+          <caret line="7" column="27" lean-forward="false" selection-start-line="7" selection-start-column="27" selection-end-line="7" selection-end-column="27" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/testSession.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="9" column="3" lean-forward="false" selection-start-line="9" selection-start-column="3" selection-end-line="9" selection-end-column="3" />
+>>>>>>> b02d6b7eda9e51635c8e6f0ed3846d39552dda34
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/test.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="144">
+          <caret line="10" column="3" lean-forward="false" selection-start-line="10" selection-start-column="3" selection-end-line="10" selection-end-column="3" />
+          <folding>
+            <element signature="e#0#39#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
