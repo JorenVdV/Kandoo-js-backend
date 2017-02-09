@@ -12,19 +12,11 @@ class UserRepository {
         return this.userDao.find(user => user._id === id);
     }
 
-    getUserByName(firstname, lastname) {
-        return this.userDao.find(user => user.firstname === firstname && user.lastname === lastname);
+    getUserByEmail(email) {
+        return this.userDao.find(user => user.emailAddress === email);
     }
 
-    createUser(firstname, lastname, dateOfBirth, emailAddress, profilePicture = null) {
-        let user = new User();
-        user.firstname = firstname;
-        user.lastname = lastname;
-        user.dateOfBirth = dateOfBirth;
-        user.emailAddress = emailAddress;
-        if (profilePicture)
-            user.profilePicture = profilePicture;
-
+    createUser(user) {
         this.userDao.push(user);
         return user;
     }
@@ -36,5 +28,6 @@ class UserRepository {
     deleteUser(id) {
         this.userDao.splice(this.userDao.findIndex(user => user._id === id));
     }
-
 }
+
+module.exports = new UserRepository();

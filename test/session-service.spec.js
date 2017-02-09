@@ -14,13 +14,9 @@ describe('Session service tests -', function () {
         before('setup test theme and testuser', function () {
             let testTheme = new Theme();
             testTheme.title = 'testTheme';
-            console.log('testheme id: ' + testTheme._id);
             let testUser = new User();
             testUser.firstname = "testFirstName";
-
-            console.log('testuser id: ' + testUser._id);
             let testDate = new Date(2017, 8, 2, 16, 20, 0);
-
             testGlobal.testTheme = testTheme;
             testGlobal.testUser = testUser;
             testGlobal.testDate = testDate;

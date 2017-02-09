@@ -7,13 +7,6 @@ class SessionRepository {
     }
 
     createSession(session) {
-        console.log('createSession - creator:');
-        console.log(session.creator);
-        console.log('createSession - session:');
-        console.log(session._id);
-        console.log('createSession - session:');
-        console.log(session);
-
         this.sessionDao.push(session);
         return session;
     }
