@@ -36,11 +36,11 @@ describe('Session service tests -', function () {
             assert(session.title === 'testSession', 'session title should be "testSession"');
             assert(session.description === 'testing the creation of a session', 'session description should be "testing the creation of a session"');
             assert(session.circleType === 'blue', 'session circletype should be blue');
-            assert(session.roundDuration === 60000, 'duration of a round should be 60 seconds');
+            assert(session.turnDuration === 60000, 'duration of a round should be 60 seconds');
             assert(session.cardsPerParticipant.min === 3, 'min amount of cards to take should be 3');
             assert(session.cardsPerParticipant.max === 10, 'max amount of cards to take should be 10');
-            assert(session.canReview === false, 'participants should not be able to review cards');
-            assert(session.canAddCards === false, 'participants should not be able to add cards');
+            assert(session.cardsCanBeReviewed === false, 'participants should not be able to review cards');
+            assert(session.cardsCanBeAdded === false, 'participants should not be able to add cards');
             assert(session.participants.length === 1, 'there should be one participant');
             assert.strictEqual(session.participants[0]._id, testGlobal.testUser._id, 'id of the participant should be ' + testGlobal.testUser._id);
             let sessionDate = new Date(session.startDate);
