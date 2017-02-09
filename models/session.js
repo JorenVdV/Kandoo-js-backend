@@ -8,16 +8,23 @@ var SessionSchema = new Schema({
     title: String,
     description: String,
     circleType: String,
-    roundDuration: Number,
+    turnDuration: Number,
     cardsPerParticipant: {
         min: Number,
         max: Number
     },
-    cards: [{type:Schema.ObjectId, ref:'Card'}],
-    canReview: Boolean,
-    canAddCards : Boolean,
-    participants: [{type: Schema.ObjectId, ref:'User'}],
+    sessionCards: [{type: Schema.ObjectId, ref: 'Card'}],
+    cardsCanBeReviewed: Boolean,
+    cardsCanBeAdded: Boolean,
+    participants: [{type: Schema.ObjectId, ref: 'User'}],
     startDate: Date,
+    rounds: [
+        {
+            cards: {
+                priority: Number,
+                card: {type: Schema.ObjectId, ref: 'Card'},
+            }
+        }],
     theme: {
         type: Schema.ObjectId, ref: 'Theme'
     },

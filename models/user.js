@@ -7,9 +7,10 @@ var Schema = mongoose.Schema;
 var UserSchema = new Schema({
     firstname: String,
     lastname: String,
-    dateOfBirth: Date,
-    profilePicture: {data:Buffer, content: String},
-    emailAddress: String
+    avatar: {data:Buffer, content: String},
+    emailAddress: String,
+    organisation: String,
+    settings: [],
 });
 
 module.exports = mongoose.model('User', UserSchema);

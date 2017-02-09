@@ -5,7 +5,8 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var CardSchema = new Schema({
-    content: String,
+    description: String,
+    commentary: String,
     created: {
         type: Date, default: Date.now
     }

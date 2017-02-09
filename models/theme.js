@@ -8,16 +8,16 @@ var ThemeSchema = new Schema({
     title: String,
     description: String,
     tags: [String],
-    isPrivate: Boolean,
-    created: {
-        type: Date, default: Date.now
-    },
+    isPublic: Boolean,
     organisers: [{
         type: Schema.ObjectId, ref: 'User'
     }],
     cards: [{
         type: Schema.ObjectId, ref: 'Card'
-    }]
+    }],
+    created: {
+        type: Date, default: Date.now
+    }
 });
 
 module.exports = mongoose.model('Theme', ThemeSchema);

@@ -8,19 +8,20 @@ class SessionService {
         this.repo = require('../repositories/session-repository');
     }
 
-    createSession(title, description, circleType, roundDuration, cardsPerParticipant,cards, canReview, canAddCards, participants,theme, creator, startDate = null){
+    createSession(title, description, circleType, turnDuration, cardsPerParticipant,cards, canReviewCards, canAddCards, participants,theme, creator, startDate = null){
         let session = new Session();
         session.title = title;
         session.description = description;
         session.circleType = circleType;
-        session.roundDuration = roundDuration;
+        session.turnDuration = turnDuration;
         session.cardsPerParticipant = cardsPerParticipant;
         session.cards = cards;
-        session.canReview = canReview;
-        session.canAddCards = canAddCards;
+        session.cardsCanBeReviewed = canReviewCards;
+        session.cardsCanBeAdded = canAddCards;
         session.theme = theme._id;
         session.creator = creator._id;
         session.participants = participants;
+        session.rounds = [];
         if(startDate)
             session.startDate = startDate;
 
