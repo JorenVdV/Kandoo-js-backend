@@ -1,23 +1,18 @@
 /**
  * Created by steve on 2/8/2017.
  */
-const Session = require('../models/session');
-
 class SessionRepository {
     constructor() {
         this.sessionDao = [];
     }
 
-    createSession(title, description, circleType, roundDuration, cardsPerParticipant, theme, creator, cards) {
-        let session = new Session();
-        session.title = title;
-        session.description = description;
-        session.circleType = circleType;
-        session.roundDuration = roundDuration;
-        session.cardsPerParticipant = cardsPerParticipant;
-        session.theme = theme;
-        session.creator = creator;
-        session.cards = cards;
+    createSession(session) {
+        console.log('createSession - creator:');
+        console.log(session.creator);
+        console.log('createSession - session:');
+        console.log(session._id);
+        console.log('createSession - session:');
+        console.log(session);
 
         this.sessionDao.push(session);
         return session;
