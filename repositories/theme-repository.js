@@ -21,6 +21,14 @@ class ThemeRepository{
         this.themeDao.push(theme);
         return theme;
     }
+    
+    readTheme(id) {
+        return this.themeDao.find(t=> t.id === id);
+    }
+    
+    readThemes(organiser) {
+        return this.themeDao
+    }
 
     updateTheme(){
 
@@ -30,3 +38,5 @@ class ThemeRepository{
         this.themeDao.splice(this.themeDao.findIndex(theme => theme.id) === id,1);
     }
 }
+
+module.exports = new ThemeRepository();
