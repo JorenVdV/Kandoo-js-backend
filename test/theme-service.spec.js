@@ -53,7 +53,7 @@ describe("theme service tests", function(){
         assert.strictEqual(theme1.isPublic, true, 'the theme-isPublic should been "true"');
         assert(theme1.organisers.includes(user1), 'the theme-organisers should contain "user1"');
 
-        themeService.updateTheme(theme1._id, "new Title", "new description", [], false, user2);
+        themeService.changeTheme(theme1._id, "new Title", "new description", [], false, user2);
         assert.strictEqual(theme1.title, "new Title", 'the theme-title should been "new Title"');
         assert.strictEqual(theme1.description, "new description", 'the theme-description should been "new description"');
         assert.strictEqual(theme1.isPublic, false, 'the theme-isPublic should been "false"');

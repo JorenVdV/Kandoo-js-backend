@@ -28,6 +28,16 @@ class SessionService {
         this.repo.createSession(session);
         return session;
     }
+    
+    getSession(sessionId){
+        return this.repo.getSessionById(sessionId)
+    }
+
+    startSession(sessionId, date = new Date()){
+        let session = this.getSession(sessionId);
+        session.startDate = date;
+        this.repo.updateSession(session)
+    }
 
 }
 
