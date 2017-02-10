@@ -9,7 +9,7 @@ class ThemeService {
         this.repo = require('../repositories/theme-repository');
     }
 
-    addTheme(title, description, tags, isPublic, organiser, cards) {
+    addTheme(title, description, tags, isPublic, organiser, cards = []) {
         let theme = new Theme();
         theme.title = title;
         theme.description = description;
@@ -34,6 +34,14 @@ class ThemeService {
 
     removeTheme(themeId) {
         this.repo.deleteTheme(themeId);
+    }
+
+    addCard(themeId, card) {
+
+        var theme = this.getTheme(themeId);
+
+        theme.cards.push(card);
+        return theme;
     }
 }
 

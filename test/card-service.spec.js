@@ -3,7 +3,6 @@
  */
 
 
-
 const chai = require('chai');
 const assert = chai.assert;
 
@@ -22,7 +21,6 @@ describe('Card service tests', function () {
     });
 
     it('add a card', function () {
-
         var card = cardService.addCard('This is a description.');
 
         assert.isDefined(card, 'The card exists.');

@@ -1,15 +1,18 @@
-var assert = require('assert');
-var themeService = require('../services/theme-service');
+const chai = require('chai');
+const assert = chai.assert;
 
-describe("theme service tests", function(){
+var themeService = require('../services/theme-service');
+var cardService = require('../services/card-service');
+
+describe("theme service tests", function () {
     let user1;
     let user2;
     before(function () {
-        var userService =  require('../services/user-service');
+        var userService = require('../services/user-service');
         user1 = userService.createUser("User1");
         user2 = userService.createUser("User2");
     });
-    
+
     it('initial there should be no themes', function () {
         var themes = themeService.getThemes();
         assert(Array.isArray(themes), 'themes should always retrun an array');
@@ -58,16 +61,29 @@ describe("theme service tests", function(){
         assert.strictEqual(theme1.description, "new description", 'the theme-description should been "new description"');
         assert.strictEqual(theme1.isPublic, false, 'the theme-isPublic should been "false"');
         assert(theme1.organisers.includes(user2), 'the theme-organisers should contain "user2"');
-        
+
         themeService.removeTheme(theme1._id);
     });
-    
+
     it('get a theme', function () {
         var theme1 = themeService.addTheme("first theme", "a description", [], true, user1);
         var testTheme = themeService.getTheme(theme1._id);
         assert.strictEqual(theme1, testTheme, "should get theme1");
-        
+
         themeService.removeTheme(theme1._id)
+    });
+
+    it('adds a card to a theme', function () {
+        var card = cardService.addCard('This is a description');
+
+        var theme1 = themeService.addTheme("first theme", "a description", [], true, user1);
+        theme1.populate('cards');
+
+        themeService.addCard(theme1._id, card);
+
+        assert.isArray(theme1.cards, 'Should be an array');
+        assert.lengthOf(theme1.cards, 1, 'The amount of cards should be 1');
+        assert.equal(theme1.cards[0], card._id, 'The id should be equal to the cards\' id');
     });
 
 });
