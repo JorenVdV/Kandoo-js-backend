@@ -21,6 +21,10 @@ class UserRepository {
         return user;
     }
 
+    getUsers(){
+        return this.userDao;
+    }
+
     updateUser() {
 
     }
