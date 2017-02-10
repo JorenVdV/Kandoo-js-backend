@@ -1,4 +1,5 @@
-var assert = require('assert');
+var chai = require('chai');
+var assert = chai.assert;
 var themeService = require('../services/theme-service');
 
 describe("theme service tests", function(){

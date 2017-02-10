@@ -45,6 +45,7 @@ describe('Session service tests -', function () {
                 && sessionDate.getMinutes() === 20 && sessionDate.getSeconds() === 0, 'session should start at 2-8-2017 16:20:00');
             assert.strictEqual(session.theme, testGlobal.testTheme._id, 'session theme should have ' + testGlobal.testTheme._id + ' as id');
             assert.strictEqual(session.creator, testGlobal.testUser._id, 'creator of the session should have ' + testGlobal.testUser._id + ' as id');
+            sessionService.deleteSession(session._id);
         });
 
         it('copy a session of a theme', function () {
@@ -58,6 +59,7 @@ describe('Session service tests -', function () {
                     testGlobal.testTheme, testGlobal.testUser, testGlobal.testDate);
             sessionService.startSession(session._id);
             assert(session.startDate !== null, 'startdate of the session should been set');
+            sessionService.deleteSession(session._id);
         });
 
         it('start a session on an specific date as an organiser', function () {
@@ -67,6 +69,7 @@ describe('Session service tests -', function () {
                     testGlobal.testTheme, testGlobal.testUser, testGlobal.testDate);
             sessionService.startSession(session._id, testGlobal.testDate);
             assert(session.startDate === testGlobal.testDate, 'startdate of the session should been set');
+            sessionService.deleteSession(session._id);
         });
     });
 });

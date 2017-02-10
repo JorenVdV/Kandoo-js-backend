@@ -33,6 +33,10 @@ class SessionService {
         return this.repo.getSessionById(sessionId)
     }
 
+    deleteSession(sessionId){
+        this.repo.deleteSession(sessionId);
+    }
+
     startSession(sessionId, date = new Date()){
         let session = this.getSession(sessionId);
         session.startDate = date;

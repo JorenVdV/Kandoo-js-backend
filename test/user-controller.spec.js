@@ -28,7 +28,6 @@ describe('User Controller tests', function(){
               });
       })
    });
-
    describe('/GET users', function(){
        it('should get a user', (done) => {
            let user = {
