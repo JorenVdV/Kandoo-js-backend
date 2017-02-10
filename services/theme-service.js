@@ -2,37 +2,31 @@
  * Created by Seger on 8/02/2017.
  */
 
-var Theme = require('../models/theme')
-    
+var Theme = require('../models/theme');
+
 class ThemeService {
     constructor() {
         this.repo = require('../repositories/theme-repository');
-        this.userService = require('./user-service')
     }
 
     addTheme(title, description, tags, isPublic, organiser, cards) {
         return this.repo.createTheme(title, description, tags, isPublic, organiser, cards);
     }
 
-    getTheme(user, id) {
-        var theme = this.repo.readTheme(id);
-        return theme.organisers.contains(user) ? theme : null;
+    getTheme(themeId) {
+        return this.repo.readTheme(themeId);
     }
 
-    getThemes(organiser) {
-        return this.repo.readThemes(organiser);
+    getThemes() {
+        return this.repo.readThemes();
     }
 
-    updateTheme(id, title, description, tags, isPublic, organiser, cards) {
-        if(!this.getTheme(organiser, id)){
-            //update
-        }
+    updateTheme(themeId, title, description, tags, isPublic, organiser, cards) {
+        return this.repo.updateTheme(themeId, title, description, tags, isPublic, organiser, cards)
     }
 
-    removeTheme(user, id) {
-        //if(!this.getTheme(user, id)){
-            this.repo.deleteTheme(id);
-        //}
+    removeTheme(themeId) {
+        this.repo.deleteTheme(themeId);
     }
 }
 

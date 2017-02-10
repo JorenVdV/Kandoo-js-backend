@@ -8,7 +8,7 @@ const assert = chai.assert;
 const userService = require('../services/user-service');
 const User = require('../models/user');
 
-describe('User service tests -', function(){
+describe('User service tests', function(){
    it('Creating a user', function(){
        let user = userService.createUser('Jos', 'Van Camp', 'jos.vancamp@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
        assert.strictEqual(user.firstname, 'Jos', 'the name of the user should be "Jos"');
@@ -26,4 +26,10 @@ describe('User service tests -', function(){
         assert.strictEqual(foundUser._id,user._id, 'id of the found user should be the same as the created user');
         userService.removeUser(user._id);
    });
+    it('Find doens\'t find user by email', function(){
+        let user = userService.createUser('Jos', 'Van Camp', 'jos.vancamp@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
+        let foundUser = userService.findUserByEmail('jos.vancamp@.xyz');
+        assert.isUndefined(foundUser, 'The user shouldn\'t have been found');
+        userService.removeUser(user._id);
+    });
 });
