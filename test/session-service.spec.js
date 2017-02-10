@@ -50,5 +50,23 @@ describe('Session service tests -', function () {
         it('copy a session of a theme', function () {
 
         });
+        
+        it('start a session instant as an organiser', function () {
+            let session = sessionService
+                .createSession('testSession', 'testing the creation of a session', 'blue',
+                    60000, {min: 3, max: 10}, [], false, false, [testGlobal.testUser],
+                    testGlobal.testTheme, testGlobal.testUser, testGlobal.testDate);
+            sessionService.startSession(session._id);
+            assert(session.startDate !== null, 'startdate of the session should been set');
+        });
+
+        it('start a session on an specific date as an organiser', function () {
+            session = sessionService
+                .createSession('testSession', 'testing the creation of a session', 'blue',
+                    60000, {min: 3, max: 10}, [], false, false, [testGlobal.testUser],
+                    testGlobal.testTheme, testGlobal.testUser, testGlobal.testDate);
+            sessionService.startSession(session._id, testGlobal.testDate);
+            assert(session.startDate === testGlobal.testDate, 'startdate of the session should been set');
+        });
     });
 });

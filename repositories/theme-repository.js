@@ -8,20 +8,12 @@ class ThemeRepository{
         this.themeDao = [];
     }
 
-    createTheme(title, description, tags, isPublic, organiser, cards = []){
-        let theme = new Theme();
-        theme.title = title;
-        theme.description = description;
-        theme.tags = tags;
-        theme.isPublic = isPublic;
-        theme.organisers = [organiser];
-        theme.cards = cards;
-
+    createTheme(theme){
         this.themeDao.push(theme);
         return theme;
     }
     
-    readTheme(id) {
+    readThemeById(id) {
         return this.themeDao.find(t=> t._id === id);
     }
     
@@ -30,7 +22,7 @@ class ThemeRepository{
     }
 
     updateTheme(id, title, description, tags, isPublic, organiser, cards = []){
-        var theme = this.readTheme(id);
+        var theme = this.readThemeById(id);
         theme.title = title;
         theme.description = description;
         theme.tags = tags;

@@ -12,7 +12,7 @@ class UserService {
         user.firstname = firstname;
         user.lastname = lastname;
         user.emailAddress = emailAddress;
-        user.organisation = organisation;
+        user.organisation = organisation ? organisation : "";
         user.password = password;
 
         return this.repo.createUser(user);
@@ -28,6 +28,10 @@ class UserService {
 
     findUserByEmail(email){
         return this.repo.getUserByEmail(email);
+    }
+
+    findUsers(){
+        return this.repo.getUsers();
     }
 
 

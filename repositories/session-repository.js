@@ -15,7 +15,7 @@ class SessionRepository {
         return this.sessionDao.find(session => session._id == id);
     }
 
-    updateSession() {
+    updateSession(session) {
 
     }
 
