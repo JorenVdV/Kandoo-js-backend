@@ -49,9 +49,37 @@ describe('User Controller tests', function(){
                .get('/users')
                .send()
                .end((err,res) => {
+                   res.should.have.status(200);
                   res.should.have.property('users');
                   assert.strictEquals(res.users.length, 1, 'there should be a single user');
                });
        });
-   })
+   });
+   describe('/POST login', function(){
+       it('should login a user', (done) => {
+           let user = {
+               firstname: 'Joren',
+               lastname: 'Van de Vondel',
+               organisation: 'Big Industries',
+               password: 'Pudding',
+               emailAddress: 'joren.vdv@kdg.be'
+           };
+           chai.request(server)
+               .post('/register')
+               .send(user)
+               .end((err,res) => {
+                   res.should.have.status(201);
+                   done();
+               });
+           chai.request(server)
+               .get('/login')
+               .send({emailAddress: 'joren.vdv@kdg.be', password:'Pudding'})
+               .end((err,res) => {
+                   res.should.have.status(200);
+                   res.should.have.property('user');
+                   assert.isOk(user, 'the user should be defined');
+                   assert.strictEquals(user.firstname, 'Joren', 'User should have Joren as firstname');
+               });
+       });
+   });
 });

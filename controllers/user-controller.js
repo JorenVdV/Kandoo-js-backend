@@ -18,6 +18,15 @@ class UserController{
         }
     }
 
+    login(req,res){
+        let body = req.body;
+        let user = this.service.findUserByEmail(body.emailAddress);
+        if(user.password === body.password)
+            res.status(200).send({user:user});
+        else
+            res.sendStatus(401);
+    }
+
     getUser(req,res){
 
     }
@@ -26,7 +35,6 @@ class UserController{
         let users = this.service.findUsers();
         if(users) res.send({users: users});
         else res.sendStatus(404);
-
     }
 
     deleteUser(req,res){

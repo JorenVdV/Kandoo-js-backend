@@ -12,6 +12,9 @@ module.exports = function(app){
     app.get('/users', function(req,res){
         userController.getUsers(req,res);
     });
+    app.post('/login', function(req,res){
+       userController.login(req,res);
+    });
     // app.route('/register')
     //     .post(userController.createUser);
     // app.route('/users')
