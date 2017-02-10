@@ -39,6 +39,14 @@ class SessionService {
         this.repo.updateSession(session)
     }
 
+    stopSession(sessionId){
+        let session = this.getSession(sessionId);
+        console.log(session.startDate)
+        if(session.startDate){
+            session.endDate = new Date();
+            this.repo.updateSession();
+        }
+    }
 }
 
 module.exports = new SessionService();
