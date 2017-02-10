@@ -8,14 +8,13 @@ class ThemeRepository{
         this.themeDao = [];
     }
 
-    createTheme(title, description, tags, isPrivate, organiser, cards = []){
+    createTheme(title, description, tags, isPublic, organiser, cards = []){
         let theme = new Theme();
         theme.title = title;
         theme.description = description;
         theme.tags = tags;
-        theme.isPrivate = isPrivate;
-        theme.organisers = [];
-        theme.organisers.push(organiser);
+        theme.isPublic = isPublic;
+        theme.organisers = [organiser];
         theme.cards = cards;
 
         this.themeDao.push(theme);
@@ -23,15 +22,22 @@ class ThemeRepository{
     }
     
     readTheme(id) {
-        return this.themeDao.find(t=> t.id === id);
+        return this.themeDao.find(t=> t._id === id);
     }
     
-    readThemes(organiser) {
-        return this.themeDao
+    readThemes() {
+        return this.themeDao;
     }
 
-    updateTheme(){
-
+    updateTheme(id, title, description, tags, isPublic, organiser, cards = []){
+        var theme = this.readTheme(id);
+        theme.title = title;
+        theme.description = description;
+        theme.tags = tags;
+        theme.isPublic = isPublic;
+        theme.organisers = [organiser];
+        theme.cards = cards;
+        return theme
     }
 
     deleteTheme(id){
