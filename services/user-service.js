@@ -34,14 +34,14 @@ class UserService {
         return this.userRepo.getUsers();
     }
 
-
-    checkLogin() {
-        return true;
-    }
-    
-    getId(username){
-        return 1;
-    }
+    //
+    // checkLogin() {
+    //     return true;
+    // }
+    //
+    // getId(username){
+    //     return 1;
+    // }
     
 }
 

@@ -27,19 +27,12 @@ class UserController{
             res.sendStatus(401);
     }
 
-    getUser(req,res){
-
-    }
-
     getUsers(req,res){
         let users = this.userService.findUsers();
         if(users) res.send({users: users});
         else res.sendStatus(404);
     }
 
-    deleteUser(req,res){
-
-    }
 }
 
 module.exports = new UserController();

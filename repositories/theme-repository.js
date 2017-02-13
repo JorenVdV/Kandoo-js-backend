@@ -14,7 +14,8 @@ class ThemeRepository{
     }
     
     readThemeById(id) {
-        return this.themeDao.find(theme => theme._id === id);
+
+        return this.themeDao.find(theme => theme._id == id) ;
     }
     
     readThemes() {
@@ -33,7 +34,7 @@ class ThemeRepository{
     }
 
     deleteTheme(id){
-        this.themeDao.splice(this.themeDao.findIndex(theme => theme._id === id),1);
+        this.themeDao.splice(this.themeDao.findIndex(theme => theme._id == id),1);
     }
 }
 
