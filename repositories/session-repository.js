@@ -19,9 +19,9 @@ class SessionRepository {
 
     }
 
-    // deleteSession(id) {
-    //     return this.sessionDao.splice(this.sessionDao.findIndex(session => session._id === id), 1);
-    // }
+    deleteSession(id) {
+        return this.sessionDao.splice(this.sessionDao.findIndex(session => session._id === id), 1);
+    }
 }
 
 module.exports = new SessionRepository();
