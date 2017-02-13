@@ -9,7 +9,7 @@ class UserRepository {
     }
 
     getUserById(id) {
-        return this.userDao.find(user => user._id === id);
+        return this.userDao.find(user => user._id == id);
     }
 
     getUserByEmail(email) {

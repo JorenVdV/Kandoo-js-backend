@@ -6,7 +6,8 @@ var Theme = require('../models/theme');
 
 class ThemeService {
     constructor() {
-        this.repo = require('../repositories/theme-repository');
+        this.themeRepo = require('../repositories/theme-repository');
+
     }
 
     addTheme(title, description, tags, isPublic, organiser, cards = []) {
@@ -17,30 +18,31 @@ class ThemeService {
         theme.isPublic = isPublic;
         theme.organisers = [organiser];
         theme.cards = cards;
-        return this.repo.createTheme(theme);
+        return this.themeRepo.createTheme(theme);
     }
 
     getTheme(themeId) {
-        return this.repo.readThemeById(themeId);
+        return this.themeRepo.readThemeById(themeId);
     }
 
     getThemes() {
-        return this.repo.readThemes();
+        return this.themeRepo.readThemes();
     }
 
     changeTheme(themeId, title, description, tags, isPublic, organiser, cards) {
-        return this.repo.updateTheme(themeId, title, description, tags, isPublic, organiser, cards)
+        return this.themeRepo.updateTheme(themeId, title, description, tags, isPublic, organiser, cards)
     }
 
     removeTheme(themeId) {
-        this.repo.deleteTheme(themeId);
+        this.themeRepo.deleteTheme(themeId);
     }
 
     addCard(themeId, card) {
-
+        console.log(themeId);
         var theme = this.getTheme(themeId);
-
         theme.cards.push(card);
+
+        console.log(this.themeRepo.readThemeById(themeId));
         return theme;
     }
 }

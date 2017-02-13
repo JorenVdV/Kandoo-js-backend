@@ -5,7 +5,7 @@ const Session = require('../models/session');
 
 class SessionService {
     constructor(){
-        this.repo = require('../repositories/session-repository');
+        this.sessionRepo = require('../repositories/session-repository');
     }
 
     createSession(title, description, circleType, turnDuration, cardsPerParticipant,cards, canReviewCards, canAddCards, participants,theme, creator, startDate = null){
@@ -25,18 +25,18 @@ class SessionService {
         if(startDate)
             session.startDate = startDate;
 
-        this.repo.createSession(session);
+        this.sessionRepo.createSession(session);
         return session;
     }
     
     getSession(sessionId){
-        return this.repo.getSessionById(sessionId)
+        return this.sessionRepo.getSessionById(sessionId)
     }
 
     startSession(sessionId, date = new Date()){
         let session = this.getSession(sessionId);
         session.startDate = date;
-        this.repo.updateSession(session)
+        this.sessionRepo.updateSession(session)
     }
 
     stopSession(sessionId){
@@ -44,7 +44,7 @@ class SessionService {
         console.log(session.startDate)
         if(session.startDate){
             session.endDate = new Date();
-            this.repo.updateSession();
+            this.sessionRepo.updateSession();
         }
     }
 }

@@ -6,6 +6,7 @@ const Card = require('../models/card');
 class CardRepository {
     constructor() {
         this.cardDao = [];
+
     }
 
     createCard(description) {
