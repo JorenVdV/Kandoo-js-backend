@@ -85,9 +85,9 @@ describe('Session service tests -', function () {
                 .createSession('testSession', 'testing the creation of a session', 'blue',
                     60000, {min: 3, max: 10}, [], false, false, [testGlobal.testUser],
                     testGlobal.testTheme, testGlobal.testUser);
-            sessionService.startSession(session._id, testGlobal.testDate);
+            sessionService.startSession(session._id, testGlobal.testDate2);
             assert.strictEqual(session.startDate, testGlobal.testDate, 'startdate should be equals tot testdate1');
-            sessionService.startSession(session._id, testGlobal.testDate2)
+            sessionService.startSession(session._id, testGlobal.testDate2);
             assert.strictEqual(session.startDate, testGlobal.testDate, 'startdate should be equals tot testdate1');
         })
     });

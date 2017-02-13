@@ -43,7 +43,7 @@ class SessionService {
         this.sessionRepo.updateSession(session);
         if(!session.startDate){
             session.startDate = date;
-            this.repo.updateSession(session)
+            this.sessionRepo.updateSession(session)
         }
     }
 
@@ -51,7 +51,7 @@ class SessionService {
         let session = this.getSession(sessionId);
         if(session.startDate){
             session.endDate = new Date();
-            this.repo.updateSession();
+            this.sessionRepo.updateSession();
         }
     }
 }
