@@ -29,7 +29,7 @@ describe('Session service tests -', function () {
             let session = sessionService
                 .createSession('testSession', 'testing the creation of a session', 'blue',
                     60000, {min: 3, max: 10}, [], false, false, [testGlobal.testUser],
-                    testGlobal.testTheme, testGlobal.testUser, testGlobal.testDate);
+                    testGlobal.testTheme._id, testGlobal.testUser, testGlobal.testDate);
             assert(session, 'session is not null or undefined');
             assert(session.title === 'testSession', 'session title should be "testSession"');
             assert(session.description === 'testing the creation of a session', 'session description should be "testing the creation of a session"');
@@ -47,6 +47,7 @@ describe('Session service tests -', function () {
                 && sessionDate.getMinutes() === 20 && sessionDate.getSeconds() === 0, 'session should start at 2-8-2017 16:20:00');
             assert.strictEqual(session.theme, testGlobal.testTheme._id, 'session theme should have ' + testGlobal.testTheme._id + ' as id');
             assert.strictEqual(session.creator, testGlobal.testUser._id, 'creator of the session should have ' + testGlobal.testUser._id + ' as id');
+            sessionService.deleteSession(session._id);
         });
 
         it('copy a session of a theme', function () {
@@ -62,6 +63,8 @@ describe('Session service tests -', function () {
                     testGlobal.testTheme, testGlobal.testUser);
             var beforeDate = new Date();
             sessionService.startSession(session._id);
+            assert(session.startDate !== null, 'startdate of the session should been set');
+            sessionService.deleteSession(session._id);
             assert(session.startDate!==null, 'startdate of the session should been set');
             // assert(session.startDate <= beforeDate, 'startdate of the session should been set');
             // assert(session.startDate >= new Date(), 'startdate of the session should been set');
@@ -74,6 +77,7 @@ describe('Session service tests -', function () {
                     testGlobal.testTheme, testGlobal.testUser);
             sessionService.startSession(session._id, testGlobal.testDate);
             assert(session.startDate === testGlobal.testDate, 'startdate of the session should been set');
+            sessionService.deleteSession(session._id);
         });
         
         it('a session can not be started if it already is started', function () {

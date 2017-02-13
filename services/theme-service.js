@@ -7,7 +7,6 @@ var Theme = require('../models/theme');
 class ThemeService {
     constructor() {
         this.themeRepo = require('../repositories/theme-repository');
-
     }
 
     addTheme(title, description, tags, isPublic, organiser, cards = []) {
@@ -38,11 +37,10 @@ class ThemeService {
     }
 
     addCard(themeId, card) {
-        console.log(themeId);
-        var theme = this.getTheme(themeId);
-        theme.cards.push(card);
 
-        console.log(this.themeRepo.readThemeById(themeId));
+        var theme = this.getTheme(themeId);
+
+        theme.cards.push(card);
         return theme;
     }
 }

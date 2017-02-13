@@ -8,7 +8,7 @@ class SessionService {
         this.sessionRepo = require('../repositories/session-repository');
     }
 
-    createSession(title, description, circleType, turnDuration, cardsPerParticipant,cards, canReviewCards, canAddCards, participants,theme, creator, startDate = null){
+    createSession(title, description, circleType, turnDuration, cardsPerParticipant,cards, canReviewCards, canAddCards, participants,themeId, creator, startDate = null){
         let session = new Session();
         session.title = title;
         session.description = description;
@@ -18,7 +18,7 @@ class SessionService {
         session.cards = cards;
         session.cardsCanBeReviewed = canReviewCards;
         session.cardsCanBeAdded = canAddCards;
-        session.theme = theme._id;
+        session.theme = themeId;
         session.creator = creator._id;
         session.participants = participants;
         session.rounds = [];
@@ -33,8 +33,14 @@ class SessionService {
         return this.sessionRepo.getSessionById(sessionId)
     }
 
+    deleteSession(sessionId){
+        this.sessionRepo.deleteSession(sessionId);
+    }
+
     startSession(sessionId, date = new Date()){
         let session = this.getSession(sessionId);
+        session.startDate = date;
+        this.sessionRepo.updateSession(session);
         if(!session.startDate){
             session.startDate = date;
             this.sessionRepo.updateSession(session)
@@ -43,7 +49,6 @@ class SessionService {
 
     stopSession(sessionId){
         let session = this.getSession(sessionId);
-        console.log(session.startDate)
         if(session.startDate){
             session.endDate = new Date();
             this.sessionRepo.updateSession();

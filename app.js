@@ -27,6 +27,7 @@ app.use(express.static(path.join(__dirname)));
 
 require("./routes")(app);
 require("./routes/user-routes")(app);
+require("./routes/session-routes")(app);
 require("./routes/theme-routes")(app);
 
 server.listen(port, function () {
