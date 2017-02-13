@@ -35,8 +35,10 @@ class SessionService {
 
     startSession(sessionId, date = new Date()){
         let session = this.getSession(sessionId);
-        session.startDate = date;
-        this.sessionRepo.updateSession(session)
+        if(!session.startDate){
+            session.startDate = date;
+            this.sessionRepo.updateSession(session)
+        }
     }
 
     stopSession(sessionId){

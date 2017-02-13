@@ -16,9 +16,11 @@ describe('Session service tests -', function () {
         let testUser = new User();
         testUser.firstname = "testFirstName";
         let testDate = new Date(2017, 8, 2, 16, 20, 0);
+        let testDate2 = new Date(2017, 9, 2, 16, 20, 0);
         testGlobal.testTheme = testTheme;
         testGlobal.testUser = testUser;
         testGlobal.testDate = testDate;
+        testGlobal.testDate2 = testDate2;
     });
     describe('Creating a session:', function () {
 
@@ -58,8 +60,11 @@ describe('Session service tests -', function () {
                 .createSession('testSession', 'testing the creation of a session', 'blue',
                     60000, {min: 3, max: 10}, [], false, false, [testGlobal.testUser],
                     testGlobal.testTheme, testGlobal.testUser);
+            var beforeDate = new Date();
             sessionService.startSession(session._id);
-            assert(session.startDate !== null, 'startdate of the session should been set');
+            assert(session.startDate!==null, 'startdate of the session should been set');
+            // assert(session.startDate <= beforeDate, 'startdate of the session should been set');
+            // assert(session.startDate >= new Date(), 'startdate of the session should been set');
         });
 
         it('start a session on an specific date as an organiser', function () {
@@ -70,6 +75,17 @@ describe('Session service tests -', function () {
             sessionService.startSession(session._id, testGlobal.testDate);
             assert(session.startDate === testGlobal.testDate, 'startdate of the session should been set');
         });
+        
+        it('a session can not be started if it already is started', function () {
+            let session = sessionService
+                .createSession('testSession', 'testing the creation of a session', 'blue',
+                    60000, {min: 3, max: 10}, [], false, false, [testGlobal.testUser],
+                    testGlobal.testTheme, testGlobal.testUser);
+            sessionService.startSession(session._id, testGlobal.testDate);
+            assert.strictEqual(session.startDate, testGlobal.testDate, 'startdate should be equals tot testdate1');
+            sessionService.startSession(session._id, testGlobal.testDate2)
+            assert.strictEqual(session.startDate, testGlobal.testDate, 'startdate should be equals tot testdate1');
+        })
     });
 
     describe('Stop a session:', function () {
