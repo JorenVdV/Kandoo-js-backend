@@ -26,6 +26,7 @@ var SessionSchema = new Schema({
                 card: {type: Schema.ObjectId, ref: 'Card'},
             }
         }],
+    currentUser: {type: Schema.ObjectId, ref: 'User'},
     theme: {
         type: Schema.ObjectId, ref: 'Theme'
     },
