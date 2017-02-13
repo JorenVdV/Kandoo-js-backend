@@ -1,50 +1,64 @@
-var chai = require('chai');
-var assert = chai.assert;
-var themeService = require('../services/theme-service');
+const chai = require('chai');
+const assert = chai.assert;
 
-describe("theme service tests", function(){
+var themeService = require('../services/theme-service');
+var cardService = require('../services/card-service');
+
+describe("theme service tests", function () {
     let user1;
     let user2;
-    before(function () {
-        var userService =  require('../services/user-service');
+    beforeEach(function () {
+        var userService = require('../services/user-service');
         user1 = userService.createUser("User1");
         user2 = userService.createUser("User2");
     });
-    
-    it('initial there should be no themes', function () {
-        var themes = themeService.getThemes();
-        assert(Array.isArray(themes), 'themes should always retrun an array');
-        assert.equal(themes.length, 0, 'there should be no themes in the list');
+
+    // //test wegdoen?
+    // it('initial there should be no themes', function () {
+    //     var themes = themeService.getThemes();
+    //     assert(Array.isArray(themes), 'themes should always retrun an array');
+    //     assert.equal(themes.length, 0, 'there should be no themes in the list');
+    // });
+
+    it('Adding a new theme and check the content', function () {
+        var theme = themeService.addTheme("first theme", "a description", [], true, user1);
+        assert.strictEqual(theme.title, 'first theme', 'the title of the theme should be "first theme"');
+        assert.strictEqual(theme.description, 'a description', 'the description of the theme should be "a description"');
+        //assert.equal(theme.tags, [], 'the tags of the theme should be an empty array');
+        assert.strictEqual(theme.isPublic, true, 'the theme should be public');
+        assert(theme.organisers.includes(user1), 'the theme should contain its creator');
+        assert.strictEqual(theme.organisers.length,1, 'the theme should only contain one organiser at this moment');
+        themeService.removeTheme(theme._id);
+
+        theme = themeService.addTheme("what will we drink?", "beer or wine", [], false, user2);
+        assert.strictEqual(theme.title, 'what will we drink?', 'the title of the theme should be "first theme"');
+        assert.strictEqual(theme.description, 'beer or wine', 'the description of the theme should be "a description"');
+        //assert.equal(theme.tags, [], 'the tags of the theme should be an empty array');
+        assert.strictEqual(theme.isPublic, false, 'the theme should be public');
+        assert(theme.organisers.includes(user2), 'the theme should contain its creator');
+        assert.strictEqual(theme.organisers.length,1, 'the theme should only contain one organiser at this moment');
+        themeService.removeTheme(theme._id);
     });
 
-    it('new theme should been added', function () {
-        var themes = themeService.getThemes();
-        assert.equal(themes.length, 0, 'there should be no themes in the list');
-        var theme1 = themeService.addTheme("first theme", "a description", [], true, user1);
-        assert.equal(themes.length, 1, 'there should be one theme in the list');
-        assert(themes.includes(theme1), "themes should contain the 'first theme'");
-        var theme2 = themeService.addTheme('second theme', "a description", [], true, user1);
-        assert.equal(themes.length, 2, 'there should be two theme in the list');
-        assert(themes.includes(theme2, theme1), "themes should contain the 'first theme' and 'second theme'");
-        themeService.removeTheme(theme1._id);
+    it('Removing themes', function () {
+        var theme1 = themeService.addTheme("First theme", "a description", [], true, user1);
+        var theme2 = themeService.addTheme("Second theme", "a description", [], true, user1);
+        var theme3 = themeService.addTheme("Third theme", "a description", [], true, user1);
+        
         themeService.removeTheme(theme2._id);
-    });
+        assert.isNotOk(themeService.getTheme(theme2._id), "Second theme should have been removed");
+        assert.strictEqual(themeService.getTheme(theme1._id), theme1,"First theme should still been safed");
+        assert.strictEqual(themeService.getTheme(theme3._id), theme3,"Third theme should still been safed");
 
-    it('remove themes', function () {
-        var theme1 = themeService.addTheme("first theme");
-        var theme2 = themeService.addTheme("second theme");
-        var theme3 = themeService.addTheme("third theme");
-        var themes = themeService.getThemes();
-        assert.strictEqual(themes.length, 3, 'there should be three themes in the list');
-        assert(themes.includes(theme1, theme2, theme3), "themes should contain the theme1, theme2 and theme3");
-        themeService.removeTheme("second theme");
-        assert.strictEqual(themes.length, 2, 'there should be two themes in the list');
-        assert(themes.includes(theme2, theme3), "themes should contain the theme2 and theme3");
-        themeService.removeTheme("first theme");
-        assert.strictEqual(themes.length, 1, 'there should be one theme in the list');
-        assert(themes.includes(theme3), "themes should contain the theme3");
-        themeService.removeTheme("third theme");
-        assert.strictEqual(themes.length, 0, 'there should be no themes in the list');
+        themeService.removeTheme(theme1._id);
+        assert.isNotOk(themeService.getTheme(theme1._id), "First theme should have been removed");
+        assert.isNotOk(themeService.getTheme(theme2._id), "Second theme should have been removed");
+        assert.strictEqual(themeService.getTheme(theme3._id), theme3,"Third theme should still been safed");
+        
+        themeService.removeTheme(theme3._id);
+        assert.isNotOk(themeService.getTheme(theme1._id), "First theme should have been removed");
+        assert.isNotOk(themeService.getTheme(theme2._id), "Second theme should have been removed");
+        assert.isNotOk(themeService.getTheme(theme3._id), "Third theme should have been removed");
     });
 
     it('update theme', function () {
@@ -59,16 +73,21 @@ describe("theme service tests", function(){
         assert.strictEqual(theme1.description, "new description", 'the theme-description should been "new description"');
         assert.strictEqual(theme1.isPublic, false, 'the theme-isPublic should been "false"');
         assert(theme1.organisers.includes(user2), 'the theme-organisers should contain "user2"');
-        
+
         themeService.removeTheme(theme1._id);
     });
-    
-    it('get a theme', function () {
+
+    it('adds a card to a theme', function () {
+        var card = cardService.addCard('This is a description');
+
         var theme1 = themeService.addTheme("first theme", "a description", [], true, user1);
-        var testTheme = themeService.getTheme(theme1._id);
-        assert.strictEqual(theme1, testTheme, "should get theme1");
-        
-        themeService.removeTheme(theme1._id)
+        theme1.populate('cards');
+
+        themeService.addCard(theme1._id, card);
+
+        assert.isArray(theme1.cards, 'Should be an array');
+        assert.lengthOf(theme1.cards, 1, 'The amount of cards should be 1');
+        assert.equal(theme1.cards[0], card._id, 'The id should be equal to the cards\' id');
     });
 
 });

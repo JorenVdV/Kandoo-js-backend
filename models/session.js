@@ -18,6 +18,7 @@ var SessionSchema = new Schema({
     cardsCanBeAdded: Boolean,
     participants: [{type: Schema.ObjectId, ref: 'User'}],
     startDate: Date,
+    endDate: Date,
     rounds: [
         {
             cards: {

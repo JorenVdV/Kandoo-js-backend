@@ -9,18 +9,20 @@ const User = require('../models/user');
 const sessionService = require('../services/session-service');
 
 describe('Session service tests -', function () {
+    let testGlobal = {};
+    before('setup test theme and testuser', function () {
+        let testTheme = new Theme();
+        testTheme.title = 'testTheme';
+        let testUser = new User();
+        testUser.firstname = "testFirstName";
+        let testDate = new Date(2017, 8, 2, 16, 20, 0);
+        let testDate2 = new Date(2017, 9, 2, 16, 20, 0);
+        testGlobal.testTheme = testTheme;
+        testGlobal.testUser = testUser;
+        testGlobal.testDate = testDate;
+        testGlobal.testDate2 = testDate2;
+    });
     describe('Creating a session:', function () {
-        let testGlobal = {};
-        before('setup test theme and testuser', function () {
-            let testTheme = new Theme();
-            testTheme.title = 'testTheme';
-            let testUser = new User();
-            testUser.firstname = "testFirstName";
-            let testDate = new Date(2017, 8, 2, 16, 20, 0);
-            testGlobal.testTheme = testTheme;
-            testGlobal.testUser = testUser;
-            testGlobal.testDate = testDate;
-        });
 
         it('Create a session on a theme', function () {
             //title, description, circleType, roundDuration, cardsPerParticipant,cards, canReview, canAddCards, theme, creator, startDate = null)
@@ -51,25 +53,63 @@ describe('Session service tests -', function () {
         it('copy a session of a theme', function () {
 
         });
-        
+    });
+
+    describe('Start a session:', function () {
         it('start a session instant as an organiser', function () {
             let session = sessionService
                 .createSession('testSession', 'testing the creation of a session', 'blue',
                     60000, {min: 3, max: 10}, [], false, false, [testGlobal.testUser],
-                    testGlobal.testTheme, testGlobal.testUser, testGlobal.testDate);
+                    testGlobal.testTheme, testGlobal.testUser);
+            var beforeDate = new Date();
             sessionService.startSession(session._id);
             assert(session.startDate !== null, 'startdate of the session should been set');
             sessionService.deleteSession(session._id);
+            assert(session.startDate!==null, 'startdate of the session should been set');
+            // assert(session.startDate <= beforeDate, 'startdate of the session should been set');
+            // assert(session.startDate >= new Date(), 'startdate of the session should been set');
         });
 
         it('start a session on an specific date as an organiser', function () {
             session = sessionService
                 .createSession('testSession', 'testing the creation of a session', 'blue',
                     60000, {min: 3, max: 10}, [], false, false, [testGlobal.testUser],
-                    testGlobal.testTheme, testGlobal.testUser, testGlobal.testDate);
+                    testGlobal.testTheme, testGlobal.testUser);
             sessionService.startSession(session._id, testGlobal.testDate);
             assert(session.startDate === testGlobal.testDate, 'startdate of the session should been set');
             sessionService.deleteSession(session._id);
+        });
+        
+        it('a session can not be started if it already is started', function () {
+            let session = sessionService
+                .createSession('testSession', 'testing the creation of a session', 'blue',
+                    60000, {min: 3, max: 10}, [], false, false, [testGlobal.testUser],
+                    testGlobal.testTheme, testGlobal.testUser);
+            sessionService.startSession(session._id, testGlobal.testDate);
+            assert.strictEqual(session.startDate, testGlobal.testDate, 'startdate should be equals tot testdate1');
+            sessionService.startSession(session._id, testGlobal.testDate2)
+            assert.strictEqual(session.startDate, testGlobal.testDate, 'startdate should be equals tot testdate1');
+        })
+    });
+
+    describe('Stop a session:', function () {
+        it('end a session as an organiser', function () {
+            let session = sessionService
+                .createSession('testSession', 'testing the creation of a session', 'blue',
+                    60000, {min: 3, max: 10}, [], false, false, [testGlobal.testUser],
+                    testGlobal.testTheme, testGlobal.testUser);
+            sessionService.startSession(session._id);
+            sessionService.stopSession(session._id);
+            assert(session.endDate, 'endDate schould be defined')
+        });
+
+        it('a session can not be stopped before it was started', function () {
+            let session = sessionService
+                .createSession('testSession', 'testing the creation of a session', 'blue',
+                    60000, {min: 3, max: 10}, [], false, false, [testGlobal.testUser],
+                    testGlobal.testTheme, testGlobal.testUser);
+            sessionService.stopSession(session._id);
+            assert(!session.endDate, 'endDate schould not be defined')
         });
     });
 });

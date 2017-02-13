@@ -16,7 +16,6 @@ class CardRepository {
 
         return card;
     }
-
 }
 
 module.exports = new CardRepository();
