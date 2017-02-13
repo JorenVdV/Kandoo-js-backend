@@ -27,7 +27,7 @@ describe('Session service tests -', function () {
             let session = sessionService
                 .createSession('testSession', 'testing the creation of a session', 'blue',
                     60000, {min: 3, max: 10}, [], false, false, [testGlobal.testUser],
-                    testGlobal.testTheme, testGlobal.testUser, testGlobal.testDate);
+                    testGlobal.testTheme._id, testGlobal.testUser, testGlobal.testDate);
             assert(session, 'session is not null or undefined');
             assert(session.title === 'testSession', 'session title should be "testSession"');
             assert(session.description === 'testing the creation of a session', 'session description should be "testing the creation of a session"');

@@ -5,7 +5,7 @@ var Card = require('../models/card');
 
 class CardService {
     constructor() {
-        this.repo = require('../repositories/card-repository');
+        this.cardRepo = require('../repositories/card-repository');
     }
 
     getCards() {
@@ -13,7 +13,7 @@ class CardService {
     }
 
     addCard(description) {
-        return this.repo.createCard(description);
+        return this.cardRepo.createCard(description);
     }
 
 }
