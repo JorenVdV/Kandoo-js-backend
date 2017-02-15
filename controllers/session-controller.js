@@ -6,8 +6,7 @@ class SessionController {
         this.sessionService = require('../services/session-service');
         this.themeService = require('../services/theme-service');
         this.userService = require('../services/user-service');
-        this.cardServce = require('../services/card-service');
-    }
+        this.cardServce = require('../services/card-service');}
 
     createSession(req, res) {
         let body = req.body;

@@ -9,7 +9,6 @@ module.exports = function(app){
         sessionController.createSession(req,res);
     });
     app.get('/session/:sessionId', function(req,res){
-        console.log(req.originalUrl);
         sessionController.getSession(req,res);
     });
 
