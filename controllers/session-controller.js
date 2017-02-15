@@ -22,7 +22,7 @@ class SessionController {
     }
 
     getSession(req, res) {
-        let session = this.sessionService.getSession(req.params.sessionId);
+        let session = this.sessionService.find(req.params.sessionId);
         if (session)
             res.status(200).send({session: session});
         else
@@ -45,8 +45,8 @@ class SessionController {
     }
 
     playTurn(req, res) {
-        let user = this.userService.findUserById(req.params.userId);
-        let session = this.sessionService.getSession(req.params.sessionId);
+        let user = this.userService.find(req.params.userId);
+        let session = this.sessionService.find(req.params.sessionId);
         let card = this.cardServce.find(req.params.cardId);
 
 

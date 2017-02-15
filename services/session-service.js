@@ -30,7 +30,7 @@ class SessionService {
         return session;
     }
 
-    getSession(sessionId) {
+    find(sessionId) {
         return this.sessionRepo.getSessionById(sessionId)
     }
 

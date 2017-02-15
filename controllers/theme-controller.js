@@ -18,7 +18,7 @@ class ThemeController {
 
     getTheme(req, res){
         let themeId = req.params.themeid;
-        let theme = this.service.getTheme(themeId);
+        let theme = this.service.find(themeId);
         if(theme) res.send({theme: theme});
         else res.sendStatus(404);
     }
@@ -32,7 +32,7 @@ class ThemeController {
     deleteTheme(req, res){
         let themeId = req.params.themeid;
         this.service.removeTheme(themeId);
-        res.sendStatus(!this.service.getTheme(themeId)?204:404);
+        res.sendStatus(!this.service.find(themeId)?204:404);
     }
 }
 

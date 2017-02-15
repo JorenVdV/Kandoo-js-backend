@@ -20,7 +20,7 @@ class ThemeService {
         return this.themeRepo.createTheme(theme);
     }
 
-    getTheme(themeId) {
+    find(themeId) {
         return this.themeRepo.readThemeById(themeId);
     }
 
