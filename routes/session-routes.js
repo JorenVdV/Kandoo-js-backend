@@ -23,4 +23,10 @@ module.exports = function(app){
     // app.route('/user/:userId')
     //     .get(userController.getUser)
     //     .delete(userController.deleteUser);
+    app.get('/theme/:themeId/sessions', function(req,res){
+        sessionController.getSessions(req,res);
+    });
+    app.delete('/session/:sessionId/delete', function(req,res){
+        sessionController.deleteSession(req,res);
+    })
 };

@@ -15,12 +15,20 @@ class SessionRepository {
         return this.sessionDao.find(session => session._id == id);
     }
 
+    getSessions(themeId){
+        let sessions = this.sessionDao.filter(sessions => sessions.theme == themeId);
+        if(sessions)
+            return sessions;
+        else
+            return [];
+    }
+
     updateSession(session) {
 
     }
 
     deleteSession(id) {
-        return this.sessionDao.splice(this.sessionDao.findIndex(session => session._id === id), 1);
+        this.sessionDao.splice(this.sessionDao.findIndex(session => session._id === id), 1);
     }
 }
 
