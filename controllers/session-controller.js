@@ -5,7 +5,7 @@ class SessionController{
     constructor(){
         this.sessionService = require('../services/session-service');
         this.themeService = require('../services/theme-service');
-    }
+}
 
     createSession(req,res){
         let body = req.body;

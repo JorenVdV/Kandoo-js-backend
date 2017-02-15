@@ -12,19 +12,12 @@ describe("theme service tests", function () {
         user1 = userService.createUser("User1");
         user2 = userService.createUser("User2");
     });
-
-    // //test wegdoen?
-    // it('initial there should be no themes', function () {
-    //     var themes = themeService.getThemes();
-    //     assert(Array.isArray(themes), 'themes should always retrun an array');
-    //     assert.equal(themes.length, 0, 'there should be no themes in the list');
-    // });
-
+    
     it('Adding a new theme and check the content', function () {
         var theme = themeService.addTheme("first theme", "a description", [], true, user1);
         assert.strictEqual(theme.title, 'first theme', 'the title of the theme should be "first theme"');
         assert.strictEqual(theme.description, 'a description', 'the description of the theme should be "a description"');
-        //assert.equal(theme.tags, [], 'the tags of the theme should be an empty array');
+        assert(Array.isArray(theme.tags), 'the tags of the theme should be an empty array');
         assert.strictEqual(theme.isPublic, true, 'the theme should be public');
         assert(theme.organisers.includes(user1), 'the theme should contain its creator');
         assert.strictEqual(theme.organisers.length,1, 'the theme should only contain one organiser at this moment');
@@ -33,7 +26,7 @@ describe("theme service tests", function () {
         theme = themeService.addTheme("what will we drink?", "beer or wine", [], false, user2);
         assert.strictEqual(theme.title, 'what will we drink?', 'the title of the theme should be "first theme"');
         assert.strictEqual(theme.description, 'beer or wine', 'the description of the theme should be "a description"');
-        //assert.equal(theme.tags, [], 'the tags of the theme should be an empty array');
+        assert(Array.isArray(theme.tags), 'the tags of the theme should be an empty array');
         assert.strictEqual(theme.isPublic, false, 'the theme should be public');
         assert(theme.organisers.includes(user2), 'the theme should contain its creator');
         assert.strictEqual(theme.organisers.length,1, 'the theme should only contain one organiser at this moment');
