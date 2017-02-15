@@ -17,9 +17,9 @@ module.exports = function (app) {
         themeController.addTheme(req, res);
     });
 
-    /*    app.delete('/theme/:id', function(req,res){
-     themeController.deleteTheme(req,res);
-     });*/
+    app.delete('/theme/:id', function (req, res) {
+        themeController.deleteTheme(req, res);
+    });
 
     app.get('/themes', function (req, res) {
         themeController.getThemes(req, res);

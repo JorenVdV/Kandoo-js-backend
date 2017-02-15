@@ -106,7 +106,7 @@ describe('Session service tests -', function () {
                     60000, {min: 3, max: 10}, [], false, false, [testGlobal.testUser],
                     testGlobal.testTheme._id, testGlobal.testUser, testGlobal.testDate);
 
-            sessionService.addTurn(session._id, testGlobal.card, testGlobal.testUser);
+            sessionService.addTurn(session, testGlobal.card, testGlobal.testUser);
 
 
             assert.strictEqual(session.turns[0].card._id, testGlobal.card._id, 'The cards should be the same');

@@ -34,7 +34,7 @@ class SessionService {
         return this.sessionRepo.getSessionById(sessionId)
     }
 
-    getSessions(themeId){
+    getSessions(themeId) {
         return this.sessionRepo.getSessions(themeId);
     }
 
@@ -62,8 +62,7 @@ class SessionService {
         }
     }
 
-    addTurn(sessionId, card, user) {
-        let session = this.getSession(sessionId);
+    addTurn(session, card, user) {
 
         let turns = session.turns;
         let currentCardPriority = session.amountOfCircles - 1;
@@ -82,6 +81,7 @@ class SessionService {
 
         session.turns.push({priority: currentCardPriority, card: card, user: user});
 
+        return true;
     }
 }
 

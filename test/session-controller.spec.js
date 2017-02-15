@@ -8,6 +8,7 @@ var should = chai.should();
 var server = require('../app');
 var themeService = require('../services/theme-service');
 var userService = require('../services/user-service');
+var cardService = require('../services/card-service');
 
 chai.use(chaiHttp);
 
@@ -49,10 +50,10 @@ describe('Session Controller tests', function () {
                 });
 
         });
-        after('clean up created session', function(done){
+        after('clean up created session', function (done) {
             chai.request(server)
                 .delete('/session/' + this.sessionId + '/delete')
-                .end((err,res) => {
+                .end((err, res) => {
                     res.should.have.status(204);
                     done();
                 });
@@ -103,17 +104,17 @@ describe('Session Controller tests', function () {
                     done();
                 });
         });
-        after('clean up created session', function(done){
+        after('clean up created session', function (done) {
             chai.request(server)
                 .delete('/session/' + this.sessionId + '/delete')
-                .end((err,res) => {
+                .end((err, res) => {
                     res.should.have.status(204);
                     done();
                 });
         });
     });
 
-    describe('/GET /theme/:themeId/sessions', function(){
+    describe('/GET /theme/:themeId/sessions', function () {
         let sessionId;
         before('should create a session to use', function (done) {
             let session = {
@@ -142,7 +143,7 @@ describe('Session Controller tests', function () {
                     done();
                 });
         });
-        it('find all sessions (1 session)', function(done){
+        it('find all sessions (1 session)', function (done) {
             chai.request(server)
                 .get('/theme/' + globalTestTheme._id + '/sessions')
                 .send()
@@ -157,16 +158,16 @@ describe('Session Controller tests', function () {
                     done();
                 });
         });
-        after('clean up created session', function(done){
+        after('clean up created session', function (done) {
             chai.request(server)
                 .delete('/session/' + this.sessionId + '/delete')
-                .end((err,res) => {
+                .end((err, res) => {
                     res.should.have.status(204);
                     done();
                 });
         });
     });
-    describe('/GET /theme/:themeId/sessions', function(){
+    describe('/GET /theme/:themeId/sessions', function () {
         let sessionIds;
         before('should create a session to use', function (done) {
             this.sessionIds = [];
@@ -210,7 +211,7 @@ describe('Session Controller tests', function () {
                     done();
                 });
         });
-        it('find all sessions (2 sessions)', function(done){
+        it('find all sessions (2 sessions)', function (done) {
             chai.request(server)
                 .get('/theme/' + globalTestTheme._id + '/sessions')
                 .send()
@@ -227,19 +228,74 @@ describe('Session Controller tests', function () {
                     done();
                 });
         });
-        after('clean up created sessions', function(){
-            it('delete the first session', function(done){
+        after('clean up created sessions', function () {
+            it('delete the first session', function (done) {
                 chai.request(server)
                     .delete('/session/' + this.sessionIds[0] + '/delete')
-                    .end((err,res) => {
+                    .end((err, res) => {
                         res.should.have.status(204);
                         done();
                     });
             });
-            it('delete the second session', function(done){
+            it('delete the second session', function (done) {
                 chai.request(server)
                     .delete('/session/' + this.sessionIds[1] + '/delete')
-                    .end((err,res) => {
+                    .end((err, res) => {
+                        res.should.have.status(204);
+                        done();
+                    });
+            });
+
+        });
+    });
+    describe('/POST /session/:sessionId/turn', function () {
+        let sessionId;
+        let card;
+        before('should create a session to use and add a card to the theme', function (done) {
+            this.sessionId = 0;
+            let session = {
+                title: 'Welke pudding eten we deze week?',
+                description: 'Test om sessie aan te maken',
+                circleType: 'blue',
+                turnDuration: 60000,
+                cardsPerParticipant: {min: 2, max: 5},
+                cards: [],
+                cardsCanBeReviewed: false,
+                cardsCanBeAdded: false,
+                creator: globalTestUser,
+                startDate: null
+            };
+            chai.request(server)
+                .post('/theme/' + globalTestTheme._id + '/session')
+                .send(session)
+                .end((err, res) => {
+                    res.should.have.status(201);
+                    res.body.should.have.property('session');
+                    let resSession = res.body.session;
+                    this.sessionId = resSession._id;
+                    done();
+                });
+
+
+            card = {description: 'This is a test description'};
+            card = cardService.addCard(card.description);
+            themeService.addCard(globalTestTheme._id, card);
+
+        });
+        it('should add a turn to the session', function (done) {
+            chai.request(server)
+                .post('/session/' + this.sessionId + '/turn')
+                .send({userId: globalTestUser._id, sessionId: sessionId, cardId: card._id})
+                .end((err, res) => {
+                    res.should.have.status(201);
+                    done();
+                });
+        });
+        after('clean up created stuff', function () {
+            it('delete the first session', function (done) {
+                chai.request(server)
+                    .delete('/session/' + this.sessionId + '/delete')
+                    .end((err, res) => {
                         res.should.have.status(204);
                         done();
                     });
