@@ -19,7 +19,7 @@ var SessionSchema = new Schema({
     participants: [{type: Schema.ObjectId, ref: 'User'}],
     startDate: Date,
     endDate: Date,
-    rounds: [
+    turns: [
         {
             cards: {
                 priority: Number,
