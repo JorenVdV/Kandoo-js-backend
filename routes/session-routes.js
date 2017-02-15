@@ -12,6 +12,10 @@ module.exports = function(app){
         console.log(req.originalUrl);
         sessionController.getSession(req,res);
     });
+
+    app.post('/', function (req, res) {
+        sessionController.playTurn(req,res);
+    });
     // app.route('/register')
     //     .post(userController.createUser);
     // app.route('/users')

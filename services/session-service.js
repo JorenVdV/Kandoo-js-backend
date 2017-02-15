@@ -55,6 +55,28 @@ class SessionService {
             this.sessionRepo.updateSession();
         }
     }
+
+    addTurn(sessionId, card, user) {
+        let session = this.getSession(sessionId);
+
+        let turns = session.turns;
+        let currentCardPriority = session.amountOfCircles - 1;
+        let stopSearch = false;
+
+        turns.reverse().forEach(function (turn) {
+            if (stopSearch)
+                return;
+
+
+            if (turn.card.card._id === card._id) {
+                currentCardPriority = turn.priority;
+                stopSearch = true;
+            }
+        });
+
+        session.turns.push({priority: currentCardPriority, card: card, user: user});
+
+    }
 }
 
 module.exports = new SessionService();

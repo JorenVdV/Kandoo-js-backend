@@ -26,6 +26,7 @@ describe('Session service tests -', function () {
         testGlobal.testUser = testUser;
         testGlobal.testDate = testDate;
         testGlobal.testDate2 = testDate2;
+        testGlobal.card = card;
     });
     describe('Creating a session:', function () {
 
@@ -100,11 +101,17 @@ describe('Session service tests -', function () {
     describe('play a turn', function () {
         it('should add a turn to the session with a card and it\'s priority', function () {
 
-            //
-            // sessionService.addTurn(sessionId, card, user);
-            //
-            //
-            // asser
+            let session = sessionService
+                .createSession('testSession', 'testing the creation of a session', 'blue',
+                    60000, {min: 3, max: 10}, [], false, false, [testGlobal.testUser],
+                    testGlobal.testTheme._id, testGlobal.testUser, testGlobal.testDate);
+
+            sessionService.addTurn(session._id, testGlobal.card, testGlobal.testUser);
+
+
+            assert.strictEqual(session.turns[0].card._id, testGlobal.card._id, 'The cards should be the same');
+            assert.strictEqual(session.turns[0].priority, session.amountOfCircles - 1, 'The card should be 1 step closer to the middle');
+            assert.strictEqual(session.turns[0].user._id, testGlobal.testUser._id, 'The user of the turn should be our user');
         });
     });
 

@@ -22,11 +22,11 @@ var SessionSchema = new Schema({
     endDate: Date,
     turns: [
         {
-            card: {
-                priority: Number,
-                card: {type: Schema.ObjectId, ref: 'Card'},
-            },
-            user: {type: Schema.ObjectId, ref: 'User'}
+            priority: Number,
+            card: {type: Schema.ObjectId, ref: 'Card'},
+            user: {type: Schema.ObjectId, ref: 'User'},
+            created: {type: Date, default: Date.now}
+
         }],
     currentUser: {type: Schema.ObjectId, ref: 'User'},
     theme: {
