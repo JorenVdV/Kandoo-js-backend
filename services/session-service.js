@@ -33,8 +33,14 @@ class SessionService {
         return this.sessionRepo.getSessionById(sessionId)
     }
 
+    getSessions(themeId){
+        return this.sessionRepo.getSessions(themeId);
+    }
+
     deleteSession(sessionId){
         this.sessionRepo.deleteSession(sessionId);
+        return !this.getSession(sessionId);
+
     }
 
     startSession(sessionId, date = new Date()){

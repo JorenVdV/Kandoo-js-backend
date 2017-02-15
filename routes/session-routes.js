@@ -9,14 +9,12 @@ module.exports = function(app){
         sessionController.createSession(req,res);
     });
     app.get('/session/:sessionId', function(req,res){
-        console.log(req.originalUrl);
         sessionController.getSession(req,res);
     });
-    // app.route('/register')
-    //     .post(userController.createUser);
-    // app.route('/users')
-    //     .get(userController.getUsers);
-    // app.route('/user/:userId')
-    //     .get(userController.getUser)
-    //     .delete(userController.deleteUser);
+    app.get('/theme/:themeId/sessions', function(req,res){
+        sessionController.getSessions(req,res);
+    });
+    app.delete('/session/:sessionId/delete', function(req,res){
+        sessionController.deleteSession(req,res);
+    })
 };

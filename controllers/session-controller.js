@@ -27,6 +27,21 @@ class SessionController{
         else
             res.sendStatus(400);
     }
+
+    getSessions(req,res){
+        let sessions = this.sessionService.getSessions(req.params.themeId);
+        if(sessions)
+            res.status(200).send({sessions:sessions});
+        else
+            res.sendStatus(400);
+    }
+
+    deleteSession(req,res){
+        if(this.sessionService.deleteSession(req.params.sessionId))
+            res.sendStatus(204);
+        else
+            res.sendStatus(400);
+    }
 }
 
 module.exports = new SessionController();
