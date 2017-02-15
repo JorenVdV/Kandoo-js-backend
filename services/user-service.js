@@ -22,7 +22,7 @@ class UserService {
         this.userRepo.deleteUser(id);
     }
 
-    find(id){
+    findUserById(id){
         return this.userRepo.getUserById(id);
     }
 
