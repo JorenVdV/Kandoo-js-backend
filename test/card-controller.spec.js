@@ -39,6 +39,7 @@ describe('Card Controller tests', function () {
 
 
             themeService.removeTheme(theme._id);
+            userService.removeUser(user1._id);
 
         });
 

@@ -3,14 +3,14 @@ const assert = chai.assert;
 
 var themeService = require('../services/theme-service');
 var cardService = require('../services/card-service');
+var userService = require('../services/user-service');
 
 describe("theme service tests", function () {
     let user1;
     let user2;
     beforeEach(function () {
-        var userService = require('../services/user-service');
-        user1 = userService.createUser("User1");
-        user2 = userService.createUser("User2");
+        this.user1 = userService.createUser("User1", "Test", "user1.test@teamjs.xyz", "TeamJS", "pwd");
+        this.user2 = userService.createUser("User2", "Test", "user2.test@teamjs.xyz", "TeamJS", "pwd");
     });
 
     // //test wegdoen?
@@ -90,4 +90,8 @@ describe("theme service tests", function () {
         assert.equal(theme1.cards[0], card._id, 'The id should be equal to the cards\' id');
     });
 
+    afterEach(function(){
+       userService.removeUser(this.user1._id);
+       userService.removeUser(this.user2._id);
+    })
 });

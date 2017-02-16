@@ -1,13 +1,15 @@
-
 const User = require('../models/user');
 
 class UserService {
 
-    constructor(){
+    constructor() {
         this.userRepo = require('../repositories/user-repository');
     }
 
-    createUser(firstname, lastname, emailAddress, organisation, password){
+    createUser(firstname, lastname, emailAddress, organisation, password) {
+        if (this.userRepo.getUserByEmail(emailAddress))
+            throw new Error('Email address is already in use.');
+
         let user = new User();
         user.firstname = firstname;
         user.lastname = lastname;
@@ -16,33 +18,24 @@ class UserService {
         user.password = password;
 
         return this.userRepo.createUser(user);
+
     }
 
-    removeUser(id){
+    removeUser(id) {
         this.userRepo.deleteUser(id);
     }
 
-    findUserById(id){
+    findUserById(id) {
         return this.userRepo.getUserById(id);
     }
 
-    findUserByEmail(email){
+    findUserByEmail(email) {
         return this.userRepo.getUserByEmail(email);
     }
 
-    findUsers(){
+    findUsers() {
         return this.userRepo.getUsers();
     }
-
-    //
-    // checkLogin() {
-    //     return true;
-    // }
-    //
-    // getId(username){
-    //     return 1;
-    // }
-    
 }
 
 module.exports = new UserService();

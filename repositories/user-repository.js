@@ -30,7 +30,8 @@ class UserRepository {
     }
 
     deleteUser(id) {
-        this.userDao.splice(this.userDao.findIndex(user => user._id === id));
+        this.userDao.splice(this.userDao.findIndex(user => user._id == id),1);
+        return !this.getUserById(id);
     }
 }
 

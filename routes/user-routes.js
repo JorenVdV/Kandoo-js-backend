@@ -10,16 +10,13 @@ module.exports = function(app){
         userController.createUser(req,res);
     });
     app.get('/users', function(req,res){
+        console.log(req.originalUrl);
         userController.getUsers(req,res);
     });
     app.post('/login', function(req,res){
        userController.login(req,res);
     });
-    // app.route('/register')
-    //     .post(userController.createUser);
-    // app.route('/users')
-    //     .get(userController.getUsers);
-    // app.route('/user/:userId')
-    //     .get(userController.getUser)
-    //     .delete(userController.deleteUser);
+    // app.delete('/user/:userId/delete', function(req,res){
+    //    userController.deleteUser(req,res);
+    // });
 };

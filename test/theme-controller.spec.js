@@ -6,14 +6,14 @@ var chaiHttp = require('chai-http');
 var assert = chai.assert;
 var should = chai.should();
 var server = require('../app');
+const userService = require('../services/user-service');
 
 chai.use(chaiHttp);
 
 describe('Theme controller tests', function () {
     let user1;
     before(function () {
-        var userService =  require('../services/user-service');
-        user1 = userService.createUser("User1");
+        this.user1 = userService.createUser("User1", "Test", "user1.test@teamjs.xyz", "TeamJS", "pwd");
     });
     describe('/POST newTheme', function () {
         it('should create a theme', (done) => {
@@ -88,4 +88,8 @@ describe('Theme controller tests', function () {
     //             });
     //     });
     // });
+
+    after(function(){
+        userService.removeUser(this.user1._id);
+    })
 });
