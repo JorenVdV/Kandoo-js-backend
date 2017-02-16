@@ -62,7 +62,9 @@ class SessionService {
         }
     }
 
-    addTurn(session, card, user) {
+    addTurn(sessionId, card, user) {
+
+        let session = this.getSession(sessionId);
 
         let turns = session.turns;
         let currentCardPriority = session.amountOfCircles - 1;
@@ -73,7 +75,7 @@ class SessionService {
                 return;
 
 
-            if (turn.card.card._id === card._id) {
+            if (turn.card.card._id == card._id) {
                 currentCardPriority = turn.priority;
                 stopSearch = true;
             }

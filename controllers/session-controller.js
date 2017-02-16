@@ -46,11 +46,10 @@ class SessionController {
 
     playTurn(req, res) {
         let user = this.userService.findUserById(req.params.userId);
-        let session = this.sessionService.getSession(req.params.sessionId);
         let card = this.cardServce.find(req.params.cardId);
 
 
-        if (this.sessionService.addTurn(session, card, user))
+        if (this.sessionService.addTurn(req.params.sessionId, card, user))
             res.sendStatus(201);
         else
             res.sendStatus(400);
