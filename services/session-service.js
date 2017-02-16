@@ -6,6 +6,7 @@ const Session = require('../models/session');
 class SessionService {
     constructor() {
         this.sessionRepo = require('../repositories/session-repository');
+        this.userService = require('../services/user-service');
     }
 
     createSession(title, description, circleType, turnDuration, cardsPerParticipant, cards, canReviewCards, canAddCards, participants, themeId, creator, startDate = null, amountOfCircles = 5) {
@@ -84,6 +85,13 @@ class SessionService {
         session.turns.push({priority: currentCardPriority, card: card, user: user});
 
         return true;
+    }
+
+    invite(sessionId, userId) {
+        let user = this.userService.findUserById(userId);
+        let session = this.getSession(sessionId);
+
+        session.invitees.push(user);
     }
 }
 

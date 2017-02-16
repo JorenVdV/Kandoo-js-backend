@@ -9,6 +9,7 @@ const User = require('../models/user');
 const sessionService = require('../services/session-service');
 const cardService = require('../services/card-service');
 const themeService = require('../services/theme-service');
+const userService = require('../services/user-service');
 
 describe('Session service tests -', function () {
     let testGlobal = {};
@@ -137,18 +138,24 @@ describe('Session service tests -', function () {
     });
     describe('Invite a user', function () {
         var session;
-        before('setup 2 users and a session', function(){
+        before('setup 2 users and a session', function () {
             session = sessionService
                 .createSession('testSession', 'testing the creation of a session', 'blue',
                     60000, {min: 3, max: 10}, [], false, false, [testGlobal.testUser],
                     testGlobal.testTheme, testGlobal.testUser);
             sessionService.startSession(session._id);
             sessionService.stopSession(session._id);
-            assert(session.endDate, 'endDate schould be defined')
+            assert(session.endDate, 'endDate should be defined');
+
+
+
+            testGlobal.testUser2 = userService.createUser('this is a test', 'testubg', 'nickjorens@gmail.com', 'd', 'test');
         });
 
         it('invites an existing user to a session', function () {
-          // sessionService.invite(session, )
+            sessionService.invite(session._id, testGlobal.testUser2._id);
+
+            assert.equal(session.invitees[0], testGlobal.testUser2._id,'Session invitees list should contain id from testuser2');
         });
 
 
