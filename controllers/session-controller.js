@@ -6,7 +6,8 @@ class SessionController {
         this.sessionService = require('../services/session-service');
         this.themeService = require('../services/theme-service');
         this.userService = require('../services/user-service');
-        this.cardServce = require('../services/card-service');}
+        this.cardServce = require('../services/card-service');
+    }
 
     createSession(req, res) {
         let body = req.body;
@@ -54,7 +55,18 @@ class SessionController {
         else
             res.sendStatus(400);
 
+    }
 
+    inviteUser(req, res) {
+
+
+console.log(req.params);
+console.log(req.body);
+        if (this.sessionService.invite(req.params.sessionId, req.body.userId)) {
+            res.sendStatus(201);
+        } else {
+            res.sendStatus(400);
+        }
     }
 }
 

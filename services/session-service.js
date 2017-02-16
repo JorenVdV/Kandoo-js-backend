@@ -9,7 +9,7 @@ class SessionService {
         this.userService = require('../services/user-service');
     }
 
-    createSession(title, description, circleType, turnDuration, cardsPerParticipant, cards, canReviewCards, canAddCards, participants, themeId, creator, startDate = null, amountOfCircles = 5) {
+    createSession(title, description, circleType, turnDuration = 60000, cardsPerParticipant, cards, canReviewCards, canAddCards, participants, themeId, creator, startDate = null, amountOfCircles = 5) {
         let session = new Session();
         session.title = title;
         session.description = description;
@@ -92,6 +92,8 @@ class SessionService {
         let session = this.getSession(sessionId);
 
         session.invitees.push(user);
+
+        return true;
     }
 }
 
