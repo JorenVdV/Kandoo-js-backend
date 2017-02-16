@@ -13,6 +13,7 @@ var SessionSchema = new Schema({
         min: Number,
         max: Number
     },
+    amountOfCircles: Number,
     sessionCards: [{type: Schema.ObjectId, ref: 'Card'}],
     cardsCanBeReviewed: Boolean,
     cardsCanBeAdded: Boolean,
@@ -21,10 +22,11 @@ var SessionSchema = new Schema({
     endDate: Date,
     turns: [
         {
-            cards: {
-                priority: Number,
-                card: {type: Schema.ObjectId, ref: 'Card'},
-            }
+            priority: Number,
+            card: {type: Schema.ObjectId, ref: 'Card'},
+            user: {type: Schema.ObjectId, ref: 'User'},
+            created: {type: Date, default: Date.now}
+
         }],
     currentUser: {type: Schema.ObjectId, ref: 'User'},
     theme: {

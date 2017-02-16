@@ -26,4 +26,15 @@ describe('Card service tests', function () {
         assert.isDefined(card, 'The card exists.');
         assert.equal(card.description, 'This is a description.', 'The description should match.')
     });
+
+    it('should find a card', function () {
+
+        var card = cardService.addCard('This is a description.');
+
+        var card2 = cardService.find(card._id);
+
+        assert.isDefined(card2, 'It should be defined');
+        assert.strictEqual(card._id, card2._id, 'The two ID\'s should be the same.');
+
+    });
 });

@@ -17,6 +17,11 @@ class CardRepository {
 
         return card;
     }
+
+    readCardById(id) {
+
+        return this.cardDao.find(card => card._id == id) ;
+    }
 }
 
 module.exports = new CardRepository();

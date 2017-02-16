@@ -21,7 +21,10 @@ class UserController {
     login(req, res) {
         let body = req.body;
         let user = this.userService.findUserByEmail(body.emailAddress);
-        if (user.password === body.password)
+        if (!user) {
+            res.sendStatus(405);
+        }
+        else if (user.password === body.password)
             res.status(200).send({user: user});
         else
             res.sendStatus(401);

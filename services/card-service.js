@@ -16,6 +16,11 @@ class CardService {
         return this.cardRepo.createCard(description);
     }
 
+    find(cardId) {
+
+        return this.cardRepo.readCardById(cardId);
+    }
+
 }
 
 module.exports = new CardService();

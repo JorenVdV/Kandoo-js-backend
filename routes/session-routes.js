@@ -11,6 +11,17 @@ module.exports = function(app){
     app.get('/session/:sessionId', function(req,res){
         sessionController.getSession(req,res);
     });
+
+    app.post('/session/:sessionId/turn', function (req, res) {
+        sessionController.playTurn(req,res);
+    });
+    // app.route('/register')
+    //     .post(userController.createUser);
+    // app.route('/users')
+    //     .get(userController.getUsers);
+    // app.route('/user/:userId')
+    //     .get(userController.getUser)
+    //     .delete(userController.deleteUser);
     app.get('/theme/:themeId/sessions', function(req,res){
         sessionController.getSessions(req,res);
     });

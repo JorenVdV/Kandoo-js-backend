@@ -18,8 +18,6 @@ class CardController {
         var theme = this.themeService.addCard(req.params.themeid, card);
 
         res.status(201).send({theme: theme});
-
-
     }
 
 
