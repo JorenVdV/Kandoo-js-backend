@@ -6,9 +6,10 @@ const Session = require('../models/session');
 class SessionService {
     constructor() {
         this.sessionRepo = require('../repositories/session-repository');
+        this.userService = require('../services/user-service');
     }
 
-    createSession(title, description, circleType, turnDuration, cardsPerParticipant, cards, canReviewCards, canAddCards, participants, themeId, creator, startDate = null, amountOfCircles = 5) {
+    createSession(title, description, circleType, turnDuration = 60000, cardsPerParticipant, cards, canReviewCards, canAddCards, participants, themeId, creator, startDate = null, amountOfCircles = 5) {
         let session = new Session();
         session.title = title;
         session.description = description;
@@ -62,7 +63,9 @@ class SessionService {
         }
     }
 
-    addTurn(session, card, user) {
+    addTurn(sessionId, card, user) {
+
+        let session = this.getSession(sessionId);
 
         let turns = session.turns;
         let currentCardPriority = session.amountOfCircles - 1;
@@ -73,13 +76,22 @@ class SessionService {
                 return;
 
 
-            if (turn.card.card._id === card._id) {
+            if (turn.card.card._id == card._id) {
                 currentCardPriority = turn.priority;
                 stopSearch = true;
             }
         });
 
         session.turns.push({priority: currentCardPriority, card: card, user: user});
+
+        return true;
+    }
+
+    invite(sessionId, userId) {
+        let user = this.userService.findUserById(userId);
+        let session = this.getSession(sessionId);
+
+        session.invitees.push(user);
 
         return true;
     }
