@@ -314,7 +314,7 @@ describe('Session Controller tests', function () {
         it('should add a turn to the session', function (done) {
             chai.request(server)
                 .post('/session/' + this.sessionId + '/turn')
-                .send({userId: globalTestUser._id, sessionId: sessionId, cardId: card._id})
+                .send({userId: globalTestUser._id, cardId: card._id})
                 .end((err, res) => {
                     res.should.have.status(201);
                     done();
