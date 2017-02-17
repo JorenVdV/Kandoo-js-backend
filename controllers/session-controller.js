@@ -27,7 +27,7 @@ class SessionController {
         if (session)
             res.status(200).send({session: session});
         else
-            res.sendStatus(400);
+            res.sendStatus(404);
     }
 
     getSessions(req, res) {
@@ -35,20 +35,19 @@ class SessionController {
         if (sessions)
             res.status(200).send({sessions: sessions});
         else
-            res.sendStatus(400);
+            res.sendStatus(404);
     }
 
     deleteSession(req, res) {
         if (this.sessionService.deleteSession(req.params.sessionId))
             res.sendStatus(204);
         else
-            res.sendStatus(400);
+            res.sendStatus(404);
     }
 
     playTurn(req, res) {
         let user = this.userService.findUserById(req.params.userId);
         let card = this.cardServce.find(req.params.cardId);
-
 
         if (this.sessionService.addTurn(req.params.sessionId, card, user))
             res.sendStatus(201);
@@ -58,16 +57,14 @@ class SessionController {
     }
 
     inviteUser(req, res) {
-
-
-console.log(req.params);
-console.log(req.body);
         if (this.sessionService.invite(req.params.sessionId, req.body.userId)) {
             res.sendStatus(201);
         } else {
-            res.sendStatus(400);
+            res.sendStatus(404);
         }
     }
+
+
 }
 
 module.exports = new SessionController();

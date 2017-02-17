@@ -379,7 +379,7 @@ describe('Session Controller tests', function () {
 
         });
         after('clean up created stuff', function () {
-            it('delete  session', function (done) {
+            it('delete  session', function () {
                 sessionService.deleteSession(session._id);
             });
 
