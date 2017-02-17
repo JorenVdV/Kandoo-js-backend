@@ -108,7 +108,6 @@ describe('User Controller tests', function () {
                         .get('/users')
                         .send()
                         .end((err, res) => {
-                            console.log(res.body.users.map(u => u.emailAddress));
                             res.should.have.status(200);
                             res.body.should.have.property('users');
                             assert.strictEqual(res.body.users.length, 1, 'there should be a single user');

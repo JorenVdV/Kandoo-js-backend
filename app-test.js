@@ -1,4 +1,4 @@
-process.env.NODE_ENV = 'development';
+process.env.NODE_ENV = 'test';
 var config = require('./_config');
 var express = require('express'),
     path = require('path');
@@ -25,6 +25,7 @@ app.use(function(req,res,next) {
 app.use(bodyParser.urlencoded({extended: true}));
 // parse application/json
 app.use(bodyParser.json());
+
 
 var server = require('http').Server(app);
 
