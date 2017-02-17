@@ -11,6 +11,11 @@ const cardService = require('../services/card-service');
 const themeService = require('../services/theme-service');
 const userService = require('../services/user-service');
 
+
+var nodemailer = require('nodemailer');
+var mockTransport = require('../node_modules/nodemailer-mock-transport/index');
+
+
 describe('Session service tests -', function () {
     let testGlobal = {};
     before('setup test theme and testuser with card in that theme', function () {
@@ -148,16 +153,24 @@ describe('Session service tests -', function () {
             assert(session.endDate, 'endDate should be defined');
 
 
-
             testGlobal.testUser2 = userService.createUser('this is a test', 'testubg', 'nickjorens@gmail.com', 'd', 'test');
         });
 
         it('invites an existing user to a session', function () {
             sessionService.invite(session._id, testGlobal.testUser2._id);
 
-            assert.equal(session.invitees[0], testGlobal.testUser2._id,'Session invitees list should contain id from testuser2');
+            assert.equal(session.invitees[0], testGlobal.testUser2._id, 'Session invitees list should contain id from testuser2');
         });
-        after(function(){
+
+        it('it should have 2 emails from inviting users.', function () {
+            let mailService = require('../services/mail-service');
+
+
+            mailService.getTransporter().sentMail.length.should.equal(2);
+
+        });
+
+        after(function () {
             userService.removeUser(testGlobal.testUser2._id);
         })
 

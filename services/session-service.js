@@ -93,6 +93,9 @@ class SessionService {
 
         session.invitees.push(user);
 
+        let mailService = require('./mail-service');
+        mailService.sendMail();
+
         return true;
     }
 }
