@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 // parse application/json
 app.use(bodyParser.json());
 
-mongoose.connect('mongodb://146.185.153.213/teamjs');
+// mongoose.connect('mongodb://146.185.153.213/teamjs');
 
 var server = require('http').Server(app);
 
