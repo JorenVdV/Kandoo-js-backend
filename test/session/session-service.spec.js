@@ -1,22 +1,41 @@
 /**
  * Created by steve on 2/8/2017.
  */
+const config = require('../../_config');
+const mongoose = require('mongoose');
+process.env.NODE_ENV = 'test';
+
 const chai = require('chai');
 const assert = chai.assert;
 
-const Theme = require('../models/theme');
-const User = require('../models/user');
-const sessionService = require('../services/session-service');
-const cardService = require('../services/card-service');
-const themeService = require('../services/theme-service');
-const userService = require('../services/user-service');
+const Theme = require('../../models/theme');
+const User = require('../../models/user');
+const sessionService = require('../../services/session-service');
+const cardService = require('../../services/card-service');
+const themeService = require('../../services/theme-service');
+const userService = require('../../services/user-service');
 
 
 var nodemailer = require('nodemailer');
-var mockTransport = require('../node_modules/nodemailer-mock-transport/index');
-
+var mockTransport = require('../../node_modules/nodemailer-mock-transport/index');
 
 describe('Session service tests -', function () {
+    before('Open connection to test database', function(done){
+        if(mongoose.connection.readyState === 0){
+            mongoose.connect(config.mongoURI[process.env.NODE_ENV],function(err){
+                if(err){
+                    console.log('Error connecting to the database. ' + err);
+                } else{
+                    console.log('Connected to database: ' + config.mongoURI[process.env.NODE_ENV]);
+                }
+                done();
+            });
+        }else {
+            console.log("Already connected to mongodb://" + mongoose.connection.host + ":" + mongoose.connection.port + "/" + mongoose.connection.name);
+            done();
+        }
+    });
+
     let testGlobal = {};
     before('setup test theme and testuser with card in that theme', function () {
         let testTheme = new Theme();
@@ -163,7 +182,7 @@ describe('Session service tests -', function () {
         });
 
         it('it should have 2 emails from inviting users.', function () {
-            let mailService = require('../services/mail-service');
+            let mailService = require('../../services/mail-service');
 
 
             mailService.getTransporter().sentMail.length.should.equal(2);
@@ -175,5 +194,10 @@ describe('Session service tests -', function () {
         })
 
 
+    });
+
+    after('Closing connection to test database', function(done){
+        mongoose.disconnect();
+        done();
     });
 });

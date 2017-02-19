@@ -5,7 +5,7 @@
 let config = {};
 
 config.mongoURI = {
-    development: 'mongodb://146.185.153.213:27017/teamjs',
+    production: 'mongodb://146.185.153.213:27017/teamjs',
     test: 'mongodb://146.185.153.213:27017/teamjs_test'
 };
 

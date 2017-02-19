@@ -22,6 +22,8 @@ class UserService {
     }
 
     removeUser(id) {
+        // let user = this.userRepo.getUserById(id);
+        // this.userRepo.deleteUser(user);
         this.userRepo.deleteUser(id);
     }
 

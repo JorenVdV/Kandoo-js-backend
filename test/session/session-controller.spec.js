@@ -1,19 +1,38 @@
 /**
  * Created by steve on 2/10/2017.
  */
+const config = require('../../_config');
+const mongoose = require('mongoose');
+process.env.NODE_ENV = 'test';
+
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 var assert = chai.assert;
 var should = chai.should();
-var server = require('../app');
-var themeService = require('../services/theme-service');
-var userService = require('../services/user-service');
-var cardService = require('../services/card-service');
-var sessionService = require('../services/session-service');
+var server = require('../../app-test');
+var themeService = require('../../services/theme-service');
+var userService = require('../../services/user-service');
+var cardService = require('../../services/card-service');
+var sessionService = require('../../services/session-service');
 
 chai.use(chaiHttp);
 
 describe('Session Controller tests', function () {
+    before('Open connection to test database', function(done){
+        if(mongoose.connection.readyState === 0){
+            mongoose.connect(config.mongoURI[process.env.NODE_ENV],function(err){
+                if(err){
+                    console.log('Error connecting to the database. ' + err);
+                } else{
+                    console.log('Connected to database: ' + config.mongoURI[process.env.NODE_ENV]);
+                }
+                done();
+            });
+        }else {
+            console.log("Already connected to mongodb://" + mongoose.connection.host + ":" + mongoose.connection.port + "/" + mongoose.connection.name);
+            done();
+        }
+    });
     let globalTestTheme;
     let globalTestUser;
     before('create a theme to create sessions on', function () {
@@ -385,8 +404,14 @@ describe('Session Controller tests', function () {
 
         });
     });
+
     after('remove testtheme and testuser', function () {
         userService.removeUser(globalTestUser._id);
         themeService.removeTheme(globalTestTheme._id);
+    });
+
+    after('Closing connection to test database', function(done){
+        mongoose.disconnect();
+        done();
     });
 });

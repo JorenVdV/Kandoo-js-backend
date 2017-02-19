@@ -1,16 +1,36 @@
 /**
  * Created by Seger on 13/02/2017.
  */
+const config = require('../../_config');
+const mongoose = require('mongoose');
+process.env.NODE_ENV = 'test';
+
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 var assert = chai.assert;
 var should = chai.should();
-var server = require('../app');
-const userService = require('../services/user-service');
+var server = require('../../app-test');
+const userService = require('../../services/user-service');
 
 chai.use(chaiHttp);
 
 describe('Theme controller tests', function () {
+    before('Open connection to test database', function(done){
+        if(mongoose.connection.readyState === 0){
+            mongoose.connect(config.mongoURI[process.env.NODE_ENV],function(err){
+                if(err){
+                    console.log('Error connecting to the database. ' + err);
+                } else{
+                    console.log('Connected to database: ' + config.mongoURI[process.env.NODE_ENV]);
+                }
+                done();
+            });
+        }else {
+            console.log("Already connected to mongodb://" + mongoose.connection.host + ":" + mongoose.connection.port + "/" + mongoose.connection.name);
+            done();
+        }
+    });
+
     let user1;
     before(function () {
         this.user1 = userService.createUser("User1", "Test", "user1.test@teamjs.xyz", "TeamJS", "pwd");
@@ -65,7 +85,7 @@ describe('Theme controller tests', function () {
     describe('/GET theme', function () {
         let theme;
         before(function () {
-            let themeService = require('../services/theme-service');
+            let themeService = require('../../services/theme-service');
             theme = themeService.addTheme("New Theme", "", [], true, user1);
         });
         it('should get a theme', (done) => {
@@ -84,17 +104,15 @@ describe('Theme controller tests', function () {
                 });
         });
         after(function () {
-            let themeService = require('../services/theme-service');
+            let themeService = require('../../services/theme-service');
             themeService.removeTheme(theme._id);
         });
     });
 
-
-
     describe('/DELETE theme', function () {
         let theme;
         before(function () {
-            let themeService = require('../services/theme-service');
+            let themeService = require('../../services/theme-service');
             theme = themeService.addTheme("New Theme", "", [], true, user1);
         });
         it('should delete a theme', (done) => {
@@ -117,5 +135,10 @@ describe('Theme controller tests', function () {
     });
     after(function(){
         userService.removeUser(this.user1._id);
+    });
+
+    after('Closing connection to test database', function(done){
+        mongoose.disconnect();
+        done();
     });
 });

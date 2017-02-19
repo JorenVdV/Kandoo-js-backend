@@ -1,11 +1,31 @@
+const config = require('../../_config');
+const mongoose = require('mongoose');
+process.env.NODE_ENV = 'test';
+
 const chai = require('chai');
 const assert = chai.assert;
 
-var themeService = require('../services/theme-service');
-var cardService = require('../services/card-service');
-var userService = require('../services/user-service');
+var themeService = require('../../services/theme-service');
+var cardService = require('../../services/card-service');
+var userService = require('../../services/user-service');
 
 describe("theme service tests", function () {
+    before('Open connection to test database', function(done){
+        if(mongoose.connection.readyState === 0){
+            mongoose.connect(config.mongoURI[process.env.NODE_ENV],function(err){
+                if(err){
+                    console.log('Error connecting to the database. ' + err);
+                } else{
+                    console.log('Connected to database: ' + config.mongoURI[process.env.NODE_ENV]);
+                }
+                done();
+            });
+        }else {
+            console.log("Already connected to mongodb://" + mongoose.connection.host + ":" + mongoose.connection.port + "/" + mongoose.connection.name);
+            done();
+        }
+    });
+
     let user1;
     let user2;
     beforeEach(function () {
@@ -87,4 +107,9 @@ describe("theme service tests", function () {
        userService.removeUser(this.user1._id);
        userService.removeUser(this.user2._id);
     })
+
+    after('Closing connection to test database', function(done){
+        mongoose.disconnect();
+        done();
+    });
 });
