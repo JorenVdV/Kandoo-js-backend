@@ -47,12 +47,11 @@ class SessionService {
 
     startSession(sessionId, date = new Date()) {
         let session = this.getSession(sessionId);
-        session.startDate = date;
-        this.sessionRepo.updateSession(session);
         if (!session.startDate) {
             session.startDate = date;
             this.sessionRepo.updateSession(session)
         }
+        return session.startDate;
     }
 
     stopSession(sessionId) {
@@ -61,6 +60,7 @@ class SessionService {
             session.endDate = new Date();
             this.sessionRepo.updateSession();
         }
+        return session.endDate;
     }
 
     addTurn(sessionId, card, user) {

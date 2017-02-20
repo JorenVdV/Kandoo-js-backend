@@ -17,10 +17,9 @@ var sessionService = require('../../services/session-service');
 chai.use(chaiHttp);
 
 describe('Session Controller tests', function () {
-
     let globalTestTheme;
     let globalTestUser;
-    before('create a testUser', function(done){
+    before('create a testUser', function (done) {
         userService.createUser('test', 'user', 'test.user@teamjs.xyz', 'TeamJS', 'test', function (user, err) {
             assert.isNotOk(err);
             assert.isOk(user);
@@ -225,7 +224,7 @@ describe('Session Controller tests', function () {
             });
         });
 
-        describe('get all sessions with two existing sessions', function (){
+        describe('get all sessions with two existing sessions', function () {
             let sessionIds;
             before('should create a session to use', function (done) {
                 this.sessionIds = [];
@@ -416,7 +415,70 @@ describe('Session Controller tests', function () {
     //     });
     // });
 
-    after('remove testuser', function(done){
+    describe('start a session', function () {
+        let session;
+        before(function (done) {
+            session = sessionService.createSession('testSession', 'testing the creation of a session', 'blue',
+                60000, {min: 3, max: 10}, [], false, false, [globalTestUser],
+                globalTestTheme._id, globalTestUser);
+            done();
+        });
+        it('Should start a session', function (done) {
+            chai.request(server)
+                .post('/session/' + session._id + '/start')
+                .send()
+                .end((err, res) => {
+                    res.should.have.status(202);
+                    done();
+                });
+        });
+        after('clean up created stuff', function () {
+            it('delete  session', function (done) {
+                sessionService.deleteSession(session._id);
+                done();
+            });
+        });
+    });
+
+    describe('stop a session', function () {
+        let session;
+        before(function (done) {
+            session = sessionService.createSession('testSession', 'testing the creation of a session', 'blue',
+                60000, {min: 3, max: 10}, [], false, false, [globalTestUser],
+                globalTestTheme._id, globalTestUser);
+            done();
+        });
+        it('cant stop a session if the session is not started yet', (done) => {
+            chai.request(server)
+                .post('/session/' + session._id + '/stop')
+                .send()
+                .end((err, res) => {
+                    res.should.have.status(400);
+                    done();
+                });
+        });
+        it('should stop a session', (done) => {
+            chai.request(server)
+                .post('/session/' + session._id + '/start')
+                .send()
+                .end((err, res) => {
+                    res.should.have.status(202);
+                });
+            chai.request(server)
+                .post('/session/' + session._id + '/stop')
+                .send()
+                .end((err, res) => {
+                    res.should.have.status(202);
+                    done();
+                });
+        });
+        after('clean up created stuff', function (done) {
+            sessionService.deleteSession(session._id);
+            done();
+        });
+    });
+
+    after('remove testuser', function (done) {
         userService.removeUser(globalTestUser._id, function (success, err) {
             assert.isNotOk(err);
             assert.isTrue(success, 'user should have succesfully been deleted');

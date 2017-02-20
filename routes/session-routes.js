@@ -35,5 +35,13 @@ module.exports = function(app){
 
     app.delete('/session/:sessionId/delete', function(req,res){
         sessionController.deleteSession(req,res);
-    })
+    });
+
+    app.post('/session/:sessionId/start', function (req, res) {
+        sessionController.startSession(req, res);
+    });
+
+    app.post('/session/:sessionId/stop', function (req, res) {
+        sessionController.stopSession(req, res);
+    });
 };

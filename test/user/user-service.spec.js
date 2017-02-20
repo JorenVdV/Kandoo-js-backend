@@ -181,17 +181,17 @@ describe('User service tests', function () {
         });
 
         it('existing id', function (done) {
-            userService.removeUser(removeUser_user._id, function (succes, err) {
+            userService.removeUser(removeUser_user._id, function (success, err) {
                 assert.isNotOk(err);
-                assert.isTrue(succes, 'user should have succesfully been deleted');
+                assert.isTrue(success, 'user should have successfully been deleted');
                 done();
             });
         });
 
         it('non existing id', function (done) {
-            userService.removeUser('00aa0aa000a000000a0000aa', function (succes, err) {
+            userService.removeUser('00aa0aa000a000000a0000aa', function (success, err) {
                 assert.isOk(err);
-                assert.isFalse(succes);
+                assert.isFalse(success);
                 assert.strictEqual(err.message, 'Id does not exist');
                 done();
             });
