@@ -129,7 +129,7 @@ describe('Session service tests -', function () {
             sessionService.startSession(session._id, testGlobal.testDate);
             assert.strictEqual(session.startDate, testGlobal.testDate, 'startdate should be equals tot testdate1');
             sessionService.startSession(session._id, testGlobal.testDate2);
-            assert.strictEqual(session.startDate, testGlobal.testDate2, 'startdate should be equals tot testdate2');
+            assert.strictEqual(session.startDate, testGlobal.testDate, 'startdate should be equals tot testdate');
             done();
         })
     });

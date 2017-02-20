@@ -66,7 +66,21 @@ class SessionController {
         }
     }
 
+    startSession(req, res) {
+        let sessionId = req.params.sessionId;
+        if (this.sessionService.startSession(sessionId))
+            res.sendStatus(202);
+        else
+            res.sendStatus(400);
+    }
 
+    stopSession(req, res) {
+        let sessionId = req.params.sessionId;
+        if (this.sessionService.stopSession(sessionId))
+            res.sendStatus(202);
+        else
+            res.sendStatus(400);
+    }
 }
 
 module.exports = new SessionController();
