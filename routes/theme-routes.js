@@ -3,13 +3,6 @@
  */
 
 const cardController = require('../controllers/card-controller');
-
-module.exports = function (app) {
-    app.post('/theme/:themeid/card', function (req, res) {
-        cardController.addCardToTheme(req, res);
-    });
-
-};
 const themeController = require('../controllers/theme-controller');
 
 module.exports = function(app) {

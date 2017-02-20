@@ -28,10 +28,6 @@ describe('Card service tests', function () {
         }
     });
 
-    before(function () {
-
-    });
-
     it('initial there should be no cards', function () {
         var cards = cardService.getCards();
         assert(Array.isArray(cards), 'cards should always return an array');

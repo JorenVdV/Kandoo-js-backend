@@ -10,40 +10,46 @@ class UserController {
 
     createUser(req, res) {
         let body = req.body;
-        try {
-            let user = this.userService.createUser(body.firstname, body.lastname, body.emailAddress, body.organisation ? body.organisation : null, body.password);
-            res.sendStatus(201);
-        } catch (e) {
-            res.status(404).send({error: e.message});
-        }
+        this.userService.createUser(body.firstname, body.lastname, body.emailAddress, body.organisation ? body.organisation : null, body.password, function (user, err) {
+            if (err)
+                res.status(404).send({error: err.message});
+            else
+                res.sendStatus(201);
+        });
     }
 
     login(req, res) {
         let body = req.body;
-        let user = this.userService.findUserByEmail(body.emailAddress);
-        if (!user) {
-            res.sendStatus(405);
-        }
-        else if (user.password === body.password)
-            res.status(200).send({user: user});
-        else
-            res.sendStatus(401);
+        this.userService.findUserByEmail(body.emailAddress, function (user, err) {
+            if (err) {
+                res.status(404).send({error: err.message});
+            }
+            else if (user.password === body.password)
+                res.status(200).send({user: user});
+            else
+                res.status(401).send({error: "Password is incorrect"});
+        });
+
     }
 
     getUsers(req, res) {
-        let users = this.userService.findUsers();
-        if (users) res.send({users: users});
-        else res.sendStatus(404);
+        this.userService.findUsers(function (users, err) {
+            if (err) res.status(404).send({error: err});
+            else res.status(200).send({users: users});
+        });
+
     }
 
     deleteUser(req, res) {
-        if (this.userService.removeUser(req.params.userId)) {
-            res.sendStatus(204);
-        }
-        else {
-            res.sendStatus(400);
-        }
-
+        this.userService.removeUser(req.params.userId, function (success, err) {
+            if (!success && err) {
+                res.status(404).send({error: err.message});
+            } else if (err) {
+                res.sendStatus(400);
+            } else {
+                res.sendStatus(204);
+            }
+        });
     }
 
 }

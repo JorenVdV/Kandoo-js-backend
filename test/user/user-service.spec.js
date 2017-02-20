@@ -11,48 +11,214 @@ const assert = chai.assert;
 const userService = require('../../services/user-service');
 const User = require('../../models/user');
 
-describe('User service tests', function(){
-    before('Open connection to test database', function(done){
-        if(mongoose.connection.readyState === 0){
-            mongoose.connect(config.mongoURI[process.env.NODE_ENV],function(err){
-                if(err){
+describe('User service tests', function () {
+    before('Open connection to test database', function (done) {
+        if (mongoose.connection.readyState === 0) {
+            mongoose.connect(config.mongoURI[process.env.NODE_ENV], function (err) {
+                if (err) {
                     console.log('Error connecting to the database. ' + err);
-                } else{
+                } else {
                     console.log('Connected to database: ' + config.mongoURI[process.env.NODE_ENV]);
                 }
                 done();
             });
-        }else {
+        } else {
             console.log("Already connected to mongodb://" + mongoose.connection.host + ":" + mongoose.connection.port + "/" + mongoose.connection.name);
             done();
         }
     });
 
-   it('Creating a user', function(){
-       let user = userService.createUser('Jos', 'Van Camp', 'jos.vancamp@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
-       assert.strictEqual(user.firstname, 'Jos', 'the name of the user should be "Jos"');
-       assert.strictEqual(user.lastname, 'Van Camp', 'the family name of the user should be "Van Camp"');
-       assert.strictEqual(user.emailAddress, 'jos.vancamp@teamjs.xyz', 'the email address of the user should be "jos.vancamp@teamjs.xyz"');
-       assert.strictEqual(user.organisation, 'Karel de Grote Hogeschool - TeamJS', 'the organisation of the user should be "Karel de Grote Hogeschool - TeamJS"');
-       assert.strictEqual(user.password, 'myAwesomePassword.123', 'the password of the user should be "myAwesomePassword.123"');
-       userService.removeUser(user._id);
-       assert.isNotOk(userService.findUserById(user._id), 'User should have been removed');
-   });
+    it('Creating a single user', function (done) {
+        userService.createUser('Jos', 'Van Camp', 'jos.vancamp@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123', function (user, err) {
+            assert.isNotOk(err);
+            assert.isOk(user);
 
-   it('Find a user by email', function(){
-        let user = userService.createUser('Jos', 'Van Camp', 'jos.vancamp@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
-        let foundUser = userService.findUserByEmail(user.emailAddress);
-        assert.strictEqual(foundUser._id,user._id, 'id of the found user should be the same as the created user');
-        userService.removeUser(user._id);
-   });
-    it('Find doens\'t find user by email', function(){
-        let user = userService.createUser('Jos', 'Van Camp', 'jos.vancamp@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
-        let foundUser = userService.findUserByEmail('jos.vancamp@.xyz');
-        assert.isUndefined(foundUser, 'The user shouldn\'t have been found');
-        userService.removeUser(user._id);
+            assert.strictEqual(user.firstname, 'Jos', 'the name of the user should be "Jos"');
+            assert.strictEqual(user.lastname, 'Van Camp', 'the family name of the user should be "Van Camp"');
+            assert.strictEqual(user.emailAddress, 'jos.vancamp@teamjs.xyz', 'the email address of the user should be "jos.vancamp@teamjs.xyz"');
+            assert.strictEqual(user.organisation, 'Karel de Grote Hogeschool - TeamJS', 'the organisation of the user should be "Karel de Grote Hogeschool - TeamJS"');
+            assert.strictEqual(user.password, 'myAwesomePassword.123', 'the password of the user should be "myAwesomePassword.123"');
+
+            userService.removeUser(user._id, function (successful, err) {
+                assert.isNotOk(err);
+                assert.isTrue(successful, 'user should have succesfully been deleted');
+                done();
+            })
+        });
     });
 
-    after('Closing connection to test database', function(done){
+    describe('Creating two users - different email', function () {
+        let createUser_user1;
+        let createUser_user2;
+
+        it('user1', function (done) {
+            userService.createUser('Jos', 'Van Camp', 'jos.vancamp@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123', function (user, err) {
+                assert.isNotOk(err);
+                assert.isOk(user);
+                createUser_user1 = user;
+                done();
+            });
+
+        });
+
+        it('user2', function (done) {
+            userService.createUser('Jos', 'Van Camp', 'jos.vancamp2@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123', function (user, err) {
+                assert.isNotOk(err);
+                assert.isOk(user);
+                createUser_user2 = user;
+                done();
+            });
+        });
+
+        after('Remove users', function (done) {
+            userService.removeUser(createUser_user1._id, function (succes, err) {
+                assert.isNotOk(err);
+                assert.isTrue(succes, 'user1 should have succesfully been deleted');
+
+                userService.removeUser(createUser_user2._id, function (succes, err) {
+                    assert.isNotOk(err);
+                    assert.isTrue(succes, 'user2 should have succesfully been deleted');
+                    done();
+                });
+            })
+        })
+    });
+
+    describe('Creating two users - same email', function () {
+        let createUser_user1;
+        let createUser_user2;
+
+        it('user1', function (done) {
+            userService.createUser('Jos', 'Van Camp', 'jos.vancamp@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123', function (user, err) {
+                assert.isNotOk(err);
+                assert.isOk(user);
+                createUser_user1 = user;
+                done();
+            });
+
+        });
+
+        it('user2', function (done) {
+            userService.createUser('Jos', 'Van Camp', 'jos.vancamp@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123', function (user, err) {
+                assert.isOk(err);
+                assert.isNotOk(user);
+
+                assert.strictEqual(err.message, 'Error: Email address is already in use', 'user should not have been created');
+                done();
+            });
+        });
+
+        after('Remove user', function (done) {
+            userService.removeUser(createUser_user1._id, function (succes, err) {
+                assert.isNotOk(err);
+                assert.isTrue(succes, 'user1 should have succesfully been deleted');
+                done();
+            })
+        })
+    });
+
+    describe('Find a user', function () {
+        let findUser_user;
+        before('Create a user to find', function (done) {
+            userService.createUser('Jos', 'Van Camp', 'jos.vancamp@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123', function (user, err) {
+                assert.isNotOk(err);
+                assert.isOk(user);
+                findUser_user = user;
+                done();
+            });
+        });
+
+        it('by email - existing email', function (done) {
+            userService.findUserByEmail(findUser_user.emailAddress, function (user, err) {
+                assert.isNotOk(err);
+                assert.isOk(user);
+
+                assert.strictEqual(user.firstname, 'Jos', 'the name of the user should be "Jos"');
+                assert.strictEqual(user.lastname, 'Van Camp', 'the family name of the user should be "Van Camp"');
+                assert.strictEqual(user.emailAddress, 'jos.vancamp@teamjs.xyz', 'the email address of the user should be "jos.vancamp@teamjs.xyz"');
+                assert.strictEqual(user.organisation, 'Karel de Grote Hogeschool - TeamJS', 'the organisation of the user should be "Karel de Grote Hogeschool - TeamJS"');
+                assert.strictEqual(user.password, 'myAwesomePassword.123', 'the password of the user should be "myAwesomePassword.123"');
+
+                done();
+            });
+        });
+
+        it('by email - non existing email', function (done) {
+            userService.findUserByEmail('blablaEmail@nonexistant.com', function (user, err) {
+                assert.isOk(err);
+                assert.isNotOk(user);
+
+                assert.strictEqual(err.message, "Unable to find user with email: " + 'blablaEmail@nonexistant.com', "Should not be able to find this user");
+                done();
+            });
+        });
+
+        it('by id - existing id', function (done) {
+            userService.findUserById(findUser_user._id, function (user, err) {
+                assert.isNotOk(err);
+                assert.isOk(user);
+
+                assert.strictEqual(user.firstname, 'Jos', 'the name of the user should be "Jos"');
+                assert.strictEqual(user.lastname, 'Van Camp', 'the family name of the user should be "Van Camp"');
+                assert.strictEqual(user.emailAddress, 'jos.vancamp@teamjs.xyz', 'the email address of the user should be "jos.vancamp@teamjs.xyz"');
+                assert.strictEqual(user.organisation, 'Karel de Grote Hogeschool - TeamJS', 'the organisation of the user should be "Karel de Grote Hogeschool - TeamJS"');
+                assert.strictEqual(user.password, 'myAwesomePassword.123', 'the password of the user should be "myAwesomePassword.123"');
+
+                done();
+            });
+        });
+
+        it('by id - non existing id', function (done) {
+            userService.findUserById('00aa0aa000a000000a0000aa', function (user, err) {
+                assert.isOk(err);
+                assert.isNotOk(user);
+
+                assert.strictEqual(err.message, "Unable to find user with id: " + '00aa0aa000a000000a0000aa', "Should not be able to find this user");
+                done();
+            });
+        });
+
+        after('Remove the created user', function (done) {
+            userService.removeUser(findUser_user._id, function (succes, err) {
+                assert.isNotOk(err);
+                assert.isTrue(succes, 'user should have succesfully been deleted');
+                done();
+            })
+        });
+
+    });
+
+    describe('Remove a user', function () {
+        let removeUser_user;
+        before('Create a user to remove', function (done) {
+            userService.createUser('Jos', 'Van Camp', 'jos.vancamp@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123', function (user, err) {
+                assert.isNotOk(err);
+                assert.isOk(user);
+                removeUser_user = user;
+                done();
+            });
+        });
+
+        it('existing id', function (done) {
+            userService.removeUser(removeUser_user._id, function (succes, err) {
+                assert.isNotOk(err);
+                assert.isTrue(succes, 'user should have succesfully been deleted');
+                done();
+            });
+        });
+
+        it('non existing id', function (done) {
+            userService.removeUser('00aa0aa000a000000a0000aa', function (succes, err) {
+                assert.isOk(err);
+                assert.isFalse(succes);
+                assert.strictEqual(err.message, 'Id does not exist');
+                done();
+            });
+        });
+
+    });
+
+    after('Closing connection to test database', function (done) {
         mongoose.disconnect();
         done();
     });

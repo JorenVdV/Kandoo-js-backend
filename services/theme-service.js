@@ -37,10 +37,10 @@ class ThemeService {
     }
 
     addCard(themeId, card) {
-
-        var theme = this.getTheme(themeId);
-
-        theme.cards.push(card);
+        let theme = this.getTheme(themeId);
+        if(theme){
+            theme.cards.push(card);
+        }
         return theme;
     }
 }

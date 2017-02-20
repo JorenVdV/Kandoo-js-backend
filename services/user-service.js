@@ -6,37 +6,59 @@ class UserService {
         this.userRepo = require('../repositories/user-repository');
     }
 
-    createUser(firstname, lastname, emailAddress, organisation, password) {
-        if (this.userRepo.getUserByEmail(emailAddress))
-            throw new Error('Email address is already in use.');
+    createUser(firstname, lastname, emailAddress, organisation, password, callback) {
+        let newUser = new User();
+        newUser.firstname = firstname;
+        newUser.lastname = lastname;
+        newUser.emailAddress = emailAddress;
+        newUser.organisation = organisation ? organisation : "";
+        newUser.password = password;
 
-        let user = new User();
-        user.firstname = firstname;
-        user.lastname = lastname;
-        user.emailAddress = emailAddress;
-        user.organisation = organisation ? organisation : "";
-        user.password = password;
-
-        return this.userRepo.createUser(user);
-
+        this.userRepo.createUser(newUser, function (user, err) {
+            if (err) {
+                callback(null, err);
+            } else {
+                callback(user);
+            }
+        });
     }
 
-    removeUser(id) {
-        // let user = this.userRepo.getUserById(id);
-        // this.userRepo.deleteUser(user);
-        this.userRepo.deleteUser(id);
+    removeUser(id, callback1) {
+        this.userRepo.deleteUser(id, function (succes, err) {
+            if (!succes && err)
+                callback1(succes, err);
+            else if (err) {
+                callback1(err);
+            } else
+                callback1(succes);
+        });
     }
 
-    findUserById(id) {
-        return this.userRepo.getUserById(id);
+    findUserById(id, callback) {
+        this.userRepo.getUserById(id, function (user, err) {
+            if (err)
+                callback(null, err);
+            else
+                callback(user);
+        });
     }
 
-    findUserByEmail(email) {
-        return this.userRepo.getUserByEmail(email);
+    findUserByEmail(email, callback) {
+        this.userRepo.getUserByEmail(email, function (user, err) {
+            if (err)
+                callback(null, err);
+            else
+                callback(user);
+        });
     }
 
-    findUsers() {
-        return this.userRepo.getUsers();
+    findUsers(callback) {
+        this.userRepo.getUsers(function (users, err) {
+            if (err)
+                callback(null, err);
+            else
+                callback(users);
+        });
     }
 }
 

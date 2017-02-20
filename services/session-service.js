@@ -88,15 +88,18 @@ class SessionService {
     }
 
     invite(sessionId, userId) {
-        let user = this.userService.findUserById(userId);
         let session = this.getSession(sessionId);
+        this.userService.findUserById(userId, function(user, err){
 
-        session.invitees.push(user);
+            session.invitees.push(user);
+            console.log(session.invitees);
 
-        let mailService = require('./mail-service');
-        mailService.sendMail();
+            let mailService = require('./mail-service');
+            mailService.sendMail();
 
-        return true;
+            return true;
+        });
+
     }
 }
 

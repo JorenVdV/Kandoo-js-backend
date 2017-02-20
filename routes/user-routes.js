@@ -16,7 +16,7 @@ module.exports = function(app){
     app.post('/login', function(req,res){
        userController.login(req,res);
     });
-    // app.delete('/user/:userId/delete', function(req,res){
-    //    userController.deleteUser(req,res);
-    // });
+    app.delete('/user/:userId/delete', function(req,res){
+       userController.deleteUser(req,res);
+    });
 };

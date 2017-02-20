@@ -32,9 +32,15 @@ describe('Theme controller tests', function () {
     });
 
     let user1;
-    before(function () {
-        this.user1 = userService.createUser("User1", "Test", "user1.test@teamjs.xyz", "TeamJS", "pwd");
+    before('create user1', function(done){
+        userService.createUser("User1", "Test", "user1.test@teamjs.xyz", "TeamJS", "pwd", function (user, err) {
+            assert.isNotOk(err);
+            assert.isOk(user);
+            user1 = user;
+            done();
+        });
     });
+
     describe('/POST newTheme', function () {
         it('should create a theme', (done) => {
             let theme = {
@@ -133,8 +139,13 @@ describe('Theme controller tests', function () {
             
         });
     });
-    after(function(){
-        userService.removeUser(this.user1._id);
+
+    after('Remove user1', function (done) {
+        userService.removeUser(user1._id, function (succes, err) {
+            assert.isNotOk(err);
+            assert.isTrue(succes, 'user should have succesfully been deleted');
+            done();
+        })
     });
 
     after('Closing connection to test database', function(done){

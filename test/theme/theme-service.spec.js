@@ -28,9 +28,23 @@ describe("theme service tests", function () {
 
     let user1;
     let user2;
-    beforeEach(function () {
-        this.user1 = userService.createUser("User1", "Test", "user1.test@teamjs.xyz", "TeamJS", "pwd");
-        this.user2 = userService.createUser("User2", "Test", "user2.test@teamjs.xyz", "TeamJS", "pwd");
+
+    before('create user1', function(done){
+        userService.createUser("User1", "Test", "user1.test@teamjs.xyz", "TeamJS", "pwd", function (user, err) {
+            assert.isNotOk(err);
+            assert.isOk(user);
+            user1 = user;
+            done();
+        });
+    });
+
+    before('create user2', function(done){
+        userService.createUser("User2", "Test", "user2.test@teamjs.xyz", "TeamJS", "pwd", function (user, err) {
+            assert.isNotOk(err);
+            assert.isOk(user);
+            user2 = user;
+            done();
+        });
     });
     
     it('Adding a new theme and check the content', function () {
@@ -103,10 +117,20 @@ describe("theme service tests", function () {
         assert.equal(theme1.cards[0], card._id, 'The id should be equal to the cards\' id');
     });
 
-    afterEach(function(){
-       userService.removeUser(this.user1._id);
-       userService.removeUser(this.user2._id);
-    })
+    after('Remove user2', function (done) {
+        userService.removeUser(user2._id, function (succes, err) {
+            assert.isNotOk(err);
+            assert.isTrue(succes, 'user should have succesfully been deleted');
+            done();
+        })
+    });
+    after('Remove user1', function (done) {
+        userService.removeUser(user1._id, function (succes, err) {
+            assert.isNotOk(err);
+            assert.isTrue(succes, 'user should have succesfully been deleted');
+            done();
+        })
+    });
 
     after('Closing connection to test database', function(done){
         mongoose.disconnect();

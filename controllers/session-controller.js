@@ -6,7 +6,6 @@ class SessionController {
         this.sessionService = require('../services/session-service');
         this.themeService = require('../services/theme-service');
         this.userService = require('../services/user-service');
-        this.cardServce = require('../services/card-service');
     }
 
     createSession(req, res) {
@@ -46,14 +45,17 @@ class SessionController {
     }
 
     playTurn(req, res) {
-        let user = this.userService.findUserById(req.params.userId);
-        let card = this.cardServce.find(req.params.cardId);
+        this.userService.findUserById(req.params.userId, function(user, err){
+            let cardService = require('../services/card-service');
+            let sessionService = require('../services/session-service');
 
-        if (this.sessionService.addTurn(req.params.sessionId, card, user))
-            res.sendStatus(201);
-        else
-            res.sendStatus(400);
+            let card = cardService.find(req.params.cardId);
 
+            if (sessionService.addTurn(req.params.sessionId, card, user))
+                res.sendStatus(201);
+            else
+                res.sendStatus(400);
+        });
     }
 
     inviteUser(req, res) {

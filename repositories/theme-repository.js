@@ -14,8 +14,7 @@ class ThemeRepository{
     }
     
     readThemeById(id) {
-
-        return this.themeDao.find(theme => theme._id == id) ;
+        return this.themeDao.find(theme => theme._id == id);
     }
     
     readThemes() {

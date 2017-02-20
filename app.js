@@ -43,5 +43,16 @@ server.listen(port, function () {
     console.log("App is running on port " + port);
 });
 
+const userRepo = require('./repositories/user-repository');
+userRepo.getUserByEmail(config.initialUser.emailAddress, function(user, err){
+   if(!user){
+       userRepo.createUser(config.initialUser, function(user,err){
+           if(err){
+               console.error(err);
+           }
+       });
+   }
+});
+
 
 module.exports = app;
