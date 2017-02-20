@@ -218,6 +218,94 @@ describe('User service tests', function () {
 
     });
 
+    // describe('Promise functions user-service', function () {
+    //     let removeUser_user;
+    //     before('Create a user to remove', function (done) {
+    //         userService.createUser('Jos', 'Van Camp', 'jos.vancamp@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123', function (user, err) {
+    //             assert.isNotOk(err);
+    //             assert.isOk(user);
+    //             removeUser_user = user;
+    //             done();
+    //         });
+    //     });
+    //
+    //     it('find user by email', function (done) {
+    //         userService.promise_findUserByEmail(removeUser_user.emailAddress)
+    //             .then((user) => {
+    //                 assert.isOk(user);
+    //
+    //                 assert.strictEqual(user.firstname, 'Jos', 'the name of the user should be "Jos"');
+    //                 assert.strictEqual(user.lastname, 'Van Camp', 'the family name of the user should be "Van Camp"');
+    //                 assert.strictEqual(user.emailAddress, 'jos.vancamp@teamjs.xyz', 'the email address of the user should be "jos.vancamp@teamjs.xyz"');
+    //                 assert.strictEqual(user.organisation, 'Karel de Grote Hogeschool - TeamJS', 'the organisation of the user should be "Karel de Grote Hogeschool - TeamJS"');
+    //                 assert.strictEqual(user.password, 'myAwesomePassword.123', 'the password of the user should be "myAwesomePassword.123"');
+    //
+    //                 done();
+    //             });
+    //     });
+    //
+    //     it('find user by email - non existent', function (done) {
+    //         userService.promise_findUserByEmail('blablaEmail@nonexistant.com')
+    //             .then((user) => {
+    //                 assert.isOk(user);
+    //
+    //                 assert.strictEqual(user.firstname, 'Jos', 'the name of the user should be "Jos"');
+    //                 assert.strictEqual(user.lastname, 'Van Camp', 'the family name of the user should be "Van Camp"');
+    //                 assert.strictEqual(user.emailAddress, 'jos.vancamp@teamjs.xyz', 'the email address of the user should be "jos.vancamp@teamjs.xyz"');
+    //                 assert.strictEqual(user.organisation, 'Karel de Grote Hogeschool - TeamJS', 'the organisation of the user should be "Karel de Grote Hogeschool - TeamJS"');
+    //                 assert.strictEqual(user.password, 'myAwesomePassword.123', 'the password of the user should be "myAwesomePassword.123"');
+    //
+    //             })
+    //             .catch((err) => {
+    //                 assert.isOk(err);
+    //                 assert.strictEqual(err.message, "Unable to find user with email: " + 'blablaEmail@nonexistant.com');
+    //                 done();
+    //             });
+    //     });
+    //
+    //     it('find user by id', function (done) {
+    //         userService.promise_findUserById(removeUser_user._id)
+    //             .then((user) => {
+    //                 assert.isOk(user);
+    //
+    //                 assert.strictEqual(user.firstname, 'Jos', 'the name of the user should be "Jos"');
+    //                 assert.strictEqual(user.lastname, 'Van Camp', 'the family name of the user should be "Van Camp"');
+    //                 assert.strictEqual(user.emailAddress, 'jos.vancamp@teamjs.xyz', 'the email address of the user should be "jos.vancamp@teamjs.xyz"');
+    //                 assert.strictEqual(user.organisation, 'Karel de Grote Hogeschool - TeamJS', 'the organisation of the user should be "Karel de Grote Hogeschool - TeamJS"');
+    //                 assert.strictEqual(user.password, 'myAwesomePassword.123', 'the password of the user should be "myAwesomePassword.123"');
+    //
+    //                 done();
+    //             });
+    //     });
+    //
+    //     it('remove user', function (done) {
+    //         userService.promise_findUserByEmailAndDelete(removeUser_user.emailAddress)
+    //             .then((succes) => {
+    //                 assert.isTrue(succes);
+    //                 done();
+    //             });
+    //     });
+    //
+    //     it('remove user - non existent id', function (done) {
+    //         userService.promise_findUserByEmailAndDelete(removeUser_user.emailAddress)
+    //             .then((succes) => {
+    //                 assert.isTrue(succes);
+    //             })
+    //             .catch((err) => {
+    //                 assert.isOk(err);
+    //                 assert.strictEqual(err.message, 'Id does not exist');
+    //                 done();
+    //             });
+    //     });
+    //
+    //     after('Remove the created user', function (done) {
+    //         userService.removeUser(removeUser_user._id, function (succes, err) {
+    //             assert.isNotNull(succes);
+    //             done();
+    //         })
+    //     });
+    // });
+
     after('Closing connection to test database', function (done) {
         mongoose.disconnect();
         done();

@@ -17,6 +17,18 @@ class UserRepository {
             }
         });
     }
+    promise_getUserById(id){
+        return this.userDao.findOne({'_id': id}, function (err, user) {
+            if (err) {
+                throw new Error('Error trying to find user with id: ' + id + ' ' + err);
+            } else {
+                if (user)
+                    return user;
+                else
+                    throw new Error('Unable to find user with id: ' + id);
+            }
+        });
+    }
 
     getUserByEmail(email, callback) {
         this.userDao.findOne({emailAddress: email}, function (err, user) {
@@ -27,6 +39,19 @@ class UserRepository {
                     callback(user);
                 else
                     callback(null, new Error('Unable to find user with email: ' + email));
+            }
+        });
+    }
+
+    promise_getUserByEmail(email){
+        return this.userDao.findOne({emailAddress: email}, function (err, user) {
+            if (err) {
+                throw new Error('Error trying to find user with email: ' + email + ' ' + err);
+            } else {
+                if (user)
+                    return user;
+                else
+                    throw new Error('Unable to find user with email: ' + email);
             }
         });
     }
@@ -84,6 +109,16 @@ class UserRepository {
                     callback(false, new Error('Id does not exist'))
                 }
             }
+        });
+    }
+
+    promise_deleteUser(user){
+        return user.remove(function(err){
+           if(err){
+               throw new Error('Error whilst trying to remove user: ' + userEmail + ' ' + err);
+           } else{
+               return true;
+           }
         });
     }
 }
