@@ -6,33 +6,44 @@ class ThemeController {
         this.themeService = require('../services/theme-service')
     }
 
-    createTheme(req, res){
+    createTheme(req, res) {
         let body = req.body;
-        let theme = this.themeService.addTheme(body.title, body.description, body.tags, body.isPublic, body.organiser, body.cards);
-        if(theme){
-            res.sendStatus(201)
-        }else{
-            res.sendStatus(404);
-        }
+        this.themeService.addTheme(body.title, body.description, body.tags, body.isPublic, body.organiser, body.cards, function (theme, err) {
+            if (err) {
+                res.status(404).send({error: err.message});
+            } else if (theme) {
+                res.status(201).send({theme: theme});
+            }
+        });
     }
 
-    getTheme(req, res){
+    getTheme(req, res) {
         let themeId = req.params.themeid;
-        let theme = this.themeService.getTheme(themeId);
-        if(theme) res.send({theme: theme});
-        else res.sendStatus(404);
+        this.themeService.getTheme(themeId, function (theme, err) {
+            if (err) {
+                res.status(404).send({error: err.message});
+            }
+            else if (theme) {
+                res.status(200).send({theme: theme});
+            }
+        });
+
     }
 
-    getThemes(req, res){
-        let themes = this.themeService.getThemes();
-        if(themes) res.send({themes: themes});
-        else res.sendStatus(404);
+    getThemes(req, res) {
+        this.themeService.getThemes(function(themes, err){
+           if(err) {
+               res.status(404).send({error: err.message});
+           }else{
+               res.status(200).send({themes:themes});
+           }
+        });
     }
 
-    deleteTheme(req, res){
+    deleteTheme(req, res) {
         let themeId = req.params.themeid;
         this.themeService.removeTheme(themeId);
-        res.sendStatus(!this.themeService.getTheme(themeId)?204:404);
+        res.sendStatus(!this.themeService.getTheme(themeId) ? 204 : 404);
     }
 }
 

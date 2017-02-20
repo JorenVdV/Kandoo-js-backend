@@ -1,8 +1,6 @@
 /**
  * Created by steve on 2/10/2017.
  */
-const config = require('../../_config');
-const mongoose = require('mongoose');
 process.env.NODE_ENV = 'test';
 
 var chai = require('chai');
@@ -15,24 +13,11 @@ var userService = require('../../services/user-service');
 var cardService = require('../../services/card-service');
 var sessionService = require('../../services/session-service');
 
+
 chai.use(chaiHttp);
 
 describe('Session Controller tests', function () {
-    before('Open connection to test database', function(done){
-        if(mongoose.connection.readyState === 0){
-            mongoose.connect(config.mongoURI[process.env.NODE_ENV],function(err){
-                if(err){
-                    console.log('Error connecting to the database. ' + err);
-                } else{
-                    console.log('Connected to database: ' + config.mongoURI[process.env.NODE_ENV]);
-                }
-                done();
-            });
-        }else {
-            console.log("Already connected to mongodb://" + mongoose.connection.host + ":" + mongoose.connection.port + "/" + mongoose.connection.name);
-            done();
-        }
-    });
+
     let globalTestTheme;
     let globalTestUser;
     before('create a testUser', function(done){
@@ -45,8 +30,12 @@ describe('Session Controller tests', function () {
     });
 
     before('create a theme to create sessions on', function (done) {
-        globalTestTheme = themeService.addTheme('testTheme', 'a theme to use in the test', 'test', 'false', globalTestUser, []);
-        done();
+        globalTestTheme = themeService.addTheme('testTheme', 'a theme to use in the test', 'test', 'false', globalTestUser, [], function(theme, err){
+            assert.isNotOk(err);
+            assert.isOk(theme);
+            globalTestTheme = theme;
+            done();
+        });
     });
 
     describe('/POST /theme/:themeId/session', function () {
@@ -342,7 +331,9 @@ describe('Session Controller tests', function () {
 
             card = {description: 'This is a test description'};
             card = cardService.addCard(card.description);
-            themeService.addCard(globalTestTheme._id, card);
+            themeService.addCard(globalTestTheme._id, card, function(theme, err){
+
+            });
 
         });
         it('should add a turn to the session', function (done) {
@@ -426,20 +417,19 @@ describe('Session Controller tests', function () {
     // });
 
     after('remove testuser', function(done){
-        userService.removeUser(globalTestUser._id, function (succes, err) {
+        userService.removeUser(globalTestUser._id, function (success, err) {
             assert.isNotOk(err);
-            assert.isTrue(succes, 'user should have succesfully been deleted');
+            assert.isTrue(success, 'user should have succesfully been deleted');
             done();
         });
     });
 
     after('remove testtheme', function (done) {
-        themeService.removeTheme(globalTestTheme._id);
-        done();
+        themeService.removeTheme(globalTestTheme._id, function(success, err){
+            assert.isNotOk(err);
+            assert.isTrue(success);
+            done();
+        });
     });
 
-    after('Closing connection to test database', function(done){
-        mongoose.disconnect();
-        done();
-    });
 });

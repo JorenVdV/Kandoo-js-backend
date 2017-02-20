@@ -3,37 +3,112 @@
  */
 const Theme = require('../models/theme');
 
-class ThemeRepository{
-    constructor(){
-        this.themeDao = [];
+class ThemeRepository {
+    constructor() {
+        this.themeDao = Theme;
     }
 
-    createTheme(theme){
-        this.themeDao.push(theme);
-        return theme;
-    }
-    
-    readThemeById(id) {
-        return this.themeDao.find(theme => theme._id == id);
-    }
-    
-    readThemes() {
-        return this.themeDao;
+    createTheme(theme, callback) {
+        theme.save(function (err) {
+            if (err) {
+                callback(null, new Error('Error whilst trying to save theme: ' + theme.title + ' ' + err));
+            } else {
+                callback(theme);
+            }
+        });
     }
 
-    updateTheme(id, title, description, tags, isPublic, organiser, cards = []){
-        var theme = this.readThemeById(id);
-        theme.title = title;
-        theme.description = description;
-        theme.tags = tags;
-        theme.isPublic = isPublic;
-        theme.organisers = [organiser];
-        theme.cards = cards;
-        return theme
+    readThemeById(id, callback) {
+        this.themeDao.findOne({_id: id}, function (err,theme) {
+            if (err) {
+                callback(null, err);
+            } else {
+                if (!theme) {
+                    callback(null, new Error("Unable to find theme with id: " + id));
+                } else {
+                    callback(theme);
+                }
+            }
+        });
     }
 
-    deleteTheme(id){
-        this.themeDao.splice(this.themeDao.findIndex(theme => theme._id == id),1);
+    readThemes(callback) {
+        this.themeDao.find({}, function (err,themes) {
+            if (err) {
+                callback(null, err);
+            } else {
+                let themeArray = [];
+                themes.forEach(function (theme) {
+                    themeArray.push(theme);
+                });
+                callback(themeArray);
+            }
+        });
+    }
+
+    updateTheme(id, title, description, tags, isPublic, cards, callback) {
+        let updates = {
+            title: title,
+            description: description,
+            tags: tags,
+            isPublic: isPublic,
+            cards: cards
+        };
+        this.themeDao.update({_id: id}, updates, function (err, result) {
+            if (err)
+                callback(null, err);
+            else {
+                if (result.ok) {
+                    if(result.nModified == 1){
+                        callback(true);
+                    }else{
+                        callback(true, new Error("More than one document has been updated..."));
+                    }
+                }
+                else
+                    callback(false, new Error("Unable to update theme"));
+            }
+        });
+        // this.themeDao.findOne({_id: id}, function (err, theme) {
+        //     if (err)
+        //         callback(null, err);
+        //     else {
+        //         theme.title = title;
+        //         theme.description = description;
+        //         theme.tags = tags;
+        //         theme.isPublic = isPublic;
+        //         theme.organisers = [organisers];
+        //         theme.cards = cards;
+        //         theme.visits.$inc();
+        //         theme.save(function (err) {
+        //             if (err)
+        //                 callback(false, new Error("Error whilst trying to save updated theme"));
+        //             else {
+        //                 callback(true);
+        //             }
+        //         });
+        //     }
+        // });
+    }
+
+    deleteTheme(id, callback) {
+        this.themeDao.findOne({_id: id}, function (err, theme) {
+            if (err)
+                callback(false, err);
+            else {
+                if (theme) {
+                    theme.remove(function (err) {
+                        if (err) {
+                            callback(false, new Error('Error whilst trying to remove theme with id: ' + id + ' ' + err));
+                        } else {
+                            callback(true);
+                        }
+                    });
+                } else {
+                    callback(false, new Error('Id does not exist'))
+                }
+            }
+        });
     }
 }
 

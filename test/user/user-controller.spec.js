@@ -15,21 +15,21 @@ const userService = require('../../services/user-service');
 chai.use(chaiHttp);
 
 describe('User Controller tests', function () {
-    before('Open connection to test database', function (done) {
-        if (mongoose.connection.readyState === 0) {
-            mongoose.connect(config.mongoURI[process.env.NODE_ENV], function (err) {
-                if (err) {
-                    console.log('Error connecting to the database. ' + err);
-                } else {
-                    console.log('Connected to database: ' + config.mongoURI[process.env.NODE_ENV]);
-                }
-                done();
-            });
-        } else {
-            console.log("Already connected to mongodb://" + mongoose.connection.host + ":" + mongoose.connection.port + "/" + mongoose.connection.name);
-            done();
-        }
-    });
+    // before('Open connection to test database', function (done) {
+    //     if (mongoose.connection.readyState === 0) {
+    //         mongoose.connect(config.mongoURI[process.env.NODE_ENV], function (err) {
+    //             if (err) {
+    //                 console.log('Error connecting to the database. ' + err);
+    //             } else {
+    //                 console.log('Connected to database: ' + config.mongoURI[process.env.NODE_ENV]);
+    //             }
+    //             done();
+    //         });
+    //     } else {
+    //         console.log("Already connected to mongodb://" + mongoose.connection.host + ":" + mongoose.connection.port + "/" + mongoose.connection.name);
+    //         done();
+    //     }
+    // });
 
     describe('/POST register', function () {
 
@@ -258,11 +258,12 @@ describe('User Controller tests', function () {
     });
 
     describe('/POST login', function () {
-
+        let LOGINUser_user;
         before('Creating a user', function (done) {
             userService.createUser('Joren', 'Van de Vondel', 'joren.vdv@kdg.be', 'Big Industries', 'Pudding', function (user, err) {
                 assert.isNotOk(err);
                 assert.isOk(user);
+                LOGINUser_user = user;
                 done();
             });
         });
@@ -275,7 +276,11 @@ describe('User Controller tests', function () {
                     res.should.have.status(200);
                     res.body.should.have.property('user');
                     assert.isOk(res.body.user, 'the user should be defined');
-                    assert.strictEqual(res.body.user.firstname, 'Joren', 'User should have Joren as firstname');
+                    assert.strictEqual(res.body.user.firstname, LOGINUser_user.firstname);
+                    assert.strictEqual(res.body.user.lastname, LOGINUser_user.lastname);
+                    assert.strictEqual(res.body.user.emailAddress, LOGINUser_user.emailAddress);
+                    assert.strictEqual(res.body.user.password, LOGINUser_user.password);
+                    assert.strictEqual(res.body.user.organisation, LOGINUser_user.organisation);
                     done();
                 });
         });
@@ -355,8 +360,8 @@ describe('User Controller tests', function () {
         });
     });
 
-    after('Closing connection to test database', function (done) {
-        mongoose.disconnect();
-        done();
-    });
+    // after('Closing connection to test database', function (done) {
+    //     mongoose.disconnect();
+    //     done();
+    // });
 });

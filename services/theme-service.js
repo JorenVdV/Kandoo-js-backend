@@ -9,7 +9,7 @@ class ThemeService {
         this.themeRepo = require('../repositories/theme-repository');
     }
 
-    addTheme(title, description, tags, isPublic, organiser, cards = []) {
+    addTheme(title, description, tags, isPublic, organiser, cards = [], callback) {
         let theme = new Theme();
         theme.title = title;
         theme.description = description;
@@ -17,31 +17,64 @@ class ThemeService {
         theme.isPublic = isPublic;
         theme.organisers = [organiser];
         theme.cards = cards;
-        return this.themeRepo.createTheme(theme);
+
+        this.themeRepo.createTheme(theme, function (theme, err) {
+            if (err)
+                callback(null, err);
+            else
+                callback(theme);
+        });
     }
 
-    getTheme(themeId) {
-        return this.themeRepo.readThemeById(themeId);
+    getTheme(themeId, callback) {
+        this.themeRepo.readThemeById(themeId, function (theme, err) {
+            if (err)
+                callback(null, err);
+            else
+                callback(theme);
+        });
     }
 
-    getThemes() {
-        return this.themeRepo.readThemes();
+    getThemes(callback) {
+        this.themeRepo.readThemes(function (themes, err) {
+            if (err)
+                callback(null, err);
+            else
+                callback(themes);
+        });
     }
 
-    changeTheme(themeId, title, description, tags, isPublic, organiser, cards) {
-        return this.themeRepo.updateTheme(themeId, title, description, tags, isPublic, organiser, cards)
+    changeTheme(themeId, title, description, tags, isPublic, cards, callback) {
+        this.themeRepo.updateTheme(themeId, title, description, tags, isPublic, cards, function (theme, err) {
+            if (err)
+                callback(null, err);
+            else
+                callback(theme);
+        })
     }
 
-    removeTheme(themeId) {
-        this.themeRepo.deleteTheme(themeId);
+    removeTheme(themeId, callback) {
+        this.themeRepo.deleteTheme(themeId, function (success, err) {
+            if (!success && err) {
+                callback(success, err);
+            } else if (err) {
+                callback(err);
+            } else {
+                callback(success);
+            }
+        });
     }
 
-    addCard(themeId, card) {
-        let theme = this.getTheme(themeId);
-        if(theme){
-            theme.cards.push(card);
-        }
-        return theme;
+    addCard(themeId, card, callback) {
+        this.getTheme(themeId, function(theme, err){
+            if(err) console.log(err);
+            else {
+                if (theme) {
+                    theme.cards.push(card);
+                    callback(theme);
+                }
+            }
+        });
     }
 }
 

@@ -43,18 +43,6 @@ class UserService {
         });
     }
 
-    promise_findUserById(id) {
-        return new Promise(function (resolve, reject) {
-            this.userRepo.promise_getUserById(id)
-                .then((user) => {
-                    resolve(user);
-                })
-                .catch((err) => {
-                    reject(err);
-                })
-        });
-    }
-
     findUserByEmail(email, callback) {
         this.userRepo.getUserByEmail(email, function (user, err) {
             if (err)
@@ -64,33 +52,45 @@ class UserService {
         });
     }
 
-    promise_findUserByEmail(email) {
-        return new Promise(function (resolve, reject) {
-            this.userRepo.promise_getUserByEmail(email)
-                .then((user) => {
-                    resolve(user);
-                })
-                .catch((err) => {
-                    reject(err);
-                })
-        });
-    }
-
-    promise_findUserByEmailAndDelete(email) {
-        return Promise(function (resolve, reject) {
-            this.userRepo.promise_getUserByEmail(email)
-                .then((user) => {
-                    if (user) {
-                        resolve(this.userRepo.promise_deleteUser(user));
-                    } else {
-                        reject(new Error('Id does not exist'));
-                    }
-                })
-                .catch((err) => {
-                    reject(err);
-                })
-        });
-    }
+    // promise_findUserById(id) {
+    //     return new Promise(function (resolve, reject) {
+    //         this.userRepo.promise_getUserById(id)
+    //             .then((user) => {
+    //                 resolve(user);
+    //             })
+    //             .catch((err) => {
+    //                 reject(err);
+    //             })
+    //     });
+    // }
+    //
+    // promise_findUserByEmail(email) {
+    //     return new Promise(function (resolve, reject) {
+    //         this.userRepo.promise_getUserByEmail(email)
+    //             .then((user) => {
+    //                 resolve(user);
+    //             })
+    //             .catch((err) => {
+    //                 reject(err);
+    //             })
+    //     });
+    // }
+    //
+    // promise_findUserByEmailAndDelete(email) {
+    //     return Promise(function (resolve, reject) {
+    //         this.userRepo.promise_getUserByEmail(email)
+    //             .then((user) => {
+    //                 if (user) {
+    //                     resolve(this.userRepo.promise_deleteUser(user));
+    //                 } else {
+    //                     reject(new Error('Id does not exist'));
+    //                 }
+    //             })
+    //             .catch((err) => {
+    //                 reject(err);
+    //             })
+    //     });
+    // }
 
     findUsers(callback) {
         this.userRepo.getUsers(function (users, err) {

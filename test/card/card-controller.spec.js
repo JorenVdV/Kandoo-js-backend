@@ -1,8 +1,6 @@
 /**
  * Created by nick on 13/02/17.
  */
-const config = require('../../_config');
-const mongoose = require('mongoose');
 process.env.NODE_ENV = 'test';
 
 var chai = require('chai');
@@ -13,24 +11,10 @@ var server = require('../../app-test');
 var userService = require('../../services/user-service');
 var themeService = require('../../services/theme-service');
 
+
 chai.use(chaiHttp);
 
 describe('Card Controller tests', function () {
-    before('Open connection to test database', function(done){
-        if(mongoose.connection.readyState === 0){
-            mongoose.connect(config.mongoURI[process.env.NODE_ENV],function(err){
-                if(err){
-                    console.log('Error connecting to the database. ' + err);
-                } else{
-                    console.log('Connected to database: ' + config.mongoURI[process.env.NODE_ENV]);
-                }
-                done();
-            });
-        }else {
-            console.log("Already connected to mongodb://" + mongoose.connection.host + ":" + mongoose.connection.port + "/" + mongoose.connection.name);
-            done();
-        }
-    });
 
     describe('/POST /theme/{themeId}/card', function () {
         let CARDUser_user;
@@ -78,8 +62,4 @@ describe('Card Controller tests', function () {
         });
     });
 
-    after('Closing connection to test database', function(done){
-        mongoose.disconnect();
-        done();
-    });
 });

@@ -12,9 +12,9 @@ config.mongoURI = {
 config.initialUser = new User();
 config.initialUser.firstname = "Puddingtje";
 config.initialUser.lastname = "Puddingske";
-config.initialUser.emailAddress = "pudding@puddingCorp.com";
+config.initialUser.emailAddress = "test@pudding.com";
 config.initialUser.organisation = "Pudding Corp.";
-config.initialUser.password = "Pudding.123!";
+config.initialUser.password = "test";
 
 // config.options = {
 //     user: 'teamjs',

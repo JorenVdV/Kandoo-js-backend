@@ -1,15 +1,11 @@
 /**
  * Created by steve on 2/8/2017.
  */
-const config = require('../../_config');
-const mongoose = require('mongoose');
 process.env.NODE_ENV = 'test';
 
 const chai = require('chai');
 const assert = chai.assert;
 
-const Theme = require('../../models/theme');
-const User = require('../../models/user');
 const sessionService = require('../../services/session-service');
 const cardService = require('../../services/card-service');
 const themeService = require('../../services/theme-service');
@@ -20,21 +16,7 @@ var nodemailer = require('nodemailer');
 var mockTransport = require('../../node_modules/nodemailer-mock-transport/index');
 
 describe('Session service tests -', function () {
-    before('Open connection to test database', function(done){
-        if(mongoose.connection.readyState === 0){
-            mongoose.connect(config.mongoURI[process.env.NODE_ENV],function(err){
-                if(err){
-                    console.log('Error connecting to the database. ' + err);
-                } else{
-                    console.log('Connected to database: ' + config.mongoURI[process.env.NODE_ENV]);
-                }
-                done();
-            });
-        }else {
-            console.log("Already connected to mongodb://" + mongoose.connection.host + ":" + mongoose.connection.port + "/" + mongoose.connection.name);
-            done();
-        }
-    });
+
 
     let testGlobal = {};
     before('setup test user', function(done){
@@ -46,15 +28,22 @@ describe('Session service tests -', function () {
         });
     });
 
+    before('setup test theme', function(done){
+        themeService.addTheme('Test theme', 'test description', ['testTag'], false, testGlobal.testUser, [], function(theme, err){
+            assert.isNotOk(err);
+            assert.isOk(theme);
+            testGlobal.testTheme = theme;
+            done();
+        })
+    });
+
     before('setup test theme and testuser with card in that theme', function () {
-        let testTheme = new Theme();
-        testTheme.title = 'testTheme';
         let testDate = new Date(2017, 8, 2, 16, 20, 0);
         let testDate2 = new Date(2017, 9, 2, 16, 20, 0);
         let card = cardService.addCard("This is a test");
-        testTheme = themeService.addTheme(testTheme, "asf", [], true, testGlobal.testUser);
-        themeService.addCard(testTheme._id, card);
-        testGlobal.testTheme = testTheme;
+        themeService.addCard(testGlobal.testTheme._id, card, function(theme, err){
+
+        });
         testGlobal.testDate = testDate;
         testGlobal.testDate2 = testDate2;
         testGlobal.card = card;
@@ -224,16 +213,19 @@ describe('Session service tests -', function () {
     //
     // });
 
-    after('Remove the test user', function (done) {
-        userService.removeUser(testGlobal.testUser._id, function (succes, err) {
+    after('Remove the test theme', function(done){
+        themeService.removeTheme(testGlobal.testTheme._id, function (success, err) {
             assert.isNotOk(err);
-            assert.isTrue(succes, 'user should have succesfully been deleted');
+            assert.isTrue(success, 'theme should have succesfully been deleted');
             done();
-        })
+        });
     });
 
-    after('Closing connection to test database', function(done){
-        mongoose.disconnect();
-        done();
+    after('Remove the test user', function (done) {
+        userService.removeUser(testGlobal.testUser._id, function (success, err) {
+            assert.isNotOk(err);
+            assert.isTrue(success, 'user should have succesfully been deleted');
+            done();
+        });
     });
 });
