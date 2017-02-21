@@ -4,6 +4,8 @@
 
 const User = require('../models/user');
 const Theme = require('../models/theme');
+const Session = require('../models/session');
+
 const mongoose = require('mongoose');
 const config = require('../_config');
 
@@ -26,6 +28,7 @@ before('Open connection to test database', function (done) {
 before('Clear collections', function (done) {
     User.collection.drop();
     Theme.collection.drop();
+    Session.collection.drop();
     console.log('====== Dropped collections ======');
     done();
 });

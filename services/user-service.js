@@ -35,7 +35,7 @@ class UserService {
     }
 
     findUserById(id, callback) {
-        this.userRepo.getUserById(id, function (user, err) {
+        this.userRepo.readUserById(id, function (user, err) {
             if (err)
                 callback(null, err);
             else
@@ -44,11 +44,20 @@ class UserService {
     }
 
     findUserByEmail(email, callback) {
-        this.userRepo.getUserByEmail(email, function (user, err) {
+        this.userRepo.readUserByEmail(email, function (user, err) {
             if (err)
                 callback(null, err);
             else
                 callback(user);
+        });
+    }
+
+    findUsers(callback) {
+        this.userRepo.readUsers(function (users, err) {
+            if (err)
+                callback(null, err);
+            else
+                callback(users);
         });
     }
 
@@ -91,15 +100,6 @@ class UserService {
     //             })
     //     });
     // }
-
-    findUsers(callback) {
-        this.userRepo.getUsers(function (users, err) {
-            if (err)
-                callback(null, err);
-            else
-                callback(users);
-        });
-    }
 }
 
 module.exports = new UserService();

@@ -8,16 +8,16 @@ var mongoose = require('mongoose');
 var bodyParser = require('body-parser'); //body parser to acces request bodies.
 var app = express();
 
-mongoose.connect(config.mongoURI[app.settings.env], config.options, function(err){
-    if(err){
+mongoose.connect(config.mongoURI[app.settings.env], config.options, function (err) {
+    if (err) {
         console.log('Error connecting to the database. ' + err);
-    } else{
+    } else {
         console.log('Connected to database: ' + config.mongoURI[app.settings.env]);
     }
 });
 
 //CORS
-app.use(function(req,res,next) {
+app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
@@ -43,16 +43,8 @@ server.listen(port, function () {
     console.log("App is running on port " + port);
 });
 
-const userRepo = require('./repositories/user-repository');
-userRepo.getUserByEmail(config.initialUser.emailAddress, function(user, err){
-   if(!user){
-       userRepo.createUser(config.initialUser, function(user,err){
-           if(err){
-               console.error(err);
-           }
-       });
-   }
-});
+//make a user/theme/session on the production server
+require('./init-example');
 
 
 module.exports = app;

@@ -5,7 +5,7 @@ class UserRepository {
         this.userDao = User;
     }
 
-    getUserById(id, callback) {
+    readUserById(id, callback) {
         this.userDao.findOne({'_id': id}, function (err, user) {
             if (err) {
                 callback(null, new Error('Error trying to find user with id: ' + id + ' ' + err));
@@ -18,7 +18,7 @@ class UserRepository {
         });
     }
 
-    getUserByEmail(email, callback) {
+    readUserByEmail(email, callback) {
         this.userDao.findOne({emailAddress: email}, function (err, user) {
             if (err) {
                 callback(null, new Error('Error trying to find user with email: ' + email + ' ' + err));
@@ -49,7 +49,7 @@ class UserRepository {
         });
     }
 
-    getUsers(callback) {
+    readUsers(callback) {
         this.userDao.find({}, function (err, users) {
             if(err){
                 callback(null, err);
