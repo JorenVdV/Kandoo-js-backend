@@ -9,13 +9,6 @@ config.mongoURI = {
     test: 'mongodb://teamjs:team.js@146.185.153.213:27017/teamjs_test'
 };
 
-config.initialUser = new User();
-config.initialUser.firstname = "Puddingtje";
-config.initialUser.lastname = "Puddingske";
-config.initialUser.emailAddress = "test@pudding.com";
-config.initialUser.organisation = "Pudding Corp.";
-config.initialUser.password = "test";
-
 // config.options = {
 //     user: 'teamjs',
 //     pass: 'team.js'

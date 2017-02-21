@@ -5,9 +5,16 @@ const userRepo = require('./repositories/user-repository');
 const themeService = require('./services/theme-service');
 const sessionService = require('./services/session-service');
 
-userRepo.readUserByEmail(config.initialUser.emailAddress, function (user, err) {
+let initialUser = new User();
+initialUser.firstname = "Puddingtje";
+initialUser.lastname = "Puddingske";
+initialUser.emailAddress = "test@pudding.com";
+initialUser.organisation = "Pudding Corp.";
+initialUser.password = "test";
+
+userRepo.readUserByEmail(initialUser.emailAddress, function (user, err) {
     if (!user) {
-        userRepo.createUser(config.initialUser, function (user, err) {
+        userRepo.createUser(initialUser, function (user, err) {
             if (err) {
                 console.error(err);
             } else {
