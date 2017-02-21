@@ -4,6 +4,7 @@
 const userRepo = require('./repositories/user-repository');
 const themeService = require('./services/theme-service');
 const sessionService = require('./services/session-service');
+const User = require("./models/user");
 
 let initialUser = new User();
 initialUser.firstname = "Puddingtje";

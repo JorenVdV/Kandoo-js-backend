@@ -1,7 +1,6 @@
 /**
  * Created by steve on 2/6/2017.
  */
-const User = require("./models/user");
 let config = {};
 
 config.mongoURI = {
