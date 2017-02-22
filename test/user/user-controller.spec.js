@@ -14,7 +14,6 @@ const userService = require('../../services/user-service');
 
 chai.use(chaiHttp);
 
-require('../global');
 
 describe('User Controller tests', function () {
     // before('Open connection to test database', function (done) {

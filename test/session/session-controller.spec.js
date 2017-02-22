@@ -13,7 +13,6 @@ var userService = require('../../services/user-service');
 var cardService = require('../../services/card-service');
 var sessionService = require('../../services/session-service');
 
-require('../global');
 chai.use(chaiHttp);
 
 describe('Session Controller tests', function () {
