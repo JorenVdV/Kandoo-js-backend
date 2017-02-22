@@ -14,7 +14,7 @@ class SessionRepository {
                 callback(null, new Error('Error whilst creating session'));
             else
                 callback(session);
-        })
+        });
     }
 
     readSessionById(id, callback) {
@@ -44,13 +44,23 @@ class SessionRepository {
         });
     }
 
-    updateSession(session, callback) {
-        session.save(function (err) {
+    // updateSession(session, callback) {
+    //     session.save(function (err) {
+    //         if (err)
+    //             callback(null, new Error('Error whilst updating session with id: ' + session._id));
+    //         else
+    //             callback(session);
+    //     });
+    // }
+
+    updateSession(sessionId, toUpdate, callback) {
+        this.sessionDao.findOneAndUpdate({_id: sessionId}, toUpdate, function (err) {
             if (err)
-                callback(null, new Error('Error whilst updating session with id: ' + session._id));
-            else
-                callback(session);
-        });
+                callback(false, err);
+            else {
+                callback(true);
+            }
+        })
     }
 
     deleteSession(id, callback) {

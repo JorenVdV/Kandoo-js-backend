@@ -7,26 +7,38 @@
 // const assert = chai.assert;
 //
 // const sessionService = require('../../services/session-service');
-// const cardService = require('../../services/card-service');
+// // const cardService = require('../../services/card-service');
 // const themeService = require('../../services/theme-service');
 // const userService = require('../../services/user-service');
 //
-// var nodemailer = require('nodemailer');
-// var mockTransport = require('../../node_modules/nodemailer-mock-transport/index');
+// // require('../global');
+// // var nodemailer = require('nodemailer');
+// // var mockTransport = require('../../node_modules/nodemailer-mock-transport/index');
 //
 // describe('Session service tests -', function () {
 //     let testGlobal = {};
+//     let testUser;
 //     before('setup test user', function (done) {
-//         userService.createUser('test', 'Testi', 'test.Testi@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123', function (user, err) {
+//         console.log('entering before setup test user');
+//         userService.createUser("User1", "Test", "user1.test@teamjs.xyz", "TeamJS", "pwd", function (user, err) {
+//             console.log(user);
+//             console.log(err);
 //             assert.isNotOk(err);
 //             assert.isOk(user);
-//             testGlobal.testUser = user;
+//             // testGlobal.testUser = user;
+//             testUser = user;
 //             done();
 //         });
+//         // userService.createUser('test', 'Testi', 'test.Testi@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123', function (user, err) {
+//         //     assert.isNotOk(err);
+//         //     assert.isOk(user);
+//         //     testGlobal.testUser = user;
+//         //     done();
+//         // });
 //     });
 //
 //     before('setup test theme', function (done) {
-//         themeService.addTheme('Test theme', 'test description', ['testTag'], false, testGlobal.testUser, [], function (theme, err) {
+//         themeService.addTheme('Test theme', 'test description', ['testTag'], false, testUser, [], function (theme, err) {
 //             assert.isNotOk(err);
 //             assert.isOk(theme);
 //             testGlobal.testTheme = theme;
@@ -37,13 +49,13 @@
 //     before('setup test theme and testuser with card in that theme', function () {
 //         let testDate = new Date(2017, 8, 2, 16, 20, 0);
 //         let testDateInPast = new Date(2016, 9, 2, 16, 20, 0);
-//         let card = cardService.addCard("This is a test");
-//         themeService.addCard(testGlobal.testTheme._id, card, function (theme, err) {
-//
-//         });
+//         // let card = cardService.addCard("This is a test");
+//         // themeService.addCard(testGlobal.testTheme._id, card, function (theme, err) {
+//         //
+//         // });
 //         testGlobal.testDate = testDate;
 //         testGlobal.testDateInPast = testDateInPast;
-//         testGlobal.card = card;
+//         // testGlobal.card = card;
 //     });
 //
 //     describe('Creating a session:', function () {
@@ -51,8 +63,8 @@
 //         it('Create a session on a theme', function (done) {
 //             //title, description, circleType, roundDuration, cardsPerParticipant,cards, canReview, canAddCards, theme, creator, startDate = null)
 //             let callback = function (session, err) {
-//                 console.log('Inside callback - create session');
-//                 console.log(session);
+//                 // console.log('Inside callback - create session');
+//                 // console.log(session);
 //                 assert.isNotOk(err);
 //                 assert.isOk(session);
 //
@@ -74,6 +86,7 @@
 //                 assert(sessionDate.getFullYear() === 2017 && sessionDate.getMonth() === 8
 //                     && sessionDate.getDate() === 2 && sessionDate.getHours() === 16
 //                     && sessionDate.getMinutes() === 20 && sessionDate.getSeconds() === 0, 'session should start at 2-8-2017 16:20:00');
+//
 //                 assert.equal(session.theme._id, testGlobal.testTheme._id);
 //                 assert.equal(session.creator, testGlobal.testUser._id);
 //
@@ -87,8 +100,11 @@
 //                     done();
 //                 });
 //             };
+//             console.log('before calling service');
+//             // title, description, circleType, cardsPerParticipant, cards, canReviewCards, canAddCards,
+//             //     participants, themeId, creator, callback, startDate = null, amountOfCircles = 5, turnDuration = 60000
 //             sessionService.createSession('Test session', 'test session creation', 'opportunity', {min: 3, max: 5}, [],
-//                 true, false, [testGlobal.testUser], testGlobal.testTheme, testGlobal.testUser, callback, testGlobal.testDate);
+//                 true, false, [testUser], testGlobal.testTheme, testUser, callback, testGlobal.testDate);
 //         });
 //
 //         it('Create a session on a theme - no startDate', function (done) {
@@ -173,155 +189,155 @@
 //         });
 //
 //     });
-//
-//     describe('Get all sessions of a theme:', function () {
-//
-//         it('no existing sessions', function(done){
-//             sessionService.getSessions(testGlobal.testTheme._id, function(sessions,err){
-//                 assert.isNotOk(err);
-//                 assert.isOk(sessions);
-//
-//                 assert.isArray(sessions);
-//                 assert.strictEqual(sessions.length, 0);
-//
-//                 done();
-//             });
-//         });
-//
-//         describe('a single existing session', function(){
-//             let GETSessions_session;
-//
-//             before('Create a session', function (done) {
-//                 let callback = function (session, err) {
-//                     assert.isNotOk(err);
-//                     assert.isOk(session);
-//
-//                     GETSessions_session = session;
-//                     done();
-//                 };
-//                 sessionService.createSession('Test session', 'test session creation', 'opportunity', {min: 3, max: 5}, [],
-//                     true, false, [testGlobal.testUser], testGlobal.testTheme, testGlobal.testUser, callback, testGlobal.testDate);
-//             });
-//
-//             it('Retrieve all sessions', function (done) {
-//                 sessionService.getSessions(testGlobal.testTheme._id, function(sessions,err){
-//                     assert.isNotOk(err);
-//                     assert.isOk(sessions);
-//
-//                     assert.isArray(sessions);
-//                     assert.strictEqual(sessions.length, 1);
-//                     assert.strictEqual(sessions[0]._id.toString(), GETSessions_session._id.toString());
-//
-//                     done();
-//                 });
-//             });
-//
-//             after('Remove the session', function (done) {
-//                 sessionService.deleteSession(GETSessions_session._id, function (success, err) {
-//                     assert.isNotOk(err);
-//                     assert.isTrue(success);
-//
-//                     done();
-//                 });
-//             });
-//         });
-//
-//         describe('two existing sessions', function(){
-//             let GETSessions_session1;
-//             let GETSessions_session2;
-//
-//             before('Create a session', function (done) {
-//                 let callback = function (session, err) {
-//                     assert.isNotOk(err);
-//                     assert.isOk(session);
-//
-//                     GETSessions_session1 = session;
-//                     done();
-//                 };
-//                 sessionService.createSession('Test session', 'test session creation', 'opportunity', {min: 3, max: 5}, [],
-//                     true, false, [testGlobal.testUser], testGlobal.testTheme, testGlobal.testUser, callback, testGlobal.testDate);
-//             });
-//
-//             before('Create another session', function (done) {
-//                 let callback = function (session, err) {
-//                     assert.isNotOk(err);
-//                     assert.isOk(session);
-//
-//                     GETSessions_session2 = session;
-//                     done();
-//                 };
-//                 sessionService.createSession('Test session', 'test session creation', 'opportunity', {min: 3, max: 5}, [],
-//                     true, false, [testGlobal.testUser], testGlobal.testTheme, testGlobal.testUser, callback, testGlobal.testDate);
-//             });
-//
-//             it('Retrieve all sessions', function (done) {
-//                 sessionService.getSessions(testGlobal.testTheme._id, function(sessions,err){
-//                     assert.isNotOk(err);
-//                     assert.isOk(sessions);
-//
-//                     assert.isArray(sessions);
-//                     assert.strictEqual(sessions.length, 2);
-//                     assert.strictEqual(sessions[0]._id.toString(), GETSessions_session1._id.toString());
-//                     assert.strictEqual(sessions[1]._id.toString(), GETSessions_session2._id.toString());
-//
-//                     done();
-//                 });
-//             });
-//
-//             after('Remove the first session', function (done) {
-//                 sessionService.deleteSession(GETSessions_session1._id, function (success, err) {
-//                     assert.isNotOk(err);
-//                     assert.isTrue(success);
-//
-//                     done();
-//                 });
-//             });
-//
-//             after('Remove the second session', function (done) {
-//                 sessionService.deleteSession(GETSessions_session2._id, function (success, err) {
-//                     assert.isNotOk(err);
-//                     assert.isTrue(success);
-//
-//                     done();
-//                 });
-//             });
-//         });
-//     });
-//
-//     describe('Remove a session', function(){
-//         let REMOVESession_session;
-//
-//         before('Create a session', function (done) {
-//             let callback = function (session, err) {
-//                 assert.isNotOk(err);
-//                 assert.isOk(session);
-//
-//                 REMOVESession_session = session;
-//                 done();
-//             };
-//             sessionService.createSession('Test session', 'test session creation', 'opportunity', {min: 3, max: 5}, [],
-//                 true, false, [testGlobal.testUser], testGlobal.testTheme, testGlobal.testUser, callback, testGlobal.testDate);
-//         });
-//
-//         it('Remove the session', function(done){
-//             sessionService.deleteSession(REMOVESession_session._id, function (success, err) {
-//                 assert.isNotOk(err);
-//                 assert.isTrue(success);
-//
-//                 done();
-//             });
-//         });
-//
-//         it('Remove a non existing session', function(done){
-//             sessionService.deleteSession('00aa0aa000a000000a0000aa', function (success, err) {
-//                 assert.isOk(err);
-//                 assert.isFalse(success);
-//
-//                 assert.strictEqual(err.message, 'Unable to find session with id ' + '00aa0aa000a000000a0000aa');
-//                 done();
-//             });
-//         })
-//     });
+//     //
+//     // describe('Get all sessions of a theme:', function () {
+//     //
+//     //     it('no existing sessions', function(done){
+//     //         sessionService.getSessions(testGlobal.testTheme._id, function(sessions,err){
+//     //             assert.isNotOk(err);
+//     //             assert.isOk(sessions);
+//     //
+//     //             assert.isArray(sessions);
+//     //             assert.strictEqual(sessions.length, 0);
+//     //
+//     //             done();
+//     //         });
+//     //     });
+//     //
+//     //     describe('a single existing session', function(){
+//     //         let GETSessions_session;
+//     //
+//     //         before('Create a session', function (done) {
+//     //             let callback = function (session, err) {
+//     //                 assert.isNotOk(err);
+//     //                 assert.isOk(session);
+//     //
+//     //                 GETSessions_session = session;
+//     //                 done();
+//     //             };
+//     //             sessionService.createSession('Test session', 'test session creation', 'opportunity', {min: 3, max: 5}, [],
+//     //                 true, false, [testGlobal.testUser], testGlobal.testTheme, testGlobal.testUser, callback, testGlobal.testDate);
+//     //         });
+//     //
+//     //         it('Retrieve all sessions', function (done) {
+//     //             sessionService.getSessions(testGlobal.testTheme._id, function(sessions,err){
+//     //                 assert.isNotOk(err);
+//     //                 assert.isOk(sessions);
+//     //
+//     //                 assert.isArray(sessions);
+//     //                 assert.strictEqual(sessions.length, 1);
+//     //                 assert.strictEqual(sessions[0]._id.toString(), GETSessions_session._id.toString());
+//     //
+//     //                 done();
+//     //             });
+//     //         });
+//     //
+//     //         after('Remove the session', function (done) {
+//     //             sessionService.deleteSession(GETSessions_session._id, function (success, err) {
+//     //                 assert.isNotOk(err);
+//     //                 assert.isTrue(success);
+//     //
+//     //                 done();
+//     //             });
+//     //         });
+//     //     });
+//     //
+//     //     describe('two existing sessions', function(){
+//     //         let GETSessions_session1;
+//     //         let GETSessions_session2;
+//     //
+//     //         before('Create a session', function (done) {
+//     //             let callback = function (session, err) {
+//     //                 assert.isNotOk(err);
+//     //                 assert.isOk(session);
+//     //
+//     //                 GETSessions_session1 = session;
+//     //                 done();
+//     //             };
+//     //             sessionService.createSession('Test session', 'test session creation', 'opportunity', {min: 3, max: 5}, [],
+//     //                 true, false, [testGlobal.testUser], testGlobal.testTheme, testGlobal.testUser, callback, testGlobal.testDate);
+//     //         });
+//     //
+//     //         before('Create another session', function (done) {
+//     //             let callback = function (session, err) {
+//     //                 assert.isNotOk(err);
+//     //                 assert.isOk(session);
+//     //
+//     //                 GETSessions_session2 = session;
+//     //                 done();
+//     //             };
+//     //             sessionService.createSession('Test session', 'test session creation', 'opportunity', {min: 3, max: 5}, [],
+//     //                 true, false, [testGlobal.testUser], testGlobal.testTheme, testGlobal.testUser, callback, testGlobal.testDate);
+//     //         });
+//     //
+//     //         it('Retrieve all sessions', function (done) {
+//     //             sessionService.getSessions(testGlobal.testTheme._id, function(sessions,err){
+//     //                 assert.isNotOk(err);
+//     //                 assert.isOk(sessions);
+//     //
+//     //                 assert.isArray(sessions);
+//     //                 assert.strictEqual(sessions.length, 2);
+//     //                 assert.strictEqual(sessions[0]._id.toString(), GETSessions_session1._id.toString());
+//     //                 assert.strictEqual(sessions[1]._id.toString(), GETSessions_session2._id.toString());
+//     //
+//     //                 done();
+//     //             });
+//     //         });
+//     //
+//     //         after('Remove the first session', function (done) {
+//     //             sessionService.deleteSession(GETSessions_session1._id, function (success, err) {
+//     //                 assert.isNotOk(err);
+//     //                 assert.isTrue(success);
+//     //
+//     //                 done();
+//     //             });
+//     //         });
+//     //
+//     //         after('Remove the second session', function (done) {
+//     //             sessionService.deleteSession(GETSessions_session2._id, function (success, err) {
+//     //                 assert.isNotOk(err);
+//     //                 assert.isTrue(success);
+//     //
+//     //                 done();
+//     //             });
+//     //         });
+//     //     });
+//     // });
+//     //
+//     // describe('Remove a session', function(){
+//     //     let REMOVESession_session;
+//     //
+//     //     before('Create a session', function (done) {
+//     //         let callback = function (session, err) {
+//     //             assert.isNotOk(err);
+//     //             assert.isOk(session);
+//     //
+//     //             REMOVESession_session = session;
+//     //             done();
+//     //         };
+//     //         sessionService.createSession('Test session', 'test session creation', 'opportunity', {min: 3, max: 5}, [],
+//     //             true, false, [testGlobal.testUser], testGlobal.testTheme, testGlobal.testUser, callback, testGlobal.testDate);
+//     //     });
+//     //
+//     //     it('Remove the session', function(done){
+//     //         sessionService.deleteSession(REMOVESession_session._id, function (success, err) {
+//     //             assert.isNotOk(err);
+//     //             assert.isTrue(success);
+//     //
+//     //             done();
+//     //         });
+//     //     });
+//     //
+//     //     it('Remove a non existing session', function(done){
+//     //         sessionService.deleteSession('00aa0aa000a000000a0000aa', function (success, err) {
+//     //             assert.isOk(err);
+//     //             assert.isFalse(success);
+//     //
+//     //             assert.strictEqual(err.message, 'Unable to find session with id ' + '00aa0aa000a000000a0000aa');
+//     //             done();
+//     //         });
+//     //     })
+//     // });
 //
 //     //TODO turn
 //     console.error('#####################################');
@@ -396,7 +412,6 @@
 //     //         });
 //     //     })
 //     // });
-//
 //
 //     // describe('play a turn', function () {
 //     //     it('should add a turn to the session with a card and it\'s priority', function (done) {

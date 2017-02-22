@@ -9,7 +9,8 @@ class SessionService {
         this.userService = require('../services/user-service');
     }
 
-    createSession(title, description, circleType, cardsPerParticipant, cards, canReviewCards, canAddCards, participants, themeId, creator, callback, startDate = null, amountOfCircles = 5, turnDuration = 60000) {
+    createSession(title, description, circleType, minCardsPerParticipant, maxCardsPerParticipant, cards, canReviewCards, canAddCards,
+                  participants, themeId, creator, startDate, amountOfCircles, turnDuration, callback) {
         if (circleType != 'opportunity' && circleType != 'threat')
             callback(null, new Error('Invalid circle type. Circle type should be "opportunity" or "threat".'));
         else {
@@ -17,9 +18,10 @@ class SessionService {
             session.title = title;
             session.description = description;
             session.circleType = circleType;
-            session.turnDuration = turnDuration;
-            session.cardsPerParticipant = cardsPerParticipant;
-            session.amountOfCircles = amountOfCircles;
+            session.turnDuration = turnDuration ? turnDuration : 60000;
+            session.minCardsPerParticipant = minCardsPerParticipant;
+            session.maxCardsPerParticipant = maxCardsPerParticipant;
+            session.amountOfCircles = amountOfCircles ? amountOfCircles : 5;
             session.cards = cards;
             session.cardsCanBeReviewed = canReviewCards;
             session.cardsCanBeAdded = canAddCards;
@@ -27,11 +29,9 @@ class SessionService {
             session.creator = creator._id;
             session.participants = participants;
             session.rounds = [];
-            if (startDate)
-                session.startDate = startDate;
+            session.startDate = startDate;
 
             this.sessionRepo.createSession(session, function (session, err) {
-                console.log("woohoo created a session through sessionrepo");
                 if (err)
                     callback(null, err);
                 else
@@ -53,7 +53,7 @@ class SessionService {
     getSessions(themeId, callback) {
         this.sessionRepo.readSessions(themeId, function (sessions, err) {
             if (err)
-                callback(null,err);
+                callback(null, err);
             else callback(sessions);
         });
     }
@@ -63,7 +63,7 @@ class SessionService {
             if (!success && err)
                 callback(success, err);
             else if (err) {
-                callback(succes, err);
+                callback(success, err);
             } else
                 callback(success);
         });
@@ -71,13 +71,32 @@ class SessionService {
     }
 
     startSession(sessionId, callback) {
-        let date = new Date();
-        let session = this.getSession(sessionId);
-        if (!session.startDate) {
-            session.startDate = date;
-            this.sessionRepo.updateSession(session)
-        }
-        return session.startDate;
+        this.getSession(sessionId, function (session, err, sessionRepo) {
+            if (err)
+                callback(false, err);
+            if (!session.startDate || session.startDate >= new Date()) {
+                session.startDate = new Date();
+                sessionRepo.updateSession(session,
+                    (success, err) => {
+                        if (err) {
+                            callback(false, err);
+                        } else {
+                            callback(true, err);
+                        }
+                    });
+            }
+        });
+
+        this.sessionRepo.updateSession(sessionId)
+    }
+
+    changeSession(sessionId, toUpdate, callback) {
+        this.sessionRepo.updateSession(sessionId, toUpdate,
+            (success, err) => {
+                if (err)
+                    callback(success, err);
+                else callback(success);
+            })
     }
 
     stopSession(sessionId, callback) {

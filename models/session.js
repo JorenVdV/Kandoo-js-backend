@@ -9,10 +9,8 @@ var SessionSchema = new Schema({
     description: String,
     circleType: String,
     turnDuration: Number,
-    cardsPerParticipant: {
-        min: Number,
-        max: Number
-    },
+    minCardsPerParticipant : Number,
+    maxCardsPerParticipant : Number,
     amountOfCircles: Number,
     sessionCards: [{type: Schema.ObjectId, ref: 'Card'}],
     cardsCanBeReviewed: Boolean,
