@@ -31,6 +31,7 @@ class SessionService {
                 session.startDate = startDate;
 
             this.sessionRepo.createSession(session, function (session, err) {
+                console.log("woohoo created a session through sessionrepo");
                 if (err)
                     callback(null, err);
                 else

@@ -13,6 +13,7 @@ const userService = require('../../services/user-service');
 
 var nodemailer = require('nodemailer');
 var mockTransport = require('../../node_modules/nodemailer-mock-transport/index');
+require('../global');
 
 describe('Session service tests -', function () {
     let testGlobal = {};
@@ -36,13 +37,13 @@ describe('Session service tests -', function () {
 
     before('setup test theme and testuser with card in that theme', function () {
         let testDate = new Date(2017, 8, 2, 16, 20, 0);
-        let testDate2 = new Date(2017, 9, 2, 16, 20, 0);
+        let testDateInPast = new Date(2016, 9, 2, 16, 20, 0);
         let card = cardService.addCard("This is a test");
         themeService.addCard(testGlobal.testTheme._id, card, function (theme, err) {
 
         });
         testGlobal.testDate = testDate;
-        testGlobal.testDate2 = testDate2;
+        testGlobal.testDateInPast = testDateInPast;
         testGlobal.card = card;
     });
 
@@ -51,6 +52,8 @@ describe('Session service tests -', function () {
         it('Create a session on a theme', function (done) {
             //title, description, circleType, roundDuration, cardsPerParticipant,cards, canReview, canAddCards, theme, creator, startDate = null)
             let callback = function (session, err) {
+                console.log('Inside callback - create session');
+                console.log(session);
                 assert.isNotOk(err);
                 assert.isOk(session);
 
@@ -78,6 +81,7 @@ describe('Session service tests -', function () {
                 assert.strictEqual(session.amountOfCircles, 5);
 
                 sessionService.deleteSession(session._id, function (success, err) {
+                    console.log('Inside callback - remove session again');
                     assert.isNotOk(err);
                     assert.isTrue(success);
 
@@ -126,13 +130,13 @@ describe('Session service tests -', function () {
     });
 
     describe('Get a session:', function () {
-        let GETSession_session;
+        let get_session;
         before('Create a session to retrieve', function (done) {
             let callback = function (session, err) {
                 assert.isNotOk(err);
                 assert.isOk(session);
 
-                GETSession_session = session;
+                get_session = session;
                 done();
             };
             sessionService.createSession('Test session', 'test session creation', 'opportunity', {min: 3, max: 5}, [],
@@ -150,18 +154,18 @@ describe('Session service tests -', function () {
         });
 
         it('Retrieve an existing session', function (done) {
-            sessionService.getSession(GETSession_session._id, function (session, err) {
+            sessionService.getSession(get_session._id, function (session, err) {
                 assert.isNotOk(err);
                 assert.isOk(session);
 
-                assert.strictEqual(session._id.toString(), GETSession_session._id.toString());
-                assert.strictEqual(session.title, GETSession_session.title);
+                assert.strictEqual(session._id.toString(), get_session._id.toString());
+                assert.strictEqual(session.title, get_session.title);
                 done();
             });
         });
 
         after('Remove the session', function (done) {
-            sessionService.deleteSession(GETSession_session._id, function (success, err) {
+            sessionService.deleteSession(get_session._id, function (success, err) {
                 assert.isNotOk(err);
                 assert.isTrue(success);
 
@@ -320,50 +324,81 @@ describe('Session service tests -', function () {
         })
     });
 
-    //TODO fix start a session  & turn
+    //TODO turn
     console.error('#####################################');
     console.error('# TODO: fix start a session  & turn #');
     console.error('#####################################');
-    // describe('Start a session:', function () {
-    //     it('start a session instance as an organiser', function (done) {
-    //         let session = sessionService
-    //             .createSession('testSession', 'testing the creation of a session', 'blue',
-    //                 60000, {min: 3, max: 10}, [], false, false, [testGlobal.testUser],
-    //                 testGlobal.testTheme, testGlobal.testUser);
-    //         var beforeDate = new Date();
-    //         sessionService.startSession(session._id);
-    //         assert(session.startDate !== null, 'startdate of the session should been set');
-    //         sessionService.deleteSession(session._id);
-    //         assert(session.startDate !== null, 'startdate of the session should been set');
-    //         // assert(session.startDate <= beforeDate, 'startdate of the session should been set');
-    //         // assert(session.startDate >= new Date(), 'startdate of the session should been set');
-    //         done();
+    // describe('Start a session', function(){
+    //     describe('Start a session immediately', function () {
+    //         let start_session;
+    //         before('Create a session', function (done) {
+    //             let callback = function (session, err) {
+    //                 assert.isNotOk(err);
+    //                 assert.isOk(session);
+    //
+    //                 start_session = session;
+    //                 done();
+    //             };
+    //             sessionService.createSession('Test session', 'test session creation', 'opportunity', {min: 3, max: 5}, [],
+    //                 true, false, [testGlobal.testUser], testGlobal.testTheme, testGlobal.testUser, callback);
+    //         });
+    //
+    //         it('start a session instance as an organiser', function (done) {
+    //             sessionService.startSession(start_session._id, function(success, err){
+    //                 assert.isNotOk(err);
+    //                 assert.isTrue(success);
+    //                 done();
+    //             });
+    //         });
+    //
+    //         after('Remove the session', function (done) {
+    //             sessionService.deleteSession(get_session._id, function (success, err) {
+    //                 assert.isNotOk(err);
+    //                 assert.isTrue(success);
+    //
+    //                 done();
+    //             });
+    //         });
     //     });
     //
-    //     it('start a session on an specific date as an organiser', function (done) {
-    //         session = sessionService
-    //             .createSession('testSession', 'testing the creation of a session', 'blue',
-    //                 60000, {min: 3, max: 10}, [], false, false, [testGlobal.testUser],
-    //                 testGlobal.testTheme, testGlobal.testUser);
-    //         sessionService.startSession(session._id, testGlobal.testDate);
-    //         assert(session.startDate === testGlobal.testDate, 'startdate of the session should been set');
-    //         sessionService.deleteSession(session._id);
-    //         done();
-    //     });
+    //     describe('A session can not be started if it already is started', function(){
+    //         let start_session;
+    //         before('Create a session', function (done) {
+    //             let callback = function (session, err) {
+    //                 assert.isNotOk(err);
+    //                 assert.isOk(session);
     //
-    //     it('a session can not be started if it already is started', function (done) {
-    //         let session = sessionService
-    //             .createSession('testSession', 'testing the creation of a session', 'blue',
-    //                 60000, {min: 3, max: 10}, [], false, false, [testGlobal.testUser],
-    //                 testGlobal.testTheme, testGlobal.testUser);
-    //         sessionService.startSession(session._id, testGlobal.testDate);
-    //         assert.strictEqual(session.startDate, testGlobal.testDate, 'startdate should be equals tot testdate1');
-    //         sessionService.startSession(session._id, testGlobal.testDate2);
-    //         assert.strictEqual(session.startDate, testGlobal.testDate, 'startdate should be equals tot testdate');
-    //         done();
+    //                 assert.isTrue(session.startDate <= Date.now());
+    //
+    //                 start_session = session;
+    //                 done();
+    //             };
+    //             sessionService.createSession('Test session', 'test session creation', 'opportunity', {min: 3, max: 5}, [],
+    //                 true, false, [testGlobal.testUser], testGlobal.testTheme, testGlobal.testUser, callback, testGlobal.testDateInPast);
+    //         });
+    //
+    //         it('a session can not be started if it already is started', function (done) {
+    //             sessionService.startSession(session._id, testGlobal.testDate, function(success, err){
+    //                 assert.isOk(err);
+    //                 assert.isFalse(success);
+    //
+    //                 assert.strictEqual(err.message, 'Unable to start a session that has already started');
+    //                 done();
+    //             });
+    //         });
+    //
+    //         after('Remove the session', function (done) {
+    //             sessionService.deleteSession(get_session._id, function (success, err) {
+    //                 assert.isNotOk(err);
+    //                 assert.isTrue(success);
+    //
+    //                 done();
+    //             });
+    //         });
     //     })
     // });
-    //
+
+
     // describe('play a turn', function () {
     //     it('should add a turn to the session with a card and it\'s priority', function (done) {
     //

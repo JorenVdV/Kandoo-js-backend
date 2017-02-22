@@ -8,6 +8,7 @@ const Session = require('../models/session');
 
 const mongoose = require('mongoose');
 const config = require('../_config');
+//mongodb://localhost:27021/testTesten
 
 before('Open connection to test database', function (done) {
     if (mongoose.connection.readyState === 0) {
@@ -26,11 +27,39 @@ before('Open connection to test database', function (done) {
 });
 
 before('Clear collections', function (done) {
-    User.collection.drop();
-    Theme.collection.drop();
-    Session.collection.drop();
-    console.log('====== Dropped collections ======');
-    done();
+    User.remove({}, function (err, writeOpResult) {
+        if (err)
+            console.log("error clearing users: " + err);
+        else {
+            console.log('users cleared: ');
+            console.log(writeOpResult.result);
+        }
+        done();
+    });
+});
+
+before('Clear themes', function (done) {
+    Theme.remove({}, function (err, writeOpResult) {
+        if (err)
+            console.log("error clearing themes: " + err);
+        else {
+            console.log('themes cleared: ');
+            console.log(writeOpResult.result);
+        }
+        done();
+    });
+});
+
+before('Clear sessions', function (done) {
+    Session.remove({}, function (err, writeOpResult) {
+        if (err)
+            console.log("error clearing sessions: " + err);
+        else {
+            console.log('sessions cleared: ');
+            console.log(writeOpResult.result);
+        }
+        done();
+    });
 });
 
 after('Closing connection to test database', function (done) {

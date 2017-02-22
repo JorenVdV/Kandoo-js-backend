@@ -8,6 +8,8 @@ var themeService = require('../../services/theme-service');
 var cardService = require('../../services/card-service');
 var userService = require('../../services/user-service');
 
+require('../global');
+
 describe("theme service tests", function () {
     let user1;
     let user2;
