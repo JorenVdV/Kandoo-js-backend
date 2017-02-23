@@ -7,7 +7,6 @@ class UserService {
     }
 
     createUser(firstname, lastname, emailAddress, organisation, password, callback) {
-        console.log('userservice - createuser');
         let newUser = new User();
         newUser.firstname = firstname;
         newUser.lastname = lastname;
@@ -16,7 +15,6 @@ class UserService {
         newUser.password = password;
 
         this.userRepo.createUser(newUser, function (user, err) {
-            console.log('userservice - createuser - callback func of repo create');
             if (err) {
                 callback(null, err);
             } else {
@@ -25,14 +23,12 @@ class UserService {
         });
     }
 
-    removeUser(id, callback1) {
+    removeUser(id, callback) {
         this.userRepo.deleteUser(id, function (succes, err) {
-            if (!succes && err)
-                callback1(succes, err);
-            else if (err) {
-                callback1(err);
-            } else
-                callback1(succes);
+            if (err)
+                callback(succes, err);
+            else
+                callback(succes);
         });
     }
 

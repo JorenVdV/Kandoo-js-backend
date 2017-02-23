@@ -34,10 +34,11 @@ var port = process.env.PORT || 8000;
 app.use(express.static(path.join(__dirname)));
 
 
-require("./routes")(app);
+// require("./routes")(app);
 require("./routes/user-routes")(app);
 require("./routes/session-routes")(app);
 require("./routes/theme-routes")(app);
+require("./routes/card-routes")(app);
 
 server.listen(port, function () {
     console.log("App is running on port " + port);

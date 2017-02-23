@@ -5,22 +5,57 @@ const Card = require('../models/card');
 
 class CardRepository {
     constructor() {
-        this.cardDao = [];
+        this.cardDao = Card;
 
     }
 
-    createCard(description) {
-        let card = new Card();
-        card.description = description;
-
-        this.cardDao.push(card);
-
-        return card;
+    createCard(card, callback) {
+        card.save((err) => {
+            if (err)
+                callback(null, new Error('Error whilst creating card'));
+            else
+                callback(card);
+        });
     }
 
-    readCardById(id) {
+    readCardById(id, callback) {
+        this.cardDao.findOne({_id: id}, (err, card) => {
+            if (err) {
+                callback(null, err);
+            } else {
+                if (card) {
+                    callback(card);
+                } else {
+                    callback(null, new Error('Unable to find card with id ' + id));
+                }
+            }
+        });
+    }
 
-        return this.cardDao.find(card => card._id == id) ;
+    readCardsByTheme(themeId, callback) {
+        this.cardDao.find({theme: themeId}, (err, cards) => {
+            if (err) {
+                callback(null, err);
+            } else {
+                let cardsArray = [];
+                cards.forEach((card) => cardsArray.push(card));
+                callback(cards);
+            }
+        });
+    }
+
+    deleteCard(cardId, callback) {
+        this.cardDao.remove({_id: cardId}, (err, affected) => {
+           if(err){
+               callback(false, err);
+           } else {
+               if(affected.result.n === 1){
+                   callback(true)
+               } else if(affected.result.n === 0){
+                   callback(false, new Error('Unable to find card with id ' + cardId));
+               }
+           }
+        });
     }
 }
 

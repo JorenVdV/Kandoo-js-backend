@@ -1,7 +1,6 @@
 /**
  * Created by steve on 2/10/2017.
  */
-const config = require('../../_config');
 const mongoose = require('mongoose');
 process.env.NODE_ENV = 'test';
 

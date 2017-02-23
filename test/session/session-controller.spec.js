@@ -10,7 +10,6 @@ var should = chai.should();
 var server = require('../../app-test');
 var themeService = require('../../services/theme-service');
 var userService = require('../../services/user-service');
-var cardService = require('../../services/card-service');
 var sessionService = require('../../services/session-service');
 
 
@@ -281,16 +280,9 @@ describe('Session Controller tests', function () {
                         res.should.have.status(200);
                         res.body.should.have.property('sessions');
                         let resSessionsIds = res.body.sessions.map(session => session._id);
-                        console.log(resSessionsIds.map(session => session._id));
+
                         assert.isTrue(resSessionsIds.includes(GETSessions_session1._id.toString()));
                         assert.isTrue(resSessionsIds.includes(GETSessions_session2._id.toString()));
-                        // assert.equal(resSessions[0]._id, GETSessions_session1._id);
-                        // assert.equal(resSessions[0].creator, globalTestUser._id);
-                        // assert.strictEqual(resSessions[0].title, 'Welke pudding eten we deze week?');
-                        //
-                        // assert.equal(resSessions[1]._id, GETSessions_session2._id);
-                        // assert.equal(resSessions[1].creator, globalTestUser._id);
-                        // assert.strictEqual(resSessions[1].title, 'Welke pudding eten we volgende week?');
                         done();
                     });
             });

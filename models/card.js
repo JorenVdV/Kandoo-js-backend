@@ -6,6 +6,7 @@ var Schema = mongoose.Schema;
 
 var CardSchema = new Schema({
     description: String,
+    theme: {type: Schema.ObjectId, ref: 'Theme'},
     created: {
         type: Date, default: Date.now
     }

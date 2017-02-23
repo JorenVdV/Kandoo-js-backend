@@ -5,6 +5,7 @@
 const User = require('../models/user');
 const Theme = require('../models/theme');
 const Session = require('../models/session');
+const Card = require('../models/card');
 
 const mongoose = require('mongoose');
 const config = require('../_config');
@@ -26,7 +27,7 @@ before('Open connection to test database', function (done) {
     }
 });
 
-before('Clear collections', function (done) {
+before('Clear users', function (done) {
     User.remove({}, function (err, writeOpResult) {
         if (err)
             console.log("error clearing users: " + err);
@@ -44,6 +45,18 @@ before('Clear themes', function (done) {
             console.log("error clearing themes: " + err);
         else {
             console.log('themes cleared: ');
+            console.log(writeOpResult.result);
+        }
+        done();
+    });
+});
+
+before('Clear cards', function (done) {
+    Card.remove({}, function (err, writeOpResult) {
+        if (err)
+            console.log("error clearing cards: " + err);
+        else {
+            console.log('cards cleared: ');
             console.log(writeOpResult.result);
         }
         done();
