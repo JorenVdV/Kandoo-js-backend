@@ -14,8 +14,6 @@ const cardService = require('../../services/card-service');
 
 chai.use(chaiHttp);
 
-require('../global');
-
 describe('Card Controller tests', function () {
     let testUser;
     let testTheme;

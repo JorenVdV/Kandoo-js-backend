@@ -11,8 +11,6 @@ var server = require('../../app-test');
 const userService = require('../../services/user-service');
 const themeService = require('../../services/theme-service');
 
-require('../global');
-
 chai.use(chaiHttp);
 
 describe('Theme controller tests', function () {

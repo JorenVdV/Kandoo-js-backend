@@ -9,8 +9,6 @@ const assert = chai.assert;
 const userService = require('../../services/user-service');
 const User = require('../../models/user');
 
-require('../global');
-
 describe('User service tests', function () {
     it('Creating a single user', async function () {
         let user = await userService.createUser('Jos', 'Van Camp', 'jos.vancamp@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');

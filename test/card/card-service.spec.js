@@ -11,8 +11,6 @@ const cardService = require('../../services/card-service');
 const userService = require('../../services/user-service');
 const themeService = require('../../services/theme-service');
 
-require('../global');
-
 describe('Card service tests', function () {
     let testUser;
     let testTheme;

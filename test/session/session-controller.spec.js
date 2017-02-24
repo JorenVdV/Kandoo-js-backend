@@ -14,8 +14,6 @@ var sessionService = require('../../services/session-service');
 
 chai.use(chaiHttp);
 
-require('../global');
-
 describe('Session Controller tests', function () {
     let globalTestTheme;
     let globalTestUser;

@@ -10,7 +10,6 @@ const themeService = require('../../services/theme-service');
 // const cardService = require('../../services/card-service');
 const userService = require('../../services/user-service');
 
-require('../global');
 
 describe('Session service tests', () => {
     let testUser;

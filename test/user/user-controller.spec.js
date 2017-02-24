@@ -13,8 +13,6 @@ const userService = require('../../services/user-service');
 
 chai.use(chaiHttp);
 
-require('../global');
-
 describe('User Controller tests', function () {
 
     describe('/POST register', function () {
