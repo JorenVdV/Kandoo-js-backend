@@ -42,13 +42,15 @@ describe('Card Controller tests', function () {
             let card = {
                 description: 'Test description',
             };
+
             chai.request(server)
                 .post('/theme/' + testTheme._id + '/card')
                 .send(card)
                 .end((err, res) => {
                     res.should.have.status(201);
                     add_card = res.body.card;
-                    assert.strictEqual(card.description, 'Test description');
+                    assert.strictEqual(add_card.description, 'Test description');
+                    assert.equal(add_card.theme._id, testTheme._id);
                     done();
                 });
         });
