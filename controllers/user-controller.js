@@ -9,47 +9,58 @@ class UserController {
     }
 
     createUser(req, res) {
-        let body = req.body;
-        this.userService.createUser(body.firstname, body.lastname, body.emailAddress, body.organisation ? body.organisation : null, body.password, function (user, err) {
-            if (err)
-                res.status(404).send({error: err.message});
-            else
+        let resolve = async(req, res) => {
+            let body = req.body;
+            try {
+                let user = await this.userService.createUser(body.firstname, body.lastname, body.emailAddress, body.organisation ? body.organisation : null, body.password);
                 res.sendStatus(201);
-        });
+            } catch (err) {
+                res.status(404).send({error: err.message});
+            }
+        };
+        resolve(req, res);
     }
 
     login(req, res) {
-        let body = req.body;
-        this.userService.findUserByEmail(body.emailAddress, function (user, err) {
-            if (err) {
+        let resolve = async(req, res) => {
+            let body = req.body;
+            try {
+                let user = await this.userService.getUserByEmail(body.emailAddress);
+                if (user.password === body.password)
+                    res.status(200).send({user: user});
+                else
+                    res.status(401).send({error: "Password is incorrect"});
+            } catch (err) {
                 res.status(404).send({error: err.message});
             }
-            else if (user.password === body.password)
-                res.status(200).send({user: user});
-            else
-                res.status(401).send({error: "Password is incorrect"});
-        });
-
+        };
+        resolve(req, res);
     }
 
     getUsers(req, res) {
-        this.userService.findUsers(function (users, err) {
-            if (err) res.status(404).send({error: err});
-            else res.status(200).send({users: users});
-        });
-
+        let resolve = async(req, res) => {
+            try {
+                let users = await this.userService.getUsers();
+                res.status(200).send({users: users})
+            } catch (err) {
+                res.status(404).send({error: err.message});
+            }
+        };
+        resolve(req, res);
     }
 
     deleteUser(req, res) {
-        this.userService.removeUser(req.params.userId, function (success, err) {
-            if (!success && err) {
+        let resolve = async(req, res) => {
+            let body = req.body;
+            try {
+                let successful = await this.userService.removeUser(req.params.userId);
+                if(successful)
+                    res.sendStatus(204);
+            } catch (err) {
                 res.status(404).send({error: err.message});
-            } else if (err) {
-                res.sendStatus(400);
-            } else {
-                res.sendStatus(204);
             }
-        });
+        };
+        resolve(req, res);
     }
 
 }

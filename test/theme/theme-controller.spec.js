@@ -11,22 +11,22 @@ var server = require('../../app-test');
 const userService = require('../../services/user-service');
 const themeService = require('../../services/theme-service');
 
+require('../global');
+
 chai.use(chaiHttp);
 
 describe('Theme controller tests', function () {
 
     let THEME_globalTestUser;
-    before('create testUser', function (done) {
-        userService.createUser("User1", "Test", "user1.test@teamjs.xyz", "TeamJS", "pwd", function (user, err) {
-            assert.isNotOk(err);
-            assert.isOk(user);
-            THEME_globalTestUser = user;
-            done();
-        });
+    before('create testUser', async function () {
+        THEME_globalTestUser = await userService.createUser("User1", "Test", "user1.test@teamjs.xyz", "TeamJS", "pwd");
+        assert.isOk(THEME_globalTestUser);
     });
 
     describe('/POST newTheme', function () {
         it('should create a theme', (done) => {
+            console.log('should create a theme emailaddress:');
+            console.log(THEME_globalTestUser.emailAddress);
             let theme = {
                 title: "New Theme",
                 description: "",
@@ -98,7 +98,7 @@ describe('Theme controller tests', function () {
                 });
         });
 
-        after('Remove the created theme', function(done){
+        after('Remove the created theme', function (done) {
             themeService.removeTheme(GET_THEME_theme._id, function (success, err) {
                 assert.isNotOk(err);
                 assert.isTrue(success);
@@ -107,10 +107,10 @@ describe('Theme controller tests', function () {
         });
     });
 
-    describe('/GET themes', function(){
+    describe('/GET themes', function () {
 
-        describe('Retrieving all themes - no themes', function(){
-            it('Retrieve no themes', function(done){
+        describe('Retrieving all themes - no themes', function () {
+            it('Retrieve no themes', function (done) {
                 chai.request(server)
                     .get('/themes')
                     .send()
@@ -125,7 +125,7 @@ describe('Theme controller tests', function () {
             });
         });
 
-        describe('Retrieving all themes - a single theme', function(){
+        describe('Retrieving all themes - a single theme', function () {
             let GET_THEMES_theme1;
             before('Create a first theme', function (done) {
                 themeService.addTheme('first theme', 'a description', [], true, THEME_globalTestUser, null, function (theme, err) {
@@ -136,7 +136,7 @@ describe('Theme controller tests', function () {
                 });
             });
 
-            it('Retrieve a single theme', function(done){
+            it('Retrieve a single theme', function (done) {
                 chai.request(server)
                     .get('/themes')
                     .send()
@@ -157,7 +157,7 @@ describe('Theme controller tests', function () {
                     });
             });
 
-            after('Remove the created theme', function(done){
+            after('Remove the created theme', function (done) {
                 themeService.removeTheme(GET_THEMES_theme1._id, function (success, err) {
                     assert.isNotOk(err);
                     assert.isTrue(success);
@@ -166,7 +166,7 @@ describe('Theme controller tests', function () {
             });
         });
 
-        describe('Retrieving all themes - two themes', function(){
+        describe('Retrieving all themes - two themes', function () {
             let GET_THEMES_theme1;
             let GET_THEMES_theme2;
             before('Create a first theme', function (done) {
@@ -187,7 +187,7 @@ describe('Theme controller tests', function () {
                 });
             });
 
-            it('Retrieve two themes', function(done){
+            it('Retrieve two themes', function (done) {
                 chai.request(server)
                     .get('/themes')
                     .send()
@@ -216,7 +216,7 @@ describe('Theme controller tests', function () {
                     });
             });
 
-            after('Remove the first theme', function(done){
+            after('Remove the first theme', function (done) {
                 themeService.removeTheme(GET_THEMES_theme1._id, function (success, err) {
                     assert.isNotOk(err);
                     assert.isTrue(success);
@@ -224,7 +224,7 @@ describe('Theme controller tests', function () {
                 });
             });
 
-            after('Remove the second theme', function(done){
+            after('Remove the second theme', function (done) {
                 themeService.removeTheme(GET_THEMES_theme2._id, function (success, err) {
                     assert.isNotOk(err);
                     assert.isTrue(success);
@@ -287,12 +287,9 @@ describe('Theme controller tests', function () {
     //     });
     // });
 
-    after('Remove testUser', function (done) {
-        userService.removeUser(THEME_globalTestUser._id, function (succes, err) {
-            assert.isNotOk(err);
-            assert.isTrue(succes, 'user should have succesfully been deleted');
-            done();
-        })
+    after('Remove testUser', async function () {
+        let successful = await userService.removeUser(THEME_globalTestUser._id);
+        assert.isTrue(successful);
     });
 
 });

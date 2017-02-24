@@ -10,19 +10,17 @@ const themeService = require('../../services/theme-service');
 // const cardService = require('../../services/card-service');
 const userService = require('../../services/user-service');
 
+require('../global');
+
 describe('Session service tests', () => {
     let testUser;
     let testTheme;
     let testDate;
     let testDateInPast;
 
-    before('Initialise test user', (done) => {
-        userService.createUser('Jos', 'Nikkel', 'jos.nikkel@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123', function (user, err) {
-            assert.isNotOk(err);
-            assert.isOk(user);
-            testUser = user;
-            done();
-        });
+    before('Initialise test user', async function() {
+        testUser = await userService.createUser('Jos', 'Nikkel', 'jos.nikkel@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
+        assert.isOk(testUser);
     });
 
     before('Initialise test theme', (done) => {
@@ -341,7 +339,7 @@ describe('Session service tests', () => {
             });
 
             it('Start a session instance', function (done) {
-                sessionService.changeSession(start_session._id, {startDate : Date.now()},function (success, err) {
+                sessionService.changeSession(start_session._id, {startDate: Date.now()}, function (success, err) {
                     assert.isNotOk(err);
                     assert.isTrue(success);
                     // done();
@@ -405,12 +403,9 @@ describe('Session service tests', () => {
         // })
     });
 
-    after('Remove test user', (done) => {
-        userService.removeUser(testUser._id, function (success, err) {
-            assert.isNotOk(err);
-            assert.isTrue(success, 'testuser should have succesfully been deleted');
-            done();
-        })
+    after('Remove test user', async() => {
+        let successful = await userService.removeUser(testUser._id);
+        assert.isTrue(successful);
     });
 
     after('Remove test theme', (done) => {
