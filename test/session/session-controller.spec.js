@@ -12,19 +12,16 @@ var themeService = require('../../services/theme-service');
 var userService = require('../../services/user-service');
 var sessionService = require('../../services/session-service');
 
-
 chai.use(chaiHttp);
+
+require('../global');
 
 describe('Session Controller tests', function () {
     let globalTestTheme;
     let globalTestUser;
-    before('create a testUser', function (done) {
-        userService.createUser('test', 'user', 'test.user@teamjs.xyz', 'TeamJS', 'test', function (user, err) {
-            assert.isNotOk(err);
-            assert.isOk(user);
-            globalTestUser = user;
-            done();
-        });
+    before('create a testUser', async function () {
+        globalTestUser = await userService.createUser('test', 'user', 'test.user@teamjs.xyz', 'TeamJS', 'test');
+        assert.isOk(globalTestUser);
     });
 
     before('create a theme to create sessions on', function (done) {
@@ -490,12 +487,9 @@ describe('Session Controller tests', function () {
     //     });
     // });
 
-    after('remove testuser', function (done) {
-        userService.removeUser(globalTestUser._id, function (success, err) {
-            assert.isNotOk(err);
-            assert.isTrue(success, 'user should have succesfully been deleted');
-            done();
-        });
+    after('remove testuser', async function () {
+        let successful = await userService.removeUser(globalTestUser._id);
+        assert.isTrue(successful);
     });
 
     after('remove testtheme', function (done) {

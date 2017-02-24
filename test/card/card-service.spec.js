@@ -11,17 +11,15 @@ const cardService = require('../../services/card-service');
 const userService = require('../../services/user-service');
 const themeService = require('../../services/theme-service');
 
+require('../global');
+
 describe('Card service tests', function () {
     let testUser;
     let testTheme;
 
-    before('Initialise test user', (done) => {
-        userService.createUser('Jos', 'Nikkel', 'jos.nikkel@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123', function (user, err) {
-            assert.isNotOk(err);
-            assert.isOk(user);
-            testUser = user;
-            done();
-        });
+    before('Initialise test user', async () => {
+        testUser = await userService.createUser('Jos', 'Nikkel', 'jos.nikkel1@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
+        assert.isOk(testUser);
     });
 
     before('Initialise test theme', (done) => {
@@ -241,12 +239,9 @@ describe('Card service tests', function () {
         })
     });
 
-    after('Remove test user', (done) => {
-        userService.removeUser(testUser._id, function (success, err) {
-            assert.isNotOk(err);
-            assert.isTrue(success, 'testuser should have succesfully been deleted');
-            done();
-        })
+    after('Remove test user', async () => {
+        let successful = await userService.removeUser(testUser._id);
+        assert.isTrue(successful);
     });
 
     after('Remove test theme', (done) => {

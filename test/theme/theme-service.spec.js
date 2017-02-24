@@ -7,28 +7,18 @@ const assert = chai.assert;
 var themeService = require('../../services/theme-service');
 var cardService = require('../../services/card-service');
 var userService = require('../../services/user-service');
-
+require('../global');
 
 describe("theme service tests", function () {
     let user1;
     let user2;
 
-    before('create user1', function (done) {
-        userService.createUser("User1", "Test", "user1.test@teamjs.xyz", "TeamJS", "pwd", function (user, err) {
-            assert.isNotOk(err);
-            assert.isOk(user);
-            user1 = user;
-            done();
-        });
-    });
+    before('Creating the users user1', async function () {
+        user1 = await userService.createUser("User1", "Test", "user1.test@teamjs.xyz", "TeamJS", "pwd");
+        assert.isOk(user1);
 
-    before('create user2', function (done) {
-        userService.createUser("User2", "Test", "user2.test@teamjs.xyz", "TeamJS", "pwd", function (user, err) {
-            assert.isNotOk(err);
-            assert.isOk(user);
-            user2 = user;
-            done();
-        });
+        user2 = await userService.createUser("User2", "Test", "user2.test@teamjs.xyz", "TeamJS", "pwd");
+        assert.isOk(user2);
     });
 
     it('Creating a theme', function (done) {
@@ -139,20 +129,12 @@ describe("theme service tests", function () {
     //     assert.equal(theme1.cards[0], card._id, 'The id should be equal to the cards\' id');
     // });
 
-    after('Remove user2', function (done) {
-        userService.removeUser(user2._id, function (succes, err) {
-            assert.isNotOk(err);
-            assert.isTrue(succes, 'user should have succesfully been deleted');
-            done();
-        })
-    });
+    after('Remove users', async function () {
+        let successful = await userService.removeUser(user1._id);
+        assert.isTrue(successful);
 
-    after('Remove user1', function (done) {
-        userService.removeUser(user1._id, function (succes, err) {
-            assert.isNotOk(err);
-            assert.isTrue(succes, 'user should have succesfully been deleted');
-            done();
-        })
+        successful = await userService.removeUser(user2._id);
+        assert.isTrue(successful);
     });
 
 
