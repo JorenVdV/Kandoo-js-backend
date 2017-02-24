@@ -2,7 +2,6 @@
  * Created by nick on 13/02/17.
  */
 
-const cardController = require('../controllers/card-controller');
 const themeController = require('../controllers/theme-controller');
 
 module.exports = function(app) {
@@ -20,9 +19,5 @@ module.exports = function(app) {
 
     app.get('/themes', function(req,res){
         themeController.getThemes(req,res);
-    });
-
-    app.post('/theme/:themeid/card', function (req, res) {
-        cardController.addCardToTheme(req, res);
     });
 };
