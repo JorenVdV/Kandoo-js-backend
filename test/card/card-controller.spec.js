@@ -17,18 +17,12 @@ chai.use(chaiHttp);
 describe('Card Controller tests', function () {
     let testUser;
     let testTheme;
-    before('Initialise test user',async () => {
-        testUser = await userService.createUser('Jos', 'Nikkel', 'jos.nikkel@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
+    before('Initialise test user & test theme', async() => {
+        testUser = await userService.addUser('Jos', 'Nikkel', 'jos.nikkel@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
         assert.isOk(testUser);
-    });
 
-    before('Initialise test theme', (done) => {
-        themeService.addTheme('first theme', 'a description', [], true, testUser, null, function (theme, err) {
-            assert.isNotOk(err);
-            assert.isOk(theme);
-            testTheme = theme;
-            done();
-        });
+        testTheme = await themeService.addTheme('first theme', 'a description', [], true, testUser, null);
+        assert.isOk(testTheme);
     });
 
     describe('/POST /theme/{themeId}/card', () => {
@@ -266,18 +260,10 @@ describe('Card Controller tests', function () {
 
     });
 
-    after('Remove test user', async () => {
+    after('Remove test user & test theme', async() => {
         let successful = await userService.removeUser(testUser._id);
         assert.isTrue(successful);
+        successful = await themeService.removeTheme(testTheme._id);
+        assert.isTrue(successful);
     });
-
-    after('Remove test theme', (done) => {
-        themeService.removeTheme(testTheme._id, function (success, err) {
-            assert.isNotOk(err);
-            assert.isTrue(success);
-
-            done();
-        });
-    });
-
 });

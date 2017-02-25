@@ -10,32 +10,22 @@ const themeService = require('../../services/theme-service');
 // const cardService = require('../../services/card-service');
 const userService = require('../../services/user-service');
 
-
 describe('Session service tests', () => {
     let testUser;
     let testTheme;
     let testDate;
     let testDateInPast;
 
-    before('Initialise test user', async function() {
-        testUser = await userService.createUser('Jos', 'Nikkel', 'jos.nikkel@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
+    before('Initialise test user & test theme & test dates', async function () {
+        testUser = await userService.addUser('Jos', 'Nikkel', 'jos.nikkel@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
         assert.isOk(testUser);
-    });
+        testTheme = await themeService.addTheme('first theme', 'a description', [], true, testUser, null);
+        assert.isOk(testTheme);
 
-    before('Initialise test theme', (done) => {
-        themeService.addTheme('first theme', 'a description', [], true, testUser, null, function (theme, err) {
-            assert.isNotOk(err);
-            assert.isOk(theme);
-            testTheme = theme;
-            done();
-        });
-    });
-
-    before('Initialise test dates', (done) => {
         testDate = new Date(2017, 8, 2, 16, 20, 0);
         testDateInPast = new Date(2016, 9, 2, 16, 20, 0);
-        done();
     });
+
 
     describe('Creating a session', () => {
         it('Create a session', (done) => {
@@ -402,18 +392,11 @@ describe('Session service tests', () => {
         // })
     });
 
-    after('Remove test user', async() => {
+    after('Remove test user & test theme', async() => {
         let successful = await userService.removeUser(testUser._id);
         assert.isTrue(successful);
-    });
-
-    after('Remove test theme', (done) => {
-        themeService.removeTheme(testTheme._id, function (success, err) {
-            assert.isNotOk(err);
-            assert.isTrue(success);
-
-            done();
-        });
+        successful = await themeService.removeTheme(testTheme._id);
+        assert.isTrue(successful);
     });
 
 });

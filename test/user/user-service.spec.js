@@ -9,9 +9,10 @@ const assert = chai.assert;
 const userService = require('../../services/user-service');
 const User = require('../../models/user');
 
+
 describe('User service tests', function () {
     it('Creating a single user', async function () {
-        let user = await userService.createUser('Jos', 'Van Camp', 'jos.vancamp@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
+        let user = await userService.addUser('Jos', 'Van Camp', 'jos.vancamp@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
         assert.isOk(user);
         assert.strictEqual(user.firstname, 'Jos', 'the name of the user should be "Jos"');
         assert.strictEqual(user.lastname, 'Van Camp', 'the family name of the user should be "Van Camp"');
@@ -28,12 +29,12 @@ describe('User service tests', function () {
         let createUser_user2;
 
         it('user1', async function () {
-            createUser_user1 = await userService.createUser('Jos', 'Van Camp', 'jos.vancamp@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
+            createUser_user1 = await userService.addUser('Jos', 'Van Camp', 'jos.vancamp@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
             assert.isOk(createUser_user1);
         });
 
         it('user2', async function () {
-            createUser_user2 = await userService.createUser('Jos', 'Van Camp', 'jos.vancamp2@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
+            createUser_user2 = await userService.addUser('Jos', 'Van Camp', 'jos.vancamp2@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
             assert.isOk(createUser_user2);
 
         });
@@ -51,13 +52,13 @@ describe('User service tests', function () {
         let createUser_user1;
 
         it('user1', async function () {
-            createUser_user1 = await userService.createUser('Jos', 'Van Camp', 'jos.vancamp@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
+            createUser_user1 = await userService.addUser('Jos', 'Van Camp', 'jos.vancamp@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
             assert.isOk(createUser_user1);
         });
 
         it('user2', async function () {
                 try {
-                    let user = await userService.createUser('Jos', 'Van Camp', 'jos.vancamp@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
+                    let user = await userService.addUser('Jos', 'Van Camp', 'jos.vancamp@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
                     assert.isNotOk(user);
                 } catch (err) {
                     assert.isOk(err);
@@ -75,7 +76,7 @@ describe('User service tests', function () {
     describe('Find a user', function () {
         let findUser_user;
         before('Create a user to find', async function () {
-            findUser_user = await userService.createUser('Jos', 'Van Camp', 'jos.vancamp@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
+            findUser_user = await userService.addUser('Jos', 'Van Camp', 'jos.vancamp@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
             assert.isOk(findUser_user);
         });
 
@@ -130,7 +131,7 @@ describe('User service tests', function () {
     describe('Remove a user', function () {
         let removeUser_user;
         before('Create a user to remove', async function () {
-            removeUser_user = await userService.createUser('Jos', 'Van Camp', 'jos.vancamp@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
+            removeUser_user = await userService.addUser('Jos', 'Van Camp', 'jos.vancamp@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
             assert.isOk(removeUser_user);
         });
 

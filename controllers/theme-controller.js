@@ -8,42 +8,28 @@ class ThemeController {
 
     createTheme(req, res) {
         let body = req.body;
-        this.themeService.addTheme(body.title, body.description, body.tags, body.isPublic, body.organiser, body.cards, function (theme, err) {
-            if (err) {
-                res.status(404).send({error: err.message});
-            } else if (theme) {
-                res.status(201).send({theme: theme});
-            }
-        });
+        this.themeService.addTheme(body.title, body.description, body.tags, body.isPublic, body.organiser, body.cards)
+            .then((theme) => res.status(201).send({theme: theme}))
+            .catch((err) => res.status(404).send({error: err.message}));
     }
 
     getTheme(req, res) {
-        let themeId = req.params.themeid;
-        this.themeService.getTheme(themeId, function (theme, err) {
-            if (err) {
-                res.status(404).send({error: err.message});
-            }
-            else if (theme) {
-                res.status(200).send({theme: theme});
-            }
-        });
-
+        this.themeService.getTheme(req.params.themeId)
+            .then((theme) => res.status(200).send({theme: theme}))
+            .catch((err) => res.status(404).send({error: err.message}));
     }
 
     getThemes(req, res) {
-        this.themeService.getThemes(function(themes, err){
-           if(err) {
-               res.status(404).send({error: err.message});
-           }else{
-               res.status(200).send({themes:themes});
-           }
-        });
+        let body = req.body;
+        this.themeService.getThemes(body.organiserId)
+            .then((themes) => res.status(200).send({themes: themes}))
+            .catch((err) => res.status(404).send({error: err.message}));
     }
 
     deleteTheme(req, res) {
-        let themeId = req.params.themeid;
-        this.themeService.removeTheme(themeId);
-        res.sendStatus(!this.themeService.getTheme(themeId) ? 204 : 404);
+        this.themeService.removeTheme(req.params.themeId)
+            .then((successful) => res.sendStatus(204))
+            .catch((err) => res.status(404).send({error: err.message}));
     }
 }
 

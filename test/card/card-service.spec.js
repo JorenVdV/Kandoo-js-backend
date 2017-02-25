@@ -15,22 +15,16 @@ describe('Card service tests', function () {
     let testUser;
     let testTheme;
 
-    before('Initialise test user', async () => {
-        testUser = await userService.createUser('Jos', 'Nikkel', 'jos.nikkel1@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
+    before('Initialise test user & test theme ', async() => {
+        testUser = await userService.addUser('Jos', 'Nikkel', 'jos.nikkel1@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
         assert.isOk(testUser);
-    });
 
-    before('Initialise test theme', (done) => {
-        themeService.addTheme('first theme', 'a description', [], true, testUser, null, function (theme, err) {
-            assert.isNotOk(err);
-            assert.isOk(theme);
-            testTheme = theme;
-            done();
-        });
+        testTheme = await themeService.addTheme('first theme', 'a description', [], true, testUser, null);
+        assert.isOk(testTheme);
     });
 
     it('Add a card', (done) => {
-        cardService.addCard('Test card with a test description', testTheme,
+        cardService.addCard('Test card with a test description', testTheme._id,
             (card, err) => {
                 assert.isNotOk(err);
                 assert.isOk(card);
@@ -51,7 +45,7 @@ describe('Card service tests', function () {
         let get_card;
         before('Create a card',
             (done) => {
-                cardService.addCard('Test card with a test description', testTheme,
+                cardService.addCard('Test card with a test description', testTheme._id,
                     (card, err) => {
                         assert.isNotOk(err);
                         assert.isOk(card);
@@ -98,7 +92,7 @@ describe('Card service tests', function () {
         let remove_card;
         before('Create a card',
             (done) => {
-                cardService.addCard('Test card with a test description', testTheme,
+                cardService.addCard('Test card with a test description', testTheme._id,
                     (card, err) => {
                         assert.isNotOk(err);
                         assert.isOk(card);
@@ -147,7 +141,7 @@ describe('Card service tests', function () {
             let get_all_card;
             before('Create a card',
                 (done) => {
-                    cardService.addCard('Test card with a test description', testTheme,
+                    cardService.addCard('Test card with a test description', testTheme._id,
                         (card, err) => {
                             assert.isNotOk(err);
                             assert.isOk(card);
@@ -183,7 +177,7 @@ describe('Card service tests', function () {
             let get_all_card2;
             before('Create a card',
                 (done) => {
-                    cardService.addCard('Test card with a test description', testTheme,
+                    cardService.addCard('Test card with a test description', testTheme._id,
                         (card, err) => {
                             assert.isNotOk(err);
                             assert.isOk(card);
@@ -194,7 +188,7 @@ describe('Card service tests', function () {
 
             before('Create a second card',
                 (done) => {
-                    cardService.addCard('Test card with another test description', testTheme,
+                    cardService.addCard('Test card with another test description', testTheme._id,
                         (card, err) => {
                             assert.isNotOk(err);
                             assert.isOk(card);
@@ -237,17 +231,11 @@ describe('Card service tests', function () {
         })
     });
 
-    after('Remove test user', async () => {
+    after('Remove test user & test theme', async() => {
         let successful = await userService.removeUser(testUser._id);
         assert.isTrue(successful);
-    });
 
-    after('Remove test theme', (done) => {
-        themeService.removeTheme(testTheme._id, function (success, err) {
-            assert.isNotOk(err);
-            assert.isTrue(success);
-
-            done();
-        });
+        successful = await themeService.removeTheme(testTheme._id);
+        assert.isTrue(successful);
     });
 });

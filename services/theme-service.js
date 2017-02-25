@@ -2,14 +2,14 @@
  * Created by Seger on 8/02/2017.
  */
 
-var Theme = require('../models/theme');
+const Theme = require('../models/theme');
 
 class ThemeService {
     constructor() {
         this.themeRepo = require('../repositories/theme-repository');
     }
 
-    addTheme(title, description, tags, isPublic, organiser, cards = [], callback) {
+    async addTheme(title, description, tags, isPublic, organiser, cards = []) {
         let theme = new Theme();
         theme.title = title;
         theme.description = description;
@@ -18,63 +18,24 @@ class ThemeService {
         theme.organisers = [organiser];
         theme.cards = cards;
 
-        this.themeRepo.createTheme(theme, function (theme, err) {
-            if (err)
-                callback(null, err);
-            else
-                callback(theme);
-        });
+        return await this.themeRepo.createTheme(theme);
     }
 
-    getTheme(themeId, callback) {
-        this.themeRepo.readThemeById(themeId, function (theme, err) {
-            if (err)
-                callback(null, err);
-            else
-                callback(theme);
-        });
+    async getTheme(themeId) {
+        return await this.themeRepo.readThemeById(themeId);
     }
 
-    getThemes(callback) {
-        this.themeRepo.readThemes(function (themes, err) {
-            if (err)
-                callback(null, err);
-            else
-                callback(themes);
-        });
+    async getThemes(organiserId = null) {
+        return await this.themeRepo.readThemes(organiserId);
     }
 
-    changeTheme(themeId, title, description, tags, isPublic, cards, callback) {
-        this.themeRepo.updateTheme(themeId, title, description, tags, isPublic, cards, function (theme, err) {
-            if (err)
-                callback(null, err);
-            else
-                callback(theme);
-        })
+    async changeTheme(themeId, title, description, tags, isPublic, cards) {
+        return await this.themeRepo.updateTheme(themeId, title, description, tags, isPublic, cards);
     }
 
-    removeTheme(themeId, callback) {
-        this.themeRepo.deleteTheme(themeId, function (success, err) {
-            if (!success && err) {
-                callback(success, err);
-            } else if (err) {
-                callback(err);
-            } else {
-                callback(success);
-            }
-        });
-    }
-
-    addCard(themeId, card, callback) {
-        this.getTheme(themeId, function(theme, err){
-            if(err) console.log(err);
-            else {
-                if (theme) {
-                    theme.cards.push(card);
-                    callback(theme);
-                }
-            }
-        });
+    async removeTheme(themeId) {
+        let theme = await this.getTheme(themeId);
+        return await this.themeRepo.deleteTheme(theme);
     }
 }
 

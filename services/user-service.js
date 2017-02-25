@@ -6,7 +6,7 @@ class UserService {
         this.userRepo = require('../repositories/user-repository');
     }
 
-    async createUser(firstname, lastname, emailAddress, organisation, password) {
+    async addUser(firstname, lastname, emailAddress, organisation, password) {
         let user;
         try{
             user = await this.getUserByEmail(emailAddress);

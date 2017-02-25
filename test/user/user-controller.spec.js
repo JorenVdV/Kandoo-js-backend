@@ -13,6 +13,7 @@ const userService = require('../../services/user-service');
 
 chai.use(chaiHttp);
 
+
 describe('User Controller tests', function () {
 
     describe('/POST register', function () {
@@ -47,7 +48,7 @@ describe('User Controller tests', function () {
     describe('two users can not have the same email', function () {
 
         before('Creating a first user', async function () {
-            let user = await userService.createUser('Joren', 'Van de Vondel', 'joren.vdv@kdg.be', 'Big Industries', 'Pudding');
+            let user = await userService.addUser('Joren', 'Van de Vondel', 'joren.vdv@kdg.be', 'Big Industries', 'Pudding');
             assert.isOk(user);
         });
 
@@ -120,7 +121,7 @@ describe('User Controller tests', function () {
 
         describe('Retrieving all users - single user:', function () {
             before('Creating a user', async function () {
-                let user = await userService.createUser('Joren', 'Van de Vondel', 'joren.vdv@kdg.be', 'Big Industries', 'Pudding');
+                let user = await userService.addUser('Joren', 'Van de Vondel', 'joren.vdv@kdg.be', 'Big Industries', 'Pudding');
                 assert.isOk(user);
             });
 
@@ -149,12 +150,12 @@ describe('User Controller tests', function () {
 
         describe('Retrieving all users - two users:', function () {
             before('Creating the users', async function () {
-                let user = await userService.createUser('Joren', 'Van de Vondel', 'joren.vdv@kdg.be', 'Big Industries', 'Pudding');
+                let user = await userService.addUser('Joren', 'Van de Vondel', 'joren.vdv@kdg.be', 'Big Industries', 'Pudding');
                 assert.isOk(user);
 
                 user = null;
 
-                user = await userService.createUser('Joren', 'Van de Vondel', 'joren.vdv1@kdg.be', 'Big Industries', 'Pudding');
+                user = await userService.addUser('Joren', 'Van de Vondel', 'joren.vdv1@kdg.be', 'Big Industries', 'Pudding');
                 assert.isOk(user);
             });
 
@@ -193,7 +194,7 @@ describe('User Controller tests', function () {
         describe('/POST login', function () {
             let LOGINUser_user;
             before('Creating a user', async function () {
-                LOGINUser_user = await userService.createUser('Joren', 'Van de Vondel', 'joren.vdv@kdg.be', 'Big Industries', 'Pudding');
+                LOGINUser_user = await userService.addUser('Joren', 'Van de Vondel', 'joren.vdv@kdg.be', 'Big Industries', 'Pudding');
                 assert.isOk(LOGINUser_user);
             });
 
@@ -253,7 +254,7 @@ describe('User Controller tests', function () {
             let DELETEUser_user;
 
             before('Creating a user', async function () {
-                DELETEUser_user = await userService.createUser('Joren', 'Van de Vondel', 'joren.vdv@kdg.be', 'Big Industries', 'Pudding');
+                DELETEUser_user = await userService.addUser('Joren', 'Van de Vondel', 'joren.vdv@kdg.be', 'Big Industries', 'Pudding');
                 assert.isOk(DELETEUser_user);
             });
 

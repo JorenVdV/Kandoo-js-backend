@@ -10,7 +10,7 @@ class UserController {
 
     createUser(req, res) {
         let body = req.body;
-        this.userService.createUser(body.firstname, body.lastname, body.emailAddress, body.organisation ? body.organisation : null, body.password)
+        this.userService.addUser(body.firstname, body.lastname, body.emailAddress, body.organisation ? body.organisation : null, body.password)
             .then((user) => res.sendStatus(201))
             .catch((err) => res.status(404).send({error: err.message}));
     }

@@ -20,7 +20,7 @@
 //     let testUser;
 //     before('setup test user', function (done) {
 //         console.log('entering before setup test user');
-//         userService.createUser("User1", "Test", "user1.test@teamjs.xyz", "TeamJS", "pwd", function (user, err) {
+//         userService.addUser("User1", "Test", "user1.test@teamjs.xyz", "TeamJS", "pwd", function (user, err) {
 //             console.log(user);
 //             console.log(err);
 //             assert.isNotOk(err);
@@ -29,7 +29,7 @@
 //             testUser = user;
 //             done();
 //         });
-//         // userService.createUser('test', 'Testi', 'test.Testi@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123', function (user, err) {
+//         // userService.addUser('test', 'Testi', 'test.Testi@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123', function (user, err) {
 //         //     assert.isNotOk(err);
 //         //     assert.isOk(user);
 //         //     testGlobal.testUser = user;
@@ -471,7 +471,7 @@
 //     //     });
 //     //
 //     //     before('setup second user', function(done){
-//     //         userService.createUser('this is a test', 'testubg', 'nickjorens@gmail.com', 'd', 'test', function(user, err){
+//     //         userService.addUser('this is a test', 'testubg', 'nickjorens@gmail.com', 'd', 'test', function(user, err){
 //     //             assert.isNotOk(err);
 //     //             assert.isOk(user);
 //     //             testGlobal.testUser2 = user;

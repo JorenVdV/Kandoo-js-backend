@@ -8,45 +8,51 @@ class ThemeRepository {
         this.themeDao = Theme;
     }
 
-    createTheme(theme, callback) {
-        theme.save(function (err) {
-            if (err) {
-                callback(null, new Error('Error whilst trying to save theme: ' + theme.title + ' ' + err));
-            } else {
-                callback(theme);
-            }
-        });
+    async createTheme(theme) {
+        try {
+            await theme.save();
+        } catch (err) {
+            throw new Error('Unexpected error occurred. ' + err);
+        }
+
+        return theme;
     }
 
-    readThemeById(id, callback) {
-        this.themeDao.findOne({_id: id}, function (err,theme) {
-            if (err) {
-                callback(null, err);
-            } else {
-                if (!theme) {
-                    callback(null, new Error("Unable to find theme with id: " + id));
-                } else {
-                    callback(theme);
-                }
-            }
-        });
+    async readThemeById(id) {
+        let theme;
+        try {
+            theme = await this.themeDao.findOne({_id: id});
+        } catch (err) {
+            throw new Error('Unexpected error occurred. ' + err);
+        }
+
+        if (theme)
+            return theme;
+        else
+            throw new Error('Unable to find theme with id: ' + id);
     }
 
-    readThemes(callback) {
-        this.themeDao.find({}, function (err,themes) {
-            if (err) {
-                callback(null, err);
-            } else {
-                let themeArray = [];
-                themes.forEach(function (theme) {
-                    themeArray.push(theme);
-                });
-                callback(themeArray);
-            }
-        });
+    async readThemes(organiserId) {
+        let themeArray = [];
+        let query;
+
+        if (organiserId)
+            query = {organisers: {$in: [organiserId]}};
+        else
+            query = {};
+
+        try {
+            let themes = await this.themeDao.find(query);
+            themes.forEach(function (theme) {
+                themeArray.push(theme);
+            });
+        } catch (err) {
+            throw new Error('Unexpected error occurred. ' + err);
+        }
+        return themeArray;
     }
 
-    updateTheme(id, title, description, tags, isPublic, cards, callback) {
+    async updateTheme(id, title, description, tags, isPublic, cards) {
         let updates = {
             title: title,
             description: description,
@@ -54,62 +60,45 @@ class ThemeRepository {
             isPublic: isPublic,
             cards: cards
         };
-        this.themeDao.update({_id: id}, updates, function (err, result) {
-            if (err)
-                callback(null, err);
-            else {
-                if (result.ok) {
-                    if(result.nModified == 1){
-                        callback(true);
-                    }else{
-                        callback(true, new Error("More than one document has been updated..."));
-                    }
-                }
-                else
-                    callback(false, new Error("Unable to update theme"));
-            }
-        });
-        // this.themeDao.findOne({_id: id}, function (err, theme) {
-        //     if (err)
-        //         callback(null, err);
-        //     else {
-        //         theme.title = title;
-        //         theme.description = description;
-        //         theme.tags = tags;
-        //         theme.isPublic = isPublic;
-        //         theme.organisers = [organisers];
-        //         theme.cards = cards;
-        //         theme.visits.$inc();
-        //         theme.save(function (err) {
-        //             if (err)
-        //                 callback(false, new Error("Error whilst trying to save updated theme"));
-        //             else {
-        //                 callback(true);
-        //             }
-        //         });
-        //     }
-        // });
+        let theme;
+        try {
+            theme = await this.themeDao.findByIdAndUpdate(id, updates);
+        } catch (err) {
+            throw new Error('Unexpected error occurred. ' + err);
+        }
+        return theme;
     }
 
-    deleteTheme(id, callback) {
-        this.themeDao.findOne({_id: id}, function (err, theme) {
-            if (err)
-                callback(false, err);
-            else {
-                if (theme) {
-                    theme.remove(function (err) {
-                        if (err) {
-                            callback(false, new Error('Error whilst trying to remove theme with id: ' + id + ' ' + err));
-                        } else {
-                            callback(true);
-                        }
-                    });
-                } else {
-                    callback(false, new Error('Id does not exist'))
-                }
-            }
-        });
+    async deleteTheme(theme) {
+        try {
+            await theme.remove();
+        } catch (err) {
+            throw new Error('Unexpected error occurred. ' + err);
+        }
+        return true;
     }
+
+    // handleError(err){
+    //     if(err instanceof MongooseError){
+    //         let newError;
+    //         switch(err.name){
+    //             case 'CastError': newError = new Error('Unexpected error occurred.'); break;
+    //             case 'DocumentNotFoundError': newError = new Error(''); break;
+    //             case 'ValidationError': newError = new Error(''); break;
+    //             case 'ValidatorError': newError = new Error(''); break;
+    //             case 'VersionError': newError = new Error('Unexpected error occurred.'); break;
+    //             case 'OverwriteModelError': newError = new Error('Unexpected error occurred.'); break;
+    //             case 'MissingSchemaError': newError = new Error('Unexpected error occurred.'); break;
+    //             case 'DivergentArrayError': newError = new Error('Unexpected error occurred.'); break;
+    //             case 'DisconnectedError': newError = new Error('Unexpected error occurred.'); break;
+    //             case 'ObjectExpectedError': newError = new Error('Unexpected error occurred.'); break;
+    //             case 'StrictModeError': newError = new Error('Unexpected error occurred.'); break;
+    //         }
+    //         throw newError;
+    //     }else{
+    //         throw err;
+    //     }
+    // }
 }
 
 module.exports = new ThemeRepository();

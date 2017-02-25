@@ -8,22 +8,20 @@ class CardService {
         this.cardRepo = require('../repositories/card-repository');
     }
 
-    addCard(description, theme, callback) {
+    async addCard(description, themeId, callback) {
+        let theme = await themeService.getTheme(themeId);
 
         let card = new Card();
-
-        themeService.getTheme(theme, (theme) => {
-            card.description = description;
-            card.theme = theme;
-            this.cardRepo.createCard(card,
-                (card, err) => {
-                    if (err) {
-                        callback(null, err);
-                    } else {
-                        callback(card);
-                    }
-                });
-        });
+        card.description = description;
+        card.theme = theme;
+        this.cardRepo.createCard(card,
+            (card, err) => {
+                if (err) {
+                    callback(null, err);
+                } else {
+                    callback(card);
+                }
+            });
 
 
     }

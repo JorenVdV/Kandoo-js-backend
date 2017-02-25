@@ -6,7 +6,13 @@ class UserRepository {
     }
 
     async readUserById(id) {
-        let user = await this.userDao.findOne({_id: id});
+        let user;
+        try {
+            user = await this.userDao.findOne({_id: id});
+        } catch (err) {
+            throw new Error('Unexpected error occurred. ' + err);
+        }
+
         if (user)
             return user;
         else
@@ -14,20 +20,38 @@ class UserRepository {
     }
 
     async readUserByEmail(email) {
-        let user = await this.userDao.findOne({emailAddress: email});
+        let user;
+        try {
+            user = await this.userDao.findOne({emailAddress: email});
+        } catch (err) {
+            throw new Error('Unexpected error occurred. ' + err);
+        }
+
         if (user)
             return user;
         else
             throw new Error('Unable to find user with email: ' + email);
+
     }
 
     async createUser(newUser) {
-        await newUser.save();
+        try {
+            await newUser.save();
+        } catch (err) {
+            throw new Error('Unexpected error occurred. ' + err);
+        }
+
         return newUser;
     }
 
     async readUsers() {
-        let users = await this.userDao.find({});
+        let users;
+        try {
+            users = await this.userDao.find({});
+        } catch (err) {
+            throw new Error('Unexpected error occurred. ' + err);
+        }
+
         let userArray = [];
         users.forEach((user) => {
             userArray.push(user);
@@ -35,14 +59,24 @@ class UserRepository {
         return userArray;
     }
 
-    async updateUser() {
+    async updateUser(id, toUpdate) {
+        let user;
+        try{
+            user = await this.userDao.findByIdAndUpdate(id, toUpdate);
+        }catch(err){
+            throw new Error('Unexpected error occurred. ' + err);
+        }
 
+        return user;
     }
 
     async deleteUser(user) {
-        await user.remove();
+        try {
+            await user.remove();
+        } catch (err) {
+            throw new Error('Unexpected error occurred. ' + err);
+        }
         return true;
-
     }
 
 }

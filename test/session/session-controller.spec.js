@@ -17,18 +17,11 @@ chai.use(chaiHttp);
 describe('Session Controller tests', function () {
     let globalTestTheme;
     let globalTestUser;
-    before('create a testUser', async function () {
-        globalTestUser = await userService.createUser('test', 'user', 'test.user@teamjs.xyz', 'TeamJS', 'test');
+    before('create a testUser & test theme', async function () {
+        globalTestUser = await userService.addUser('test', 'user', 'test.user@teamjs.xyz', 'TeamJS', 'test');
         assert.isOk(globalTestUser);
-    });
-
-    before('create a theme to create sessions on', function (done) {
-        globalTestTheme = themeService.addTheme('testTheme', 'a theme to use in the test', 'test', 'false', globalTestUser, [], function (theme, err) {
-            assert.isNotOk(err);
-            assert.isOk(theme);
-            globalTestTheme = theme;
-            done();
-        });
+        globalTestTheme = await themeService.addTheme('testTheme', 'a theme to use in the test', 'test', 'false', globalTestUser, []);
+        assert.isOk(globalTestTheme);
     });
 
     describe('/POST /theme/:themeId/session', function () {
@@ -485,17 +478,12 @@ describe('Session Controller tests', function () {
     //     });
     // });
 
-    after('remove testuser', async function () {
+    after('remove testuser & test theme', async function () {
         let successful = await userService.removeUser(globalTestUser._id);
         assert.isTrue(successful);
-    });
 
-    after('remove testtheme', function (done) {
-        themeService.removeTheme(globalTestTheme._id, function (success, err) {
-            assert.isNotOk(err);
-            assert.isTrue(success);
-            done();
-        });
+        successful = await themeService.removeTheme(globalTestTheme._id);
+        assert.isTrue(successful);
     });
 
 });
