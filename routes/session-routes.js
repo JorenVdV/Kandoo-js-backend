@@ -30,7 +30,14 @@ module.exports = function(app){
     //     .delete(userController.deleteUser);
 
     app.get('/theme/:themeId/sessions', function(req,res){
-        sessionController.getSessions(req,res);
+        sessionController.getSessionsByTheme(req,res);
+    });
+
+    app.get('/:participantId/sessions/participating', function(req,res){
+        sessionController.getSessionsByParticipant(req,res);
+    });
+    app.get('/:inviteeId/sessions/invited', function(req,res){
+        sessionController.getSessionsByInvitee(req,res);
     });
 
     app.delete('/session/:sessionId/delete', function(req,res){

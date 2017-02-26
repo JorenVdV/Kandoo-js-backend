@@ -9,10 +9,10 @@ class SessionService {
         this.userService = require('../services/user-service');
     }
 
-    createSession(title, description, circleType, minCardsPerParticipant, maxCardsPerParticipant, cards, canReviewCards, canAddCards,
-                  participants, themeId, creator, startDate, amountOfCircles, turnDuration, callback) {
+    async addSession(title, description, circleType, minCardsPerParticipant, maxCardsPerParticipant, cards, canReviewCards, canAddCards,
+                     participants, themeId, creator, startDate, amountOfCircles, turnDuration) {
         if (circleType != 'opportunity' && circleType != 'threat')
-            callback(null, new Error('Invalid circle type. Circle type should be "opportunity" or "threat".'));
+            throw new Error('Invalid circle type. Circle type should be "opportunity" or "threat".');
         else {
             let session = new Session();
             session.title = title;
@@ -31,46 +31,32 @@ class SessionService {
             session.rounds = [];
             session.startDate = startDate;
 
-            this.sessionRepo.createSession(session, function (session, err) {
-                if (err)
-                    callback(null, err);
-                else
-                    callback(session);
-            });
+            return await this.sessionRepo.createSession(session);
         }
     }
 
-    getSession(sessionId, callback) {
-        this.sessionRepo.readSessionById(sessionId, function (session, err) {
-            if (err)
-                callback(null, err);
-            else {
-                callback(session);
-            }
-        })
+    async getSession(sessionId) {
+        return await this.sessionRepo.readSessionById(sessionId);
     }
 
-    getSessions(themeId, callback) {
-        this.sessionRepo.readSessions(themeId, function (sessions, err) {
-            if (err)
-                callback(null, err);
-            else callback(sessions);
-        });
+    async getSessionsByTheme(themeId) {
+        return await this.sessionRepo.readSessionsByTheme(themeId);
     }
 
-    deleteSession(sessionId, callback) {
-        this.sessionRepo.deleteSession(sessionId, function (success, err) {
-            if (!success && err)
-                callback(success, err);
-            else if (err) {
-                callback(success, err);
-            } else
-                callback(success);
-        });
-
+    async getSessionsByInvitee(inviteeId){
+        return await this.sessionRepo.readSessionsByInvitee(inviteeId);
     }
 
-    startSession(sessionId, callback) {
+    async getSessionsByParticipant(participantId){
+        return await this.sessionRepo.readSessionsByParticipant(participantId);
+    }
+
+    async removeSession(sessionId) {
+        let session = await this.getSession(sessionId);
+        return await this.sessionRepo.deleteSession(session);
+    }
+
+    async startSession(sessionId, callback) {
         this.getSession(sessionId, function (session, err, sessionRepo) {
             if (err)
                 callback(false, err);
@@ -90,7 +76,7 @@ class SessionService {
         this.sessionRepo.updateSession(sessionId)
     }
 
-    changeSession(sessionId, toUpdate, callback) {
+    async changeSession(sessionId, toUpdate, callback) {
         this.sessionRepo.updateSession(sessionId, toUpdate,
             (success, err) => {
                 if (err)
@@ -99,7 +85,7 @@ class SessionService {
             })
     }
 
-    stopSession(sessionId, callback) {
+    async stopSession(sessionId, callback) {
         let session = this.getSession(sessionId);
         if (session.startDate) {
             session.endDate = new Date();
@@ -108,7 +94,7 @@ class SessionService {
         return session.endDate;
     }
 
-    addTurn(sessionId, card, user, callback) {
+    async addTurn(sessionId, card, user, callback) {
 
         let session = this.getSession(sessionId);
 
@@ -132,7 +118,7 @@ class SessionService {
         return true;
     }
 
-    invite(sessionId, userId, callback) {
+    async invite(sessionId, userId, callback) {
         let session = this.getSession(sessionId);
         this.userService.findUserById(userId, function (user, err) {
 

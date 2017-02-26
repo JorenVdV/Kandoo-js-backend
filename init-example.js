@@ -23,7 +23,7 @@ userRepo.readUserByEmail(initialUser.emailAddress, function (user, err) {
                     if (err) {
                         console.error(err);
                     } else {
-                        sessionService.createSession('Example session', 'default session as an example', 'opportunity', 1,5,
+                        sessionService.addSession('Example session', 'default session as an example', 'opportunity', 1,5,
                             [], false, false, [user], theme._id, user, null, null, null, function (session, err) {
                                 if (err) {
                                     console.log(err);

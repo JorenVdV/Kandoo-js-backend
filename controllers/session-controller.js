@@ -10,48 +10,43 @@ class SessionController {
 
     createSession(req, res) {
         let body = req.body;
-        this.sessionService.createSession(body.title, body.description,
+        this.sessionService.addSession(body.title, body.description,
             body.circleType,
             body.minCardsPerParticipant, body.maxCardsPerParticipant, body.cards,
             body.cardsCanBeReviewed, body.cardsCanBeAdded,
-            [], req.params.themeId, body.creator, body.startDate, body.amountOfCircles, body.turnDuration,
-            function (session, err) {
-                if (err) {
-                    res.status(400).send({error: err.message});
-                } else {
-                    res.status(201).send({session: session});
-                }
-            });
+            [], req.params.themeId, body.creator, body.startDate, body.amountOfCircles, body.turnDuration)
+            .then((session) => res.status(201).send({session: session}))
+            .catch((err) => res.status(400).send({error: err.message}));
     }
 
     getSession(req, res) {
-        this.sessionService.getSession(req.params.sessionId, function (session, err) {
-            if (err) {
-                res.status(404).send({error: err.message});
-            } else {
-                res.status(200).send({session: session});
-            }
-        });
+        this.sessionService.getSession(req.params.sessionId)
+            .then((session) => res.status(200).send({session: session}))
+            .catch((err) => res.status(404).send({error: err.message}));
     }
 
-    getSessions(req, res) {
-        this.sessionService.getSessions(req.params.themeId, function (sessions, err) {
-            if (err) {
-                res.status(404).send({error: err.message});
-            } else {
-                res.status(200).send({sessions: sessions});
-            }
-        });
+    getSessionsByTheme(req, res) {
+        this.sessionService.getSessionsByTheme(req.params.themeId)
+            .then((sessions) => res.status(200).send({sessions: sessions}))
+            .catch((err) => res.status(404).send({error: err.message}));
+    }
+
+    getSessionsByParticipant(req, res) {
+        this.sessionService.getSessionsByParticipant(req.params.participantId)
+            .then((sessions) => res.status(200).send({sessions: sessions}))
+            .catch((err) => res.status(404).send({error: err.message}));
+    }
+
+    getSessionsByInvitee(req, res) {
+        this.sessionService.getSessionsByInvitee(req.params.inviteeId)
+            .then((sessions) => res.status(200).send({sessions: sessions}))
+            .catch((err) => res.status(404).send({error: err.message}));
     }
 
     deleteSession(req, res) {
-        this.sessionService.deleteSession(req.params.sessionId, function (success, err) {
-            if (err) {
-                res.status(404).send({error: err.message});
-            } else {
-                res.sendStatus(204);
-            }
-        });
+        this.sessionService.removeSession(req.params.sessionId)
+            .then((success) => res.sendStatus(204))
+            .catch((err) => res.status(404).send({error: err.message}));
     }
 
     playTurn(req, res) {

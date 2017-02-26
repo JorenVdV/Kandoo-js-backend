@@ -3,16 +3,17 @@
  */
 process.env.NODE_ENV = 'test';
 
-var chai = require('chai');
-var chaiHttp = require('chai-http');
-var assert = chai.assert;
-var should = chai.should();
-var server = require('../../app-test');
-var themeService = require('../../services/theme-service');
-var userService = require('../../services/user-service');
-var sessionService = require('../../services/session-service');
+const chai = require('chai');
+const chaiHttp = require('chai-http');
+const assert = chai.assert;
+const should = chai.should();
+const server = require('../../app-test');
+const themeService = require('../../services/theme-service');
+const userService = require('../../services/user-service');
+const sessionService = require('../../services/session-service');
 
 chai.use(chaiHttp);
+
 
 describe('Session Controller tests', function () {
     let globalTestTheme;
@@ -25,6 +26,7 @@ describe('Session Controller tests', function () {
     });
 
     describe('/POST /theme/:themeId/session', function () {
+        let created_session;
         it('Create a session', function (done) {
             let session = {
                 title: 'Welke pudding eten we deze week?',
@@ -50,13 +52,8 @@ describe('Session Controller tests', function () {
                     assert.isOk(resSession, 'the session should be defined');
                     assert.strictEqual(resSession.title, 'Welke pudding eten we deze week?');
                     assert.equal(resSession.creator, globalTestUser._id, 'creator should have the same id as globaltestuser');
-
-                    sessionService.deleteSession(resSession._id, function (success, err) {
-                        assert.isNotOk(err);
-                        assert.isTrue(success);
-
-                        done();
-                    });
+                    created_session = resSession;
+                    done();
                 });
         });
 
@@ -86,21 +83,20 @@ describe('Session Controller tests', function () {
                     done();
                 });
         });
+
+        after('Remove the session', async() => {
+            let successful = await sessionService.removeSession(created_session._id);
+            assert.isTrue(successful);
+        })
     });
 
     describe('/DELETE /session/:sessionId/delete', function () {
         let GETSession_session;
-        before('Create a session', function (done) {
-            let callback = function (session, err) {
-                assert.isNotOk(err);
-                assert.isOk(session);
-
-                GETSession_session = session;
-                done();
-            };
-            sessionService.createSession('Welke pudding eten we deze week?', 'Test om sessie aan te maken', 'opportunity',
+        before('Create a session', async function () {
+            GETSession_session = await sessionService.addSession('Welke pudding eten we deze week?', 'Test om sessie aan te maken', 'opportunity',
                 2, 5, [],
-                true, false, [globalTestUser], globalTestTheme, globalTestUser, new Date(), null, null, callback);
+                true, false, [globalTestUser], globalTestTheme, globalTestUser, new Date(), null, null);
+            assert.isOk(GETSession_session);
         });
 
         it('Delete the session', function (done) {
@@ -119,7 +115,7 @@ describe('Session Controller tests', function () {
                     res.should.have.status(404);
                     res.body.should.have.property('error');
 
-                    assert.strictEqual(res.body.error, 'Unable to find session with id ' + '00aa0aa000a000000a0000aa');
+                    assert.strictEqual(res.body.error, 'Unable to find session with id: ' + '00aa0aa000a000000a0000aa');
                     done();
                 });
         });
@@ -128,16 +124,11 @@ describe('Session Controller tests', function () {
 
     describe('/GET  /session/:sessionId', function () {
         let GETSession_session;
-        before('Create a session', function (done) {
-            sessionService.createSession('Welke pudding eten we deze week?', 'Test om sessie aan te maken', 'opportunity', 3, 5, [],
-                true, false, [globalTestUser], globalTestTheme, globalTestUser, new Date(), null, null,
-                (session, err) => {
-                    assert.isNotOk(err);
-                    assert.isOk(session);
-
-                    GETSession_session = session;
-                    done();
-                });
+        before('Create a session', async function () {
+            GETSession_session = await sessionService.addSession('Welke pudding eten we deze week?', 'Test om sessie aan te maken', 'opportunity',
+                2, 5, [],
+                true, false, [globalTestUser], globalTestTheme, globalTestUser, new Date(), null, null);
+            assert.isOk(GETSession_session);
         });
 
         it('retrieve an existing session', function (done) {
@@ -163,18 +154,15 @@ describe('Session Controller tests', function () {
                 .end((err, res) => {
                     res.should.have.status(404);
                     res.body.should.have.property('error');
-                    assert.strictEqual(res.body.error, 'Unable to find session with id ' + '00aa0aa000a000000a0000aa');
+                    assert.strictEqual(res.body.error, 'Unable to find session with id: ' + '00aa0aa000a000000a0000aa');
                     done();
                 });
         });
 
-        after('Remove the session', function (done) {
-            sessionService.deleteSession(GETSession_session._id, function (success, err) {
-                assert.isNotOk(err);
-                assert.isTrue(success);
+        after('Remove the session', async function () {
+            let successful = await sessionService.removeSession(GETSession_session._id);
+            assert.isTrue(successful);
 
-                done();
-            });
         });
     });
 
@@ -195,16 +183,11 @@ describe('Session Controller tests', function () {
 
         describe('get all sessions - one existing session', function () {
             let GETSessions_session;
-            before('create a session', function (done) {
-                sessionService.createSession('Welke pudding eten we deze week?', 'Test om sessie aan te maken', 'opportunity', 3, 5, [],
-                    true, false, [globalTestUser], globalTestTheme, globalTestUser, new Date(), null, null,
-                    (session, err) => {
-                        assert.isNotOk(err);
-                        assert.isOk(session);
-
-                        GETSessions_session = session;
-                        done();
-                    });
+            before('Create a session', async function () {
+                GETSessions_session = await sessionService.addSession('Welke pudding eten we deze week?', 'Test om sessie aan te maken', 'opportunity',
+                    2, 5, [],
+                    true, false, [globalTestUser], globalTestTheme, globalTestUser, new Date(), null, null);
+                assert.isOk(GETSessions_session);
             });
 
             it('retrieve all sessions', function (done) {
@@ -223,41 +206,29 @@ describe('Session Controller tests', function () {
                     });
             });
 
-            after('Remove the session', function (done) {
-                sessionService.deleteSession(GETSessions_session._id, function (success, err) {
-                    assert.isNotOk(err);
-                    assert.isTrue(success);
-
-                    done();
-                });
+            after('Remove the session', async function () {
+                let successful = await sessionService.removeSession(GETSessions_session._id);
+                assert.isTrue(successful);
             });
         });
 
         describe('get all sessions - two existing sessions', function () {
             let GETSessions_session1;
+            let user2;
             let GETSessions_session2;
-            before('create a session', function (done) {
-                sessionService.createSession('Welke pudding eten we deze week?', 'Test om sessie aan te maken', 'opportunity', 3, 5, [],
-                    true, false, [globalTestUser], globalTestTheme, globalTestUser, new Date(), null, null,
-                    (session, err) => {
-                        assert.isNotOk(err);
-                        assert.isOk(session);
+            before('Create the sessions & second testuser', async function () {
+                GETSessions_session1 = await sessionService.addSession('Welke pudding eten we deze week?', 'Test om sessie aan te maken', 'opportunity',
+                    2, 5, [],
+                    true, false, [globalTestUser], globalTestTheme, globalTestUser, new Date(), null, null);
+                assert.isOk(GETSessions_session1);
 
-                        GETSessions_session1 = session;
-                        done();
-                    });
-            });
+                user2 = await userService.addUser('test', 'user1', 'test.user1@teamjs.xyz', 'TeamJS', 'test');
+                assert.isOk(user2);
 
-            before('create a second session', function (done) {
-                sessionService.createSession('Welke pudding eten we volgende week?', 'Test om sessie aan te maken', 'opportunity', 3, 5, [],
-                    true, false, [globalTestUser], globalTestTheme, globalTestUser, new Date(), null, null,
-                    (session, err) => {
-                        assert.isNotOk(err);
-                        assert.isOk(session);
-
-                        GETSessions_session2 = session;
-                        done();
-                    });
+                GETSessions_session2 = await sessionService.addSession('Welke pudding eten we volgende week?', 'Test om sessie aan te maken', 'opportunity',
+                    2, 5, [],
+                    true, false, [user2], globalTestTheme, user2, new Date(), null, null);
+                assert.isOk(GETSessions_session2);
             });
 
             it('retrieve all sessions', function (done) {
@@ -275,22 +246,41 @@ describe('Session Controller tests', function () {
                     });
             });
 
-            after('Remove the first session', function (done) {
-                sessionService.deleteSession(GETSessions_session1._id, function (success, err) {
-                    assert.isNotOk(err);
-                    assert.isTrue(success);
-
-                    done();
-                });
+            it('retrieve all sessions - by participant globalTestUser', function (done) {
+                chai.request(server)
+                    .get('/' + globalTestUser._id + '/sessions/participating')
+                    .send()
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.have.property('sessions');
+                        let resSessionsIds = res.body.sessions.map(session => session._id);
+                        assert.isTrue(resSessionsIds.includes(GETSessions_session1._id.toString()));
+                        done();
+                    });
             });
 
-            after('Remove the second session', function (done) {
-                sessionService.deleteSession(GETSessions_session2._id, function (success, err) {
-                    assert.isNotOk(err);
-                    assert.isTrue(success);
+            it('retrieve all sessions - by participant user2', function (done) {
+                chai.request(server)
+                    .get('/' + user2._id + '/sessions/participating')
+                    .send()
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.have.property('sessions');
+                        let resSessionsIds = res.body.sessions.map(session => session._id);
+                        assert.isTrue(resSessionsIds.includes(GETSessions_session2._id.toString()));
+                        done();
+                    });
+            });
 
-                    done();
-                });
+            after('Remove the sessions & testuser', async function () {
+                let successful = await sessionService.removeSession(GETSessions_session1._id);
+                assert.isTrue(successful);
+
+                successful = await sessionService.removeSession(GETSessions_session2._id);
+                assert.isTrue(successful);
+
+                successful = await userService.removeUser(user2._id);
+                assert.isTrue(successful);
             });
         });
 
@@ -356,7 +346,7 @@ describe('Session Controller tests', function () {
     //     });
     //     after('clean up created stuff', function () {
     //         it('delete  session', function () {
-    //             sessionService.deleteSession(session._id);
+    //             sessionService.removeSession(session._id);
     //         });
     //
     //     });
@@ -369,7 +359,7 @@ describe('Session Controller tests', function () {
     // describe('start a session', function () {
     //     let session;
     //     before(function (done) {
-    //         session = sessionService.createSession('testSession', 'testing the creation of a session', 'blue',
+    //         session = sessionService.addSession('testSession', 'testing the creation of a session', 'blue',
     //             60000, {min: 3, max: 10}, [], false, false, [globalTestUser],
     //             globalTestTheme._id, globalTestUser);
     //         done();
@@ -385,7 +375,7 @@ describe('Session Controller tests', function () {
     //     });
     //     after('clean up created stuff', function () {
     //         it('delete  session', function (done) {
-    //             sessionService.deleteSession(session._id);
+    //             sessionService.removeSession(session._id);
     //             done();
     //         });
     //     });
@@ -394,7 +384,7 @@ describe('Session Controller tests', function () {
     // describe('stop a session', function () {
     //     let session;
     //     before(function (done) {
-    //         session = sessionService.createSession('testSession', 'testing the creation of a session', 'blue',
+    //         session = sessionService.addSession('testSession', 'testing the creation of a session', 'blue',
     //             60000, {min: 3, max: 10}, [], false, false, [globalTestUser],
     //             globalTestTheme._id, globalTestUser);
     //         done();
@@ -424,7 +414,7 @@ describe('Session Controller tests', function () {
     //             });
     //     });
     //     after('clean up created stuff', function (done) {
-    //         sessionService.deleteSession(session._id);
+    //         sessionService.removeSession(session._id);
     //         done();
     //     });
     // });
@@ -474,7 +464,7 @@ describe('Session Controller tests', function () {
     //             });
     //     });
     //     after('clean up created stuff', function () {
-    //         sessionService.deleteSession(sessionId);
+    //         sessionService.removeSession(sessionId);
     //     });
     // });
 
