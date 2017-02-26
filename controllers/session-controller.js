@@ -16,7 +16,7 @@ class SessionController {
             body.cardsCanBeReviewed, body.cardsCanBeAdded,
             [], req.params.themeId, body.creator, body.startDate, body.amountOfCircles, body.turnDuration)
             .then((session) => res.status(201).send({session: session}))
-            .catch((err) => res.status(400).send({error: err.message}));
+            .catch((err) => res.status(404).send({error: err.message}));
     }
 
     getSession(req, res) {

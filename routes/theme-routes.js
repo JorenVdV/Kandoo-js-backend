@@ -9,7 +9,7 @@ module.exports = function(app) {
         themeController.createTheme(req,res);
     });
 
-    app.delete('/theme/:themeId', function(req,res){
+    app.delete('/theme/:themeId/delete', function(req,res){
         themeController.deleteTheme(req,res);
     });
 

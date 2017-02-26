@@ -29,7 +29,7 @@ class SessionService {
             session.creator = creator._id;
             session.participants = participants;
             session.rounds = [];
-            session.startDate = startDate;
+            session.startDate = startDate ? startDate : null;
 
             return await this.sessionRepo.createSession(session);
         }

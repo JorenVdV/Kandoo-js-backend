@@ -299,7 +299,7 @@ describe('Theme controller tests', function () {
         });
         it('delete a theme - existing id', (done) => {
             chai.request(server)
-                .delete('/theme/' + theme._id)
+                .delete('/theme/' + theme._id + '/delete')
                 .send()
                 .end((err, res) => {
                     res.should.have.status(204);
@@ -309,7 +309,7 @@ describe('Theme controller tests', function () {
 
         it('delete a theme - non existing id', (done) => {
             chai.request(server)
-                .delete('/theme/' + '00aa0aa000a000000a0000aa')
+                .delete('/theme/' + '00aa0aa000a000000a0000aa' + '/delete')
                 .send()
                 .end((err, res) => {
                     res.should.have.status(404);

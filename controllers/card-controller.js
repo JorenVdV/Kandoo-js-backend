@@ -11,8 +11,6 @@ class CardController {
 
     addCardToTheme(req, res) {
         let body = req.body;
-        // console.log((req));
-        // console.log(req.params.themeId);
         this.cardService.addCard(body.description, req.params.themeId,
             (card, err) => {
                 if(err)

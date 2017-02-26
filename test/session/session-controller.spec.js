@@ -76,7 +76,7 @@ describe('Session Controller tests', function () {
                 .post('/theme/' + globalTestTheme._id + '/session')
                 .send(session)
                 .end((err, res) => {
-                    res.should.have.status(400);
+                    res.should.have.status(404);
                     res.body.should.have.property('error');
                     assert.isOk(res.body.error);
                     assert.strictEqual(res.body.error, 'Invalid circle type. Circle type should be "opportunity" or "threat".');
