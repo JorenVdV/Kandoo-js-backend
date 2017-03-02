@@ -3,6 +3,8 @@
  */
 const Session = require('../models/session');
 
+const replaceUndefinedOrNullOrEmptyObject = require('../_helpers/replacers');
+
 class SessionService {
     constructor() {
         this.sessionRepo = require('../repositories/session-repository');
@@ -43,17 +45,56 @@ class SessionService {
         return await this.sessionRepo.readSessionsByTheme(themeId);
     }
 
-    async getSessionsByInvitee(inviteeId){
-        return await this.sessionRepo.readSessionsByInvitee(inviteeId);
+    async getSessionsByInvitee(inviteeId) {
+        let email = this.userService.getUserById(inviteeId).emailAddress;
+        return await this.sessionRepo.readSessionsByInvitee(email);
     }
 
-    async getSessionsByParticipant(participantId){
+    async getSessionsByParticipant(participantId) {
         return await this.sessionRepo.readSessionsByParticipant(participantId);
+    }
+
+    async changeSession(id, toUpdate) {
+        toUpdate = await this.validateUpdate(id, toUpdate);
+        return await this.sessionRepo.updateSession(id, toUpdate);
+    }
+
+    async validateUpdate(id, toUpdate) {
+        let session = await this.getSession(id);
+        toUpdate = JSON.parse(JSON.stringify(toUpdate, replaceUndefinedOrNullOrEmptyObject));
+        if (toUpdate.startDate) {
+            if (session.status)
+                throw new Error('Cannot set a start date for started session.');
+            if (session.startDate && new Date() >= session.startDate)
+                throw new Error('Cannot set a start date for a started session.');
+            // 30 seconds spare time for processing
+            if (!toUpdate.startDate >= new Date(Date.now() - 30000))
+                throw new Error('Cannot set a start date in the past');
+        }
+        return toUpdate;
     }
 
     async removeSession(sessionId) {
         let session = await this.getSession(sessionId);
         return await this.sessionRepo.deleteSession(session);
+    }
+
+    async inviteUserToSession(sessionId, userEmail) {
+        let session = await this.getSession(sessionId);
+        if (session.invitees.includes(userEmail))
+            throw new Error(userEmail + ' is already invited to the session.');
+            session.invitees.push(userEmail);
+        return await this.changeSession(sessionId, {invitees: session.invitees});
+    }
+
+    async acceptInviteToSession(sessionId, userId) {
+        let session = await this.getSession(sessionId);
+        let user = await this.userService.getUserById(userId);
+        if (!session.invitees.includes(user.emailAddress))
+            throw new Error(user.emailAddress + ' was not invited to the session.');
+        session.participants.push(userId);
+        session.invitees.splice(session.invitees.indexOf(user.emailAddress), 1);
+        return await this.changeSession(sessionId, {invitees: session.invitees, participants: session.participants})
     }
 
     async startSession(sessionId, callback) {
@@ -74,15 +115,6 @@ class SessionService {
         });
 
         this.sessionRepo.updateSession(sessionId)
-    }
-
-    async changeSession(sessionId, toUpdate, callback) {
-        this.sessionRepo.updateSession(sessionId, toUpdate,
-            (success, err) => {
-                if (err)
-                    callback(success, err);
-                else callback(success);
-            })
     }
 
     async stopSession(sessionId, callback) {
@@ -118,20 +150,6 @@ class SessionService {
         return true;
     }
 
-    async invite(sessionId, userId, callback) {
-        let session = this.getSession(sessionId);
-        this.userService.findUserById(userId, function (user, err) {
-
-            session.invitees.push(user);
-            console.log(session.invitees);
-
-            let mailService = require('./mail-service');
-            mailService.sendMail();
-
-            return true;
-        });
-
-    }
 }
 
 module.exports = new SessionService();

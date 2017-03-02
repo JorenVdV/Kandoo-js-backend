@@ -62,11 +62,10 @@ class UserRepository {
     async updateUser(id, toUpdate) {
         let user;
         try{
-            user = await this.userDao.findByIdAndUpdate(id, toUpdate);
+            user = await this.userDao.findByIdAndUpdate(id, toUpdate, {new:true});
         }catch(err){
             throw new Error('Unexpected error occurred. ' + err);
         }
-
         return user;
     }
 

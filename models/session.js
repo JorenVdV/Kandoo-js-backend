@@ -7,7 +7,8 @@ var Schema = mongoose.Schema;
 var SessionSchema = new Schema({
     title: String,
     description: String,
-    circleType: {type: String,
+    circleType: {
+        type: String,
         enum: {
             values: ['opportunity', 'threat'],
             message: 'Invalid circle type. Circle type should be "opportunity" or "threat".'
@@ -22,7 +23,11 @@ var SessionSchema = new Schema({
     cardsCanBeReviewed: Boolean,
     cardsCanBeAdded: Boolean,
     participants: [{type: Schema.ObjectId, ref: 'User'}],
-    invitees: [{type: Schema.ObjectId, ref: 'User'}],
+    invitees: [{
+        type: String,
+        match: [/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/, '{VALUE} is not a valid email address!'],
+        lowercase: true
+    }],
     startDate: Date,
     endDate: Date,
     turns: [
@@ -33,6 +38,7 @@ var SessionSchema = new Schema({
             created: {type: Date, default: Date.now}
 
         }],
+    status: {type: String, enum: ['started', 'paused', 'finished']},
     currentUser: {type: Schema.ObjectId, ref: 'User'},
     theme: {
         type: Schema.ObjectId, ref: 'Theme'

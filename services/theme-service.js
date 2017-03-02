@@ -3,10 +3,12 @@
  */
 
 const Theme = require('../models/theme');
+const replaceUndefinedOrNullOrEmptyObject = require('../_helpers/replacers');
 
 class ThemeService {
     constructor() {
         this.themeRepo = require('../repositories/theme-repository');
+        this.userService = require('../services/user-service');
     }
 
     async addTheme(title, description, tags, isPublic, organiser, cards = []) {
@@ -31,6 +33,28 @@ class ThemeService {
 
     async changeTheme(themeId, title, description, tags, isPublic, cards) {
         return await this.themeRepo.updateTheme(themeId, title, description, tags, isPublic, cards);
+    }
+
+    async changeTheme(id, toUpdate) {
+        toUpdate = await this.validateUpdate(toUpdate);
+        return await this.themeRepo.updateTheme(id, toUpdate);
+    }
+
+    async validateUpdate(toUpdate) {
+        return JSON.parse(JSON.stringify(toUpdate, replaceUndefinedOrNullOrEmptyObject));
+    }
+
+    async addOrganiser(id, organiserEmail) {
+        let organiserId = await this.userService.getUserByEmail(organiserEmail)._id;
+        let theme = await this.getTheme(id);
+        theme.organisers.push(organiserId);
+        this.changeTheme(theme._id, {organisers: theme.organisers});
+    }
+
+    async removeOrganiser(id, organiserId) {
+        let theme = await this.getTheme(id);
+        theme.organisers.splice(theme.organisers.indexOf(organiserId), 1).push(organiserId);
+        this.changeTheme(theme._id, {organisers: theme.organisers});
     }
 
     async removeTheme(themeId) {

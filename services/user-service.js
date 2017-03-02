@@ -2,6 +2,8 @@ const User = require('../models/user');
 const bcrypt = require('bcrypt');
 const saltRounds = 10; // 15 = 1.8 - 2+ seconds
 
+const replaceUndefinedOrNullOrEmptyObject = require('../_helpers/replacers');
+
 class UserService {
 
     constructor() {
@@ -33,6 +35,19 @@ class UserService {
     async removeUser(id) {
         let user = await this.getUserById(id);
         return await this.userRepo.deleteUser(user);
+    }
+
+    async changeUser(id, toUpdate) {
+        toUpdate = await this.validateUpdate(toUpdate);
+        return await this.userRepo.updateUser(id, toUpdate);
+    }
+
+    async validateUpdate(toUpdate) {
+        if(toUpdate.password){
+            let salt = bcrypt.genSaltSync(saltRounds);
+            toUpdate.securePassword = bcrypt.hashSync(toUpdate.password, salt);
+        }
+        return JSON.parse(JSON.stringify(toUpdate, replaceUndefinedOrNullOrEmptyObject));
     }
 
     async getUserById(id) {

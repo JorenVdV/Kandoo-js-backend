@@ -3,7 +3,8 @@
  */
 class ThemeController {
     constructor() {
-        this.themeService = require('../services/theme-service')
+        this.themeService = require('../services/theme-service');
+        this.userService = require('../services/user-service');
     }
 
     createTheme(req, res) {
@@ -24,6 +25,26 @@ class ThemeController {
         this.themeService.getThemes(body.organiserId)
             .then((themes) => res.status(200).send({themes: themes}))
             .catch((err) => res.status(404).send({error: err.message}));
+    }
+
+    addOrganiser(req,res){
+        let body = req.body;
+        this.themeService.addOrganiser(req.params.themeId, body.organiserEmail)
+            .then((theme) => res.status(200).send({theme: theme}))
+            .catch((err) => res.status(400).send({error: err.message}));
+    }
+
+    updateTheme(req,res){
+        let body = req.body;
+        let toUpdate = {
+            title: body.title,
+            description: body.description,
+            tags: body.tags,
+            isPublic: body.isPublic
+        };
+        this.themeService.changeTheme(req.params.themeId, toUpdate)
+            .then((theme) => res.status(200).send({theme: theme}))
+            .catch((err) => res.status(400).send({error: err.message}));
     }
 
     deleteTheme(req, res) {

@@ -32,7 +32,7 @@ class MailService {
             text: 'Hello world ?', // plain text body
             html: '<b>Hello world ?</b>' // html body
         };
-        var transporter = nodemailer.createTransport(this.transporter);
+        let transporter = nodemailer.createTransport(this.transporter);
 
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {

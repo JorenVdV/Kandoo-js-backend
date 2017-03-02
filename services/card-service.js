@@ -3,6 +3,7 @@
  */
 var Card = require('../models/card');
 var themeService = require('../services/theme-service');
+
 class CardService {
     constructor() {
         this.cardRepo = require('../repositories/card-repository');

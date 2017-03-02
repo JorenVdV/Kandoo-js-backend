@@ -24,9 +24,9 @@ class SessionRepository {
         } catch (err) {
             throw new Error('Unexpected error occurred. ' + err);
         }
-        if(session){
+        if (session) {
             return session;
-        } else{
+        } else {
             throw new Error('Unable to find session with id: ' + id);
         }
     }
@@ -36,17 +36,17 @@ class SessionRepository {
         return await this.readSessions(query);
     }
 
-    async readSessionsByInvitee(inviteeId) {
-        let query = {invitees: {$in: [inviteeId]}};
+    async readSessionsByInvitee(inviteeEmail) {
+        let query = {invitees: {$in: [inviteeEmail]}};
         return await this.readSessions(query);
     }
 
-    async readSessionsByParticipant(participantId){
+    async readSessionsByParticipant(participantId) {
         let query = {participants: {$in: [participantId]}};
         return await this.readSessions(query);
     }
 
-    async readSessions(query){
+    async readSessions(query) {
         let sessions;
         try {
             sessions = await this.sessionDao.find(query);
@@ -64,7 +64,7 @@ class SessionRepository {
     async updateSession(sessionId, toUpdate) {
         let session;
         try {
-            session = await this.sessionDao.findByIdAndUpdate(sessionId, toUpdate);
+            session = await this.sessionDao.findByIdAndUpdate(sessionId, toUpdate, {new:true});
         } catch (err) {
             throw new Error('Unexpected error occurred. ' + err);
         }

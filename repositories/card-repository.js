@@ -47,6 +47,16 @@ class CardRepository {
         return cardsArray;
     }
 
+    async updateCard(id, toUpdate) {
+        let card;
+        try{
+            card = await this.cardDao.findByIdAndUpdate(id, toUpdate);
+        }catch(err){
+            throw new Error('Unexpected error occurred. ' + err);
+        }
+        return card;
+    }
+
     async deleteCard(card) {
         try {
             await card.remove();

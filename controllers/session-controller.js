@@ -49,6 +49,20 @@ class SessionController {
             .catch((err) => res.status(404).send({error: err.message}));
     }
 
+    inviteToSession(req,res){
+        let body = req.body;
+        this.sessionService.inviteUserToSession(req.params.sessionId, body.emailAddress)
+            .then((session) => res.status(200).send(session))
+            .catch((err) => res.status(400).send({error: err.message}));
+    }
+
+    acceptInviteToSession(req,res){
+        let body = req.body;
+        this.sessionService.acceptInviteToSession(req.params.sessionId, body.userId)
+            .then((session) => res.status(200).send(session))
+            .catch((err) => res.status(400).send({error: err.message}));
+    }
+
     playTurn(req, res) {
         this.userService.findUserById(req.params.userId, function (user, err) {
             let cardService = require('../services/card-service');
@@ -85,6 +99,30 @@ class SessionController {
             res.sendStatus(202);
         else
             res.sendStatus(400);
+    }
+
+    updateSession(req, res) {
+        let body = req.body;
+        let toUpdate = {
+            title: body.title,
+            description: body.description,
+            circleType: body.circleType,
+            minCardsPerParticipant: body.minCardsPerParticipant,
+            maxCardsPerParticipant: body.maxCardsPerParticipant,
+            amountOfCircles: body.amountOfCircles,
+            sessionCards: body.sessionCards,
+            cardsCanBeReviewed: body.cardsCanBeReviewed,
+            cardsCanBeAdded: body.cardsCanBeAdded,
+            startDate: body.startDate,
+            endDate: body.endDate
+        };
+        this.sessionService.changeSession(req.params.sessionId, toUpdate)
+            .then((session) => res.status(200).send({session: session}))
+            .catch((err) => res.status(400).send({error: err.message}))
+    }
+
+    inviteToSession(req,res){
+
     }
 }
 

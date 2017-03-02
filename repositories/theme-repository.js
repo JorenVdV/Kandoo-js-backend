@@ -14,7 +14,6 @@ class ThemeRepository {
         } catch (err) {
             throw new Error('Unexpected error occurred. ' + err);
         }
-
         return theme;
     }
 
@@ -52,18 +51,28 @@ class ThemeRepository {
         return themeArray;
     }
 
-    async updateTheme(id, title, description, tags, isPublic, cards) {
-        let updates = {
-            title: title,
-            description: description,
-            tags: tags,
-            isPublic: isPublic,
-            cards: cards
-        };
+    // async updateTheme(id, title, description, tags, isPublic, cards) {
+    //     let updates = {
+    //         title: title,
+    //         description: description,
+    //         tags: tags,
+    //         isPublic: isPublic,
+    //         cards: cards
+    //     };
+    //     let theme;
+    //     try {
+    //         theme = await this.themeDao.findByIdAndUpdate(id, updates);
+    //     } catch (err) {
+    //         throw new Error('Unexpected error occurred. ' + err);
+    //     }
+    //     return theme;
+    // }
+
+    async updateTheme(id, toUpdate) {
         let theme;
-        try {
-            theme = await this.themeDao.findByIdAndUpdate(id, updates);
-        } catch (err) {
+        try{
+            theme = await this.themeDao.findByIdAndUpdate(id, toUpdate, {new:true});
+        }catch(err){
             throw new Error('Unexpected error occurred. ' + err);
         }
         return theme;
