@@ -1,7 +1,7 @@
 /**
  * Created by steve on 2/10/2017.
  */
-
+const bcrypt = require('bcrypt');
 
 class UserController {
     constructor() {
@@ -19,7 +19,7 @@ class UserController {
         let body = req.body;
         this.userService.getUserByEmail(body.emailAddress).then(
             (user) => {
-                if (user.password === body.password)
+                if(bcrypt.compareSync(body.password, user.securePassword))
                     res.status(200).send({user: user});
                 else
                     res.status(401).send({error: "Password is incorrect"});

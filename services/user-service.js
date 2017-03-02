@@ -1,6 +1,6 @@
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
-const saltRounds = 10;
+const saltRounds = 10; // 15 = 1.8 - 2+ seconds
 
 class UserService {
 

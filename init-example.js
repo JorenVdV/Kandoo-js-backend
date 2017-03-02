@@ -4,9 +4,10 @@
 const userRepo = require('./repositories/user-repository');
 const themeService = require('./services/theme-service');
 const sessionService = require('./services/session-service');
-const User = require("./models/user");
+const userService = require('./services/user-service');
+// const User = require("./models/user");
 
-let initialUser = new User();
+let initialUser = {};//new User();
 initialUser.firstname = "Puddingtje";
 initialUser.lastname = "Puddingske";
 initialUser.emailAddress = "test@pudding.com";
@@ -15,8 +16,9 @@ initialUser.password = "test";
 
 userRepo.readUserByEmail(initialUser.emailAddress)
     .then((user) => console.log('user with emailAddress ' + initialUser.emailAddress + ' already exists.'))
-    .catch(
-        userRepo.createUser(initialUser)
+    .catch((err) => {
+        console.log('user doesn\'t exist yet: ' + err.message);
+        userService.addUser(initialUser.firstname, initialUser.lastname, initialUser.emailAddress, initialUser.organisation, initialUser.password)
             .then((user) => {
                     console.log('user created');
                     themeService.addTheme('Example', 'default theme as an example', ['example'], false, user, [])
@@ -32,6 +34,8 @@ userRepo.readUserByEmail(initialUser.emailAddress)
                 }
             )
             .catch((err) => console.log('Unexpected error whilst creating user: ' + err))
+
+        }
     );
 
 // userRepo.readUserByEmail(initialUser.emailAddress, function (user, err) {
