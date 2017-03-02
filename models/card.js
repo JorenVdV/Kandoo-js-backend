@@ -6,10 +6,9 @@ var Schema = mongoose.Schema;
 
 var CardSchema = new Schema({
     description: String,
-    theme: {type: Schema.ObjectId, ref: 'Theme'},
-    created: {
-        type: Date, default: Date.now
-    }
-});
+    theme: {type: Schema.ObjectId, ref: 'Theme'}
+}, {timestamps: true}, {minimize: true});
+
+CardSchema.set('validateBeforeSave', true);
 
 module.exports = mongoose.model('Card', CardSchema);

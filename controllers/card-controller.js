@@ -11,45 +11,27 @@ class CardController {
 
     addCardToTheme(req, res) {
         let body = req.body;
-        this.cardService.addCard(body.description, req.params.themeId,
-            (card, err) => {
-                if(err)
-                    res.status(404).send({error: err.message});
-                else
-                    res.status(201).send({card: card});
-            });
+        this.cardService.addCard(body.description, req.params.themeId)
+            .then((card) => res.status(201).send({card: card}))
+            .catch((err) => res.status(404).send({error: err.message}));
     }
 
     getCardById(req, res) {
-        this.cardService.getCardById(req.params.cardId,
-            (card, err) => {
-                if (err) {
-                    res.status(404).send({error: err.message});
-                } else {
-                    res.status(200).send({card: card});
-                }
-            });
+        this.cardService.getCardById(req.params.cardId)
+            .then((card) => res.status(200).send({card: card}))
+            .catch((err) => res.status(404).send({error: err.message}));
     }
 
     getCardsByThemeId(req, res) {
-        this.cardService.getCardByThemeId(req.params.themeId,
-            (cards, err) => {
-                if (err)
-                    res.status(404).send({error: err.message});
-                else
-                    res.status(200).send({cards: cards});
-            });
+        this.cardService.getCardByThemeId(req.params.themeId)
+            .then((cards) => res.status(200).send({cards: cards}))
+            .catch((err) => res.status(404).send({error: err.message}));
     }
 
     removeCard(req, res) {
-        this.cardService.removeCard(req.params.cardId,
-            (success, err) => {
-                if (err) {
-                    res.status(404).send({error: err.message});
-                } else {
-                    res.sendStatus(204);
-                }
-            })
+        this.cardService.removeCard(req.params.cardId)
+            .then((succes) => res.sendStatus(204))
+            .catch((err) => res.status(404).send({error: err.message}));
     }
 
 

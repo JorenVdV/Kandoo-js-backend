@@ -1,4 +1,6 @@
 const User = require('../models/user');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 class UserService {
 
@@ -6,21 +8,24 @@ class UserService {
         this.userRepo = require('../repositories/user-repository');
     }
 
+    // hashed using https://www.npmjs.com/package/bcrypt
     async addUser(firstname, lastname, emailAddress, organisation, password) {
         let user;
-        try{
+        try {
             user = await this.getUserByEmail(emailAddress);
-        } catch(err){
+        } catch (err) {
             let newUser = new User();
             newUser.firstname = firstname;
             newUser.lastname = lastname;
             newUser.emailAddress = emailAddress;
             newUser.organisation = organisation ? organisation : "";
             newUser.password = password;
+            let salt = bcrypt.genSaltSync(saltRounds);
+            newUser.securePassword = bcrypt.hashSync(password, salt);
 
             return await this.userRepo.createUser(newUser);
         }
-        if(user)
+        if (user)
             throw new Error('Email address is already in use');
 
     }

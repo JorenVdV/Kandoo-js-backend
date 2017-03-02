@@ -13,26 +13,47 @@ initialUser.emailAddress = "test@pudding.com";
 initialUser.organisation = "Pudding Corp.";
 initialUser.password = "test";
 
-userRepo.readUserByEmail(initialUser.emailAddress, function (user, err) {
-    if (!user) {
-        userRepo.createUser(initialUser, function (user, err) {
-            if (err) {
-                console.error(err);
-            } else {
-                themeService.addTheme('Example', 'default theme as an example', ['example'], false, user, [], function (theme, err) {
-                    if (err) {
-                        console.error(err);
-                    } else {
-                        sessionService.addSession('Example session', 'default session as an example', 'opportunity', 1,5,
-                            [], false, false, [user], theme._id, user, null, null, null, function (session, err) {
-                                if (err) {
-                                    console.log(err);
-                                }
-                            })
-                    }
-                });
-            }
+userRepo.readUserByEmail(initialUser.emailAddress)
+    .then((user) => console.log('user with emailAddress ' + initialUser.emailAddress + ' already exists.'))
+    .catch(
+        userRepo.createUser(initialUser)
+            .then((user) => {
+                    console.log('user created');
+                    themeService.addTheme('Example', 'default theme as an example', ['example'], false, user, [])
+                        .then((theme) => {
+                                console.log('theme created');
+                                sessionService.addSession('Example session', 'default session as an example', 'opportunity', 1, 5,
+                                    [], false, false, [user], theme._id, user, null, null, null)
+                                    .then((session) => console.log('session created'))
+                                    .catch((err) => console.log('Unexpected error whilst creating session: ' + err))
+                            }
+                        )
+                        .catch((err) => console.log('Unexpected error whilst creating theme: ' + err))
+                }
+            )
+            .catch((err) => console.log('Unexpected error whilst creating user: ' + err))
+    );
 
-        });
-    }
-});
+// userRepo.readUserByEmail(initialUser.emailAddress, function (user, err) {
+//     if (!user) {
+//         userRepo.createUser(initialUser, function (user, err) {
+//             if (err) {
+//                 console.error(err);
+//             } else {
+//                 themeService.addTheme('Example', 'default theme as an example', ['example'], false, user, [], function (theme, err) {
+//                     if (err) {
+//                         console.error(err);
+//                     } else {
+//                         sessionService.addSession('Example session', 'default session as an example', 'opportunity', 1, 5,
+//                             [], false, false, [user], theme._id, user, null, null, null, function (session, err) {
+//                                 if (err) {
+//                                     console.log(err);
+//                                 }
+//                             })
+//                     }
+//                 });
+//             }
+//
+//         });
+//     }
+// });

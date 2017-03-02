@@ -8,52 +8,26 @@ class CardService {
         this.cardRepo = require('../repositories/card-repository');
     }
 
-    async addCard(description, themeId, callback) {
+    async addCard(description, themeId) {
         let theme = await themeService.getTheme(themeId);
 
         let card = new Card();
         card.description = description;
         card.theme = theme;
-        this.cardRepo.createCard(card,
-            (card, err) => {
-                if (err) {
-                    callback(null, err);
-                } else {
-                    callback(card);
-                }
-            });
-
-
+        return await this.cardRepo.createCard(card);
     }
 
-    getCardById(cardId, callback) {
-        this.cardRepo.readCardById(cardId,
-            (card, err) => {
-                if (err)
-                    callback(null, err);
-                else
-                    callback(card);
-            });
+    async getCardById(cardId) {
+        return await this.cardRepo.readCardById(cardId);
     }
 
-    getCardByThemeId(themeId, callback) {
-        this.cardRepo.readCardsByTheme(themeId,
-            (cards, err) => {
-                if (err)
-                    callback(null, err);
-                else
-                    callback(cards);
-            });
+    async getCardByThemeId(themeId) {
+        return await this.cardRepo.readCardsByTheme(themeId);
     }
 
-    removeCard(cardId, callback) {
-        this.cardRepo.deleteCard(cardId,
-            (success, err) => {
-                if (err)
-                    callback(success, err);
-                else
-                    callback(success);
-            });
+    async removeCard(cardId) {
+        let card = await this.cardRepo.readCardById(cardId);
+        return await this.cardRepo.deleteCard(card);
     }
 
 }

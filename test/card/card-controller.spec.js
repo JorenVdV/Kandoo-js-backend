@@ -45,13 +45,9 @@ describe('Card Controller tests', function () {
                 });
         });
 
-        after('Remove the card', (done) => {
-            cardService.removeCard(add_card._id,
-                (success, err) => {
-                    assert.isNotOk(err);
-                    assert.isTrue(success);
-                    done();
-                });
+        after('Remove the card', async() => {
+            let successful = await cardService.removeCard(add_card._id);
+            assert.isTrue(successful);
         });
     });
 
@@ -59,14 +55,9 @@ describe('Card Controller tests', function () {
         let remove_card;
 
         before('Create a card',
-            (done) => {
-                cardService.addCard('Test card with a test description', testTheme,
-                    (card, err) => {
-                        assert.isNotOk(err);
-                        assert.isOk(card);
-                        remove_card = card;
-                        done();
-                    });
+            async() => {
+                remove_card = await cardService.addCard('Test card with a test description', testTheme);
+                assert.isOk(remove_card);
             });
 
         it('Remove an existing card', (done) => {
@@ -87,7 +78,7 @@ describe('Card Controller tests', function () {
                     res.should.have.status(404);
                     res.body.should.have.property('error');
 
-                    assert.strictEqual(res.body.error, "Unable to find card with id " + '00aa0aa000a000000a0000aa');
+                    assert.strictEqual(res.body.error, "Unable to find card with id: " + '00aa0aa000a000000a0000aa');
                     done();
                 });
         });
@@ -97,14 +88,9 @@ describe('Card Controller tests', function () {
         let get_card;
 
         before('Create a card',
-            (done) => {
-                cardService.addCard('Test card with a test description', testTheme,
-                    (card, err) => {
-                        assert.isNotOk(err);
-                        assert.isOk(card);
-                        get_card = card;
-                        done();
-                    });
+            async() => {
+                get_card = await cardService.addCard('Test card with a test description', testTheme);
+                assert.isOk(get_card);
             });
 
         it('Get an existing card', (done) => {
@@ -128,18 +114,14 @@ describe('Card Controller tests', function () {
                     res.should.have.status(404);
                     res.body.should.have.property('error');
 
-                    assert.strictEqual(res.body.error, "Unable to find card with id " + '00aa0aa000a000000a0000aa');
+                    assert.strictEqual(res.body.error, "Unable to find card with id: " + '00aa0aa000a000000a0000aa');
                     done();
                 });
         });
 
-        after('Remove the card', (done) => {
-            cardService.removeCard(get_card._id,
-                (success, err) => {
-                    assert.isNotOk(err);
-                    assert.isTrue(success);
-                    done();
-                });
+        after('Remove the card', async() => {
+            let successful = await cardService.removeCard(get_card._id);
+            assert.isTrue(successful);
         });
     });
 
@@ -162,14 +144,9 @@ describe('Card Controller tests', function () {
             let get_all_card;
 
             before('Create a card',
-                (done) => {
-                    cardService.addCard('Test card with a test description', testTheme,
-                        (card, err) => {
-                            assert.isNotOk(err);
-                            assert.isOk(card);
-                            get_all_card = card;
-                            done();
-                        });
+                async() => {
+                    get_all_card = await cardService.addCard('Test card with a test description', testTheme);
+                    assert.isOk(get_all_card);
                 });
 
             it('Retrieve all cards', (done) => {
@@ -187,13 +164,9 @@ describe('Card Controller tests', function () {
                     })
             });
 
-            after('Remove the card', (done) => {
-                cardService.removeCard(get_all_card._id,
-                    (success, err) => {
-                        assert.isNotOk(err);
-                        assert.isTrue(success);
-                        done();
-                    });
+            after('Remove the card', async() => {
+                let successful = await cardService.removeCard(get_all_card._id);
+                assert.isTrue(successful);
             });
         });
 
@@ -201,26 +174,12 @@ describe('Card Controller tests', function () {
             let get_all_card1;
             let get_all_card2;
 
-            before('Create a card',
-                (done) => {
-                    cardService.addCard('Test card with a test description', testTheme,
-                        (card, err) => {
-                            assert.isNotOk(err);
-                            assert.isOk(card);
-                            get_all_card1 = card;
-                            done();
-                        });
-                });
-
-            before('Create a card',
-                (done) => {
-                    cardService.addCard('Test card with another test description', testTheme,
-                        (card, err) => {
-                            assert.isNotOk(err);
-                            assert.isOk(card);
-                            get_all_card2 = card;
-                            done();
-                        });
+            before('Create the cards',
+                async() => {
+                    get_all_card1 = await cardService.addCard('Test card with a test description', testTheme);
+                    assert.isOk(get_all_card1);
+                    get_all_card2 = await cardService.addCard('Test card with another test description', testTheme);
+                    assert.isOk(get_all_card2);
                 });
 
             it('Retrieve all cards', (done) => {
@@ -239,23 +198,14 @@ describe('Card Controller tests', function () {
                     })
             });
 
-            after('Remove the card', (done) => {
-                cardService.removeCard(get_all_card1._id,
-                    (success, err) => {
-                        assert.isNotOk(err);
-                        assert.isTrue(success);
-                        done();
-                    });
+            after('Remove the cards', async() => {
+                let successful = await cardService.removeCard(get_all_card1._id);
+                assert.isTrue(successful);
+
+                successful = await cardService.removeCard(get_all_card2._id);
+                assert.isTrue(successful);
             });
 
-            after('Remove the card', (done) => {
-                cardService.removeCard(get_all_card2._id,
-                    (success, err) => {
-                        assert.isNotOk(err);
-                        assert.isTrue(success);
-                        done();
-                    });
-            });
         });
 
     });

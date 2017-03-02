@@ -7,10 +7,16 @@ var Schema = mongoose.Schema;
 var SessionSchema = new Schema({
     title: String,
     description: String,
-    circleType: String,
+    circleType: {type: String,
+        enum: {
+            values: ['opportunity', 'threat'],
+            message: 'Invalid circle type. Circle type should be "opportunity" or "threat".'
+        },
+        lowercase: true
+    },
     turnDuration: Number,
-    minCardsPerParticipant : Number,
-    maxCardsPerParticipant : Number,
+    minCardsPerParticipant: Number,
+    maxCardsPerParticipant: Number,
     amountOfCircles: Number,
     sessionCards: [{type: Schema.ObjectId, ref: 'Card'}],
     cardsCanBeReviewed: Boolean,
@@ -33,10 +39,9 @@ var SessionSchema = new Schema({
     },
     creator: {
         type: Schema.ObjectId, ref: 'User'
-    },
-    created: {
-        type: Date, default: Date.now
     }
-});
+}, {timestamps: true}, {minimize: true});
+
+SessionSchema.set('validateBeforeSave', true);
 
 module.exports = mongoose.model('Session', SessionSchema);
