@@ -45,16 +45,17 @@ class ThemeService {
     }
 
     async addOrganiser(id, organiserEmail) {
-        let organiserId = await this.userService.getUserByEmail(organiserEmail)._id;
+        let organiser = await this.userService.getUserByEmail(organiserEmail);
         let theme = await this.getTheme(id);
-        theme.organisers.push(organiserId);
-        this.changeTheme(theme._id, {organisers: theme.organisers});
+        theme.organisers.push(organiser);
+        return await this.changeTheme(theme._id, {organisers: theme.organisers});
     }
 
     async removeOrganiser(id, organiserId) {
         let theme = await this.getTheme(id);
-        theme.organisers.splice(theme.organisers.indexOf(organiserId), 1).push(organiserId);
-        this.changeTheme(theme._id, {organisers: theme.organisers});
+        let index = theme.organisers.findIndex(org => org._id.toString() == organiserId.toString());
+        theme.organisers.splice(index, 1);
+        return await this.changeTheme(theme._id, {organisers: theme.organisers});
     }
 
     async removeTheme(themeId) {

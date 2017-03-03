@@ -75,7 +75,7 @@ describe('Theme controller tests', function () {
                     assert.strictEqual(resultTheme.tags.length, GET_THEME_theme.tags.length);
                     assert.strictEqual(resultTheme.isPublic, GET_THEME_theme.isPublic);
                     assert.strictEqual(resultTheme.organisers.length, 1);
-                    assert.strictEqual(resultTheme.organisers[0].toString(), THEME_globalTestUser._id.toString());
+                    assert.strictEqual(resultTheme.organisers[0]._id.toString(), THEME_globalTestUser._id.toString());
                     done();
                 });
         });
@@ -139,7 +139,7 @@ describe('Theme controller tests', function () {
                         assert.strictEqual(resultTheme.tags.length, GET_THEMES_theme1.tags.length);
                         assert.strictEqual(resultTheme.isPublic, GET_THEMES_theme1.isPublic);
                         assert.strictEqual(resultTheme.organisers.length, 1);
-                        assert.strictEqual(resultTheme.organisers[0].toString(), THEME_globalTestUser._id.toString());
+                        assert.strictEqual(resultTheme.organisers[0]._id.toString(), THEME_globalTestUser._id.toString());
 
                         done();
                     });
@@ -182,7 +182,7 @@ describe('Theme controller tests', function () {
                         assert.strictEqual(resultTheme1.tags.length, GET_THEMES_theme1.tags.length);
                         assert.strictEqual(resultTheme1.isPublic, GET_THEMES_theme1.isPublic);
                         assert.strictEqual(resultTheme1.organisers.length, 1);
-                        assert.strictEqual(resultTheme1.organisers[0].toString(), THEME_globalTestUser._id.toString());
+                        assert.strictEqual(resultTheme1.organisers[0]._id.toString(), THEME_globalTestUser._id.toString());
 
                         let resultTheme2 = resultThemes[1];
                         assert.strictEqual(resultTheme2.title, GET_THEMES_theme2.title);
@@ -190,7 +190,7 @@ describe('Theme controller tests', function () {
                         assert.strictEqual(resultTheme2.tags.length, GET_THEMES_theme2.tags.length);
                         assert.strictEqual(resultTheme2.isPublic, GET_THEMES_theme2.isPublic);
                         assert.strictEqual(resultTheme2.organisers.length, 1);
-                        assert.strictEqual(resultTheme2.organisers[0].toString(), user2._id.toString());
+                        assert.strictEqual(resultTheme2.organisers[0]._id.toString(), user2._id.toString());
 
                         done();
                     });
@@ -211,7 +211,7 @@ describe('Theme controller tests', function () {
                         assert.strictEqual(resultTheme1.tags.length, GET_THEMES_theme1.tags.length);
                         assert.strictEqual(resultTheme1.isPublic, GET_THEMES_theme1.isPublic);
                         assert.strictEqual(resultTheme1.organisers.length, 1);
-                        assert.strictEqual(resultTheme1.organisers[0].toString(), THEME_globalTestUser._id.toString());
+                        assert.strictEqual(resultTheme1.organisers[0]._id.toString(), THEME_globalTestUser._id.toString());
                         done();
                     });
             });
@@ -231,7 +231,7 @@ describe('Theme controller tests', function () {
                         assert.strictEqual(resultTheme1.tags.length, GET_THEMES_theme2.tags.length);
                         assert.strictEqual(resultTheme1.isPublic, GET_THEMES_theme2.isPublic);
                         assert.strictEqual(resultTheme1.organisers.length, 1);
-                        assert.strictEqual(resultTheme1.organisers[0].toString(), user2._id.toString());
+                        assert.strictEqual(resultTheme1.organisers[0]._id.toString(), user2._id.toString());
                         done();
                     });
             });
@@ -268,7 +268,7 @@ describe('Theme controller tests', function () {
                     assert.strictEqual(res.body.theme.tags.length, theme.tags.length);
                     assert.strictEqual(res.body.theme.isPublic, theme.isPublic);
                     assert.strictEqual(res.body.theme.organisers.length, 1);
-                    assert.strictEqual(res.body.theme.organisers[0].toString(), THEME_globalTestUser._id.toString());
+                    assert.strictEqual(res.body.theme.organisers[0]._id.toString(), THEME_globalTestUser._id.toString());
                     done();
                 });
         });
@@ -318,6 +318,114 @@ describe('Theme controller tests', function () {
                     done();
                 });
         });
+    });
+
+    describe('/PUT theme', function () {
+        describe('Add and remove organisers', function () {
+            let theme;
+            let anotherUser;
+            before(async function () {
+                theme = await themeService.addTheme('first theme', 'a description', [], true, THEME_globalTestUser, null);
+                assert.isOk(theme);
+                anotherUser = await userService.addUser("User123", "Test456", "user123.test456@teamjs.xyz", "TeamJS", "pwd");
+            });
+
+            it('Add an organiser', function (done) {
+                chai.request(server)
+                    .put('/theme/' + theme._id + '/addorganiser')
+                    .send({organiserEmail: anotherUser.emailAddress})
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.have.property('theme');
+                        let updatedTheme = res.body.theme;
+                        assert.strictEqual(updatedTheme.organisers.length, 2);
+
+                        let organisers = updatedTheme.organisers.map(org => org._id.toString());
+                        assert.isTrue(organisers.includes(anotherUser._id.toString()));
+                        assert.strictEqual(updatedTheme.organisers.find(org => org._id == anotherUser._id).emailAddress, anotherUser.emailAddress);
+                        done();
+                    });
+            });
+
+            it('Remove an organiser', function (done) {
+                chai.request(server)
+                    .put('/theme/' + theme._id + '/removeorganiser')
+                    .send({organiserId: THEME_globalTestUser._id})
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.have.property('theme');
+                        let updatedTheme = res.body.theme;
+                        assert.strictEqual(updatedTheme.organisers.length, 1);
+                        let organisers = updatedTheme.organisers.map(org => org._id.toString());
+                        assert.isTrue(organisers.includes(anotherUser._id.toString()));
+                        assert.isFalse(organisers.includes(THEME_globalTestUser._id.toString()));
+                        done();
+                    });
+            });
+
+
+            after(async function () {
+                let successful = await themeService.removeTheme(theme._id);
+                assert.isTrue(successful);
+                successful = await userService.removeUser(anotherUser._id);
+                assert.isTrue(successful);
+            });
+        });
+
+        describe('Update a theme', function () {
+            let theme;
+            before(async function () {
+                theme = await themeService.addTheme('first theme', 'a description', ['a tag'], true, THEME_globalTestUser, null);
+                assert.isOk(theme);
+            });
+
+            it('Update title and description', function (done) {
+                let updates = {title: 'A fuzzy title', description: 'a weird description'};
+                chai.request(server)
+                    .put('/theme/' + theme._id + '/update')
+                    .send(updates)
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.have.property('theme');
+                        let updatedTheme = res.body.theme;
+                        assert.strictEqual(updatedTheme.title, updates.title);
+                        assert.strictEqual(updatedTheme.description, updates.description);
+                        assert.strictEqual(updatedTheme.tags.length, 1);
+                        assert.strictEqual(updatedTheme.tags[0], 'a tag');
+                        done();
+                    });
+            });
+
+            it('Update tags', function (done) {
+                let tags = theme.tags;
+                tags.push('another tag', 'a third tag');
+                let updates = {tags: tags};
+                chai.request(server)
+                    .put('/theme/' + theme._id + '/update')
+                    .send(updates)
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.have.property('theme');
+                        let updatedTheme = res.body.theme;
+                        assert.strictEqual(updatedTheme.title, theme.title);
+                        assert.strictEqual(updatedTheme.description, theme.description);
+                        assert.strictEqual(updatedTheme.tags.length, 3);
+                        assert.strictEqual(updatedTheme.tags[0], 'a tag');
+                        assert.strictEqual(updatedTheme.tags[1], 'another tag');
+                        assert.strictEqual(updatedTheme.tags[2], 'a third tag');
+                        done();
+                    });
+            });
+
+            afterEach(async () => {
+               theme = await themeService.getTheme(theme._id);
+            });
+
+            after(async function () {
+                let successful = await themeService.removeTheme(theme._id);
+                assert.isTrue(successful);
+            });
+        })
     });
 
     after('Remove testUser', async function () {

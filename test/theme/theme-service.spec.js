@@ -39,7 +39,6 @@ describe("theme service tests", function () {
         before('Create a theme to remove', async function () {
             removeTheme_theme = await themeService.addTheme('first theme', 'a description', [], true, user1, null);
             assert.isOk(removeTheme_theme);
-
         });
 
         it('Remove a theme - existing id', async function () {
@@ -132,50 +131,70 @@ describe("theme service tests", function () {
 
     });
 
-    // TODO fix update a theme
-    console.log('Fix: update a theme');
-    // describe('Update a theme', function () {
-    //     let updateTheme_theme;
-    //     before('Create a theme to remove', function (done) {
-    //         themeService.addTheme('first theme', 'a description', [], true, user1, null, function (theme, err) {
-    //             assert.isNotOk(err);
-    //             assert.isOk(theme);
-    //             updateTheme_theme = theme;
-    //             done();
-    //         });
-    //     });
-    //
-    //     it('Update the theme', function (done) {
-    //         themeService.changeTheme(updateTheme_theme._id, updateTheme_theme.title, "new description", updateTheme_theme.tags, false, updateTheme_theme.cards, function (success, err) {
-    //             assert.isNotOk(err);
-    //             assert.isOk(success);
-    //             done();
-    //         });
-    //     });
-    //
-    //     it('Check updated theme', function (done) {
-    //         themeService.getTheme(updateTheme_theme._id, function (theme, err) {
-    //             assert.isNotOk(err);
-    //             assert.isOk(theme);
-    //
-    //             assert.strictEqual(theme.title, updateTheme_theme.title);
-    //             assert.strictEqual(theme.description, "new description");
-    //             assert.strictEqual(theme.tags.length, updateTheme_theme.tags.length);
-    //             assert.strictEqual(theme.isPublic, false);
-    //             assert.strictEqual(theme.organisers.length, 1);
-    //             done();
-    //         });
-    //     });
-    //
-    //     after('Remove the theme', function (done) {
-    //         themeService.removeTheme(updateTheme_theme._id, function (success, err) {
-    //             assert.isNotOk(err);
-    //             assert.isTrue(success);
-    //
-    //             done();
-    //         });
-    //     });
-    // });
+    describe('Update a theme - ', function () {
+        let update_theme;
+        let anotherUser;
+        before('Create a theme to remove', async function () {
+            update_theme = await themeService.addTheme('first theme', 'a description', ['a tag'], true, user1, null);
+            assert.isOk(update_theme);
+
+            anotherUser = await userService.addUser('bla', 'bla', 'bla@bla.com', 'bla', 'bla');
+            assert.isOk(anotherUser);
+        });
+
+        it('Update the title and description', async function () {
+            let updates = {title: "Fun new Title", description: "testDescription"};
+            let theme = await themeService.changeTheme(update_theme._id, updates);
+            assert.isOk(theme);
+            assert.strictEqual(theme.title, "Fun new Title");
+            assert.strictEqual(theme.description, "testDescription");
+            assert.strictEqual(theme.tags.length, 1);
+            assert.strictEqual(theme.tags[0], 'a tag');
+
+            update_theme = theme;
+        });
+
+        it('Update the theme - add two tags', async function () {
+            let tags = update_theme.tags;
+            tags.push('another tag', 'third tag');
+            let updates = {tags: tags};
+            let theme = await themeService.changeTheme(update_theme._id, updates);
+            assert.isOk(theme);
+            assert.strictEqual(theme.title, update_theme.title);
+            assert.strictEqual(theme.description, update_theme.description);
+            assert.strictEqual(theme.tags.length, 3);
+            assert.strictEqual(theme.tags[0], 'a tag');
+            assert.strictEqual(theme.tags[1], 'another tag');
+            assert.strictEqual(theme.tags[2], 'third tag');
+
+            update_theme = theme;
+        });
+
+        it('Update the theme - add organiser', async function () {
+            let theme = await themeService.addOrganiser(update_theme._id, anotherUser.emailAddress);
+            assert.isOk(theme);
+            let organisers = theme.organisers.map(organiser => organiser._id.toString());
+            assert.isTrue(organisers.includes(anotherUser._id.toString()));
+
+            update_theme = theme;
+        });
+
+        it('Update the theme - remove organiser', async function () {
+            let theme = await themeService.removeOrganiser(update_theme._id, anotherUser._id);
+            assert.isOk(theme);
+            let organisers = theme.organisers.map(organiserId => organiserId.toString());
+            assert.isFalse(organisers.includes(anotherUser._id.toString()));
+
+            update_theme = theme;
+        });
+
+        after('Remove the theme & second user', async function () {
+            let successful = await themeService.removeTheme(update_theme._id);
+            assert.isTrue(successful);
+            successful = await userService.removeUser(anotherUser._id);
+            assert.isTrue(successful);
+        });
+    });
 
     after('Remove users', async function () {
         let successful = await userService.removeUser(user1._id);

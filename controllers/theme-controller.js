@@ -34,6 +34,13 @@ class ThemeController {
             .catch((err) => res.status(400).send({error: err.message}));
     }
 
+    removeOrganiser(req,res){
+        let body = req.body;
+        this.themeService.removeOrganiser(req.params.themeId, body.organiserId)
+            .then((theme) => res.status(200).send({theme: theme}))
+            .catch((err) => res.status(400).send({error: err.message}));
+    }
+
     updateTheme(req,res){
         let body = req.body;
         let toUpdate = {

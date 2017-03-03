@@ -13,6 +13,16 @@ module.exports = function(app) {
         themeController.deleteTheme(req,res);
     });
 
+    app.put('/theme/:themeId/update', function(req,res){
+        themeController.updateTheme(req,res);
+    });
+    app.put('/theme/:themeId/addorganiser', function(req,res){
+        themeController.addOrganiser(req,res);
+    });
+    app.put('/theme/:themeId/removeorganiser', function(req,res){
+        themeController.removeOrganiser(req,res);
+    });
+
     app.get('/theme/:themeId', function(req,res){
         themeController.getTheme(req,res);
     });

@@ -20,7 +20,7 @@ class ThemeRepository {
     async readThemeById(id) {
         let theme;
         try {
-            theme = await this.themeDao.findOne({_id: id});
+            theme = await this.themeDao.findOne({_id: id}).populate('organisers', 'firstname lastname emailAddress _id');
         } catch (err) {
             throw new Error('Unexpected error occurred. ' + err);
         }
@@ -41,7 +41,7 @@ class ThemeRepository {
             query = {};
 
         try {
-            let themes = await this.themeDao.find(query);
+            let themes = await this.themeDao.find(query).populate('organisers', 'firstname lastname emailAddress _id');
             themes.forEach(function (theme) {
                 themeArray.push(theme);
             });
@@ -51,27 +51,10 @@ class ThemeRepository {
         return themeArray;
     }
 
-    // async updateTheme(id, title, description, tags, isPublic, cards) {
-    //     let updates = {
-    //         title: title,
-    //         description: description,
-    //         tags: tags,
-    //         isPublic: isPublic,
-    //         cards: cards
-    //     };
-    //     let theme;
-    //     try {
-    //         theme = await this.themeDao.findByIdAndUpdate(id, updates);
-    //     } catch (err) {
-    //         throw new Error('Unexpected error occurred. ' + err);
-    //     }
-    //     return theme;
-    // }
-
     async updateTheme(id, toUpdate) {
         let theme;
         try{
-            theme = await this.themeDao.findByIdAndUpdate(id, toUpdate, {new:true});
+            theme = await this.themeDao.findByIdAndUpdate(id, toUpdate, {new:true}).populate('organisers', 'firstname lastname emailAddress _id');
         }catch(err){
             throw new Error('Unexpected error occurred. ' + err);
         }
