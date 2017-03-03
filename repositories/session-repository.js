@@ -20,7 +20,7 @@ class SessionRepository {
     async readSessionById(id) {
         let session;
         try {
-            session = await this.sessionDao.findOne({_id: id});
+            session = await this.sessionDao.findOne({_id: id}).populate('participants', '_id firstname lastname emailAddress');
         } catch (err) {
             throw new Error('Unexpected error occurred. ' + err);
         }
@@ -49,7 +49,7 @@ class SessionRepository {
     async readSessions(query) {
         let sessions;
         try {
-            sessions = await this.sessionDao.find(query);
+            sessions = await this.sessionDao.find(query).populate('participants', '_id firstname lastname emailAddress');
         } catch (err) {
             throw new Error('Unexpected error occurred. ' + err);
         }
@@ -64,7 +64,7 @@ class SessionRepository {
     async updateSession(sessionId, toUpdate) {
         let session;
         try {
-            session = await this.sessionDao.findByIdAndUpdate(sessionId, toUpdate, {new:true});
+            session = await this.sessionDao.findByIdAndUpdate(sessionId, toUpdate, {new:true}).populate('participants', '_id firstname lastname emailAddress');
         } catch (err) {
             throw new Error('Unexpected error occurred. ' + err);
         }

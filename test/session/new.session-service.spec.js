@@ -207,7 +207,7 @@ describe('Session service tests', () => {
                 assert.strictEqual(sessions2[0]._id.toString(), get_all_sessions2._id.toString());
             });
 
-            after('Remove the sessions & second user', async () => {
+            after('Remove the sessions & second user', async() => {
                 let successful = await sessionService.removeSession(get_all_sessions1._id);
                 assert.isTrue(successful);
                 successful = await sessionService.removeSession(get_all_sessions2._id);
@@ -389,6 +389,52 @@ describe('Session service tests', () => {
         //     });
         //
         // });
+    });
+
+    describe('Update a session', function () {
+        let session;
+        let anotherUser;
+        before('Create a session', async() => {
+            session = await sessionService.addSession('Test session', 'test session creation', 'opportunity', 3, 5, [],
+                true, false, [testUser], testTheme, testUser, null, null, null);
+            assert.isOk(session);
+
+            anotherUser = await userService.addUser('blem', 'Kalob', 'blemkalob@iets.be', null, 'blemkalbo');
+            assert.isOk(anotherUser);
+        });
+
+        it('Invite a user to a session - invitees check', async() => {
+            let newSession = await sessionService.inviteUserToSession(session._id, anotherUser.emailAddress);
+            assert.isOk(newSession);
+            assert.isTrue(newSession.invitees.includes(anotherUser.emailAddress));
+        });
+
+        it('Invite a user to a session - unable to invite an already participating person', async() => {
+            try {
+                let newSession = await sessionService.inviteUserToSession(session._id, testUser.emailAddress);
+                assert.isNotOk(newSession);
+            } catch (err) {
+                assert.isOk(err);
+                assert.strictEqual(err.message, testUser.emailAddress + ' is already a participant of this session');
+            }
+        });
+
+        it('Invite a user to a session - unable to invite an already invited person', async() => {
+            try {
+                let newSession = await sessionService.inviteUserToSession(session._id, anotherUser.emailAddress);
+                assert.isNotOk(newSession);
+            } catch (err) {
+                assert.isOk(err);
+                assert.strictEqual(err.message, anotherUser.emailAddress + ' is already invited to the session.');
+            }
+        });
+
+        after('Remove the session & user', async() => {
+            let successful = await sessionService.removeSession(session._id);
+            assert.isTrue(successful);
+            successful = await userService.removeUser(anotherUser._id);
+            assert.isTrue(successful);
+        });
     });
 
     after('Remove test user & test theme', async() => {

@@ -16,8 +16,8 @@ module.exports = function(app){
         sessionController.playTurn(req,res);
     });
 
-    app.post('/session/:sessionId/invite', function (req, res) {
-        sessionController.inviteUser(req,res);
+    app.put('/session/:sessionId/invite', function (req, res) {
+        sessionController. inviteToSession(req,res);
     });
 
 
@@ -28,6 +28,7 @@ module.exports = function(app){
     app.get('/:participantId/sessions/participating', function(req,res){
         sessionController.getSessionsByParticipant(req,res);
     });
+
     app.get('/:inviteeId/sessions/invited', function(req,res){
         sessionController.getSessionsByInvitee(req,res);
     });

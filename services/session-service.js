@@ -83,7 +83,10 @@ class SessionService {
         let session = await this.getSession(sessionId);
         if (session.invitees.includes(userEmail))
             throw new Error(userEmail + ' is already invited to the session.');
-            session.invitees.push(userEmail);
+        let sessionParticipantsEmailAddresses = session.participants.map(user => user.emailAddress);
+        if (sessionParticipantsEmailAddresses.includes(userEmail))
+            throw new Error(userEmail + ' is already a participant of this session');
+        session.invitees.push(userEmail);
         return await this.changeSession(sessionId, {invitees: session.invitees});
     }
 
@@ -91,8 +94,8 @@ class SessionService {
         let session = await this.getSession(sessionId);
         let user = await this.userService.getUserById(userId);
         if (!session.invitees.includes(user.emailAddress))
-            throw new Error(user.emailAddress + ' was not invited to the session.');
-        session.participants.push(userId);
+            throw new Error(user.emailAddress + ' has not been invited to the session.');
+        session.participants.push(user);
         session.invitees.splice(session.invitees.indexOf(user.emailAddress), 1);
         return await this.changeSession(sessionId, {invitees: session.invitees, participants: session.participants})
     }

@@ -52,14 +52,14 @@ class SessionController {
     inviteToSession(req,res){
         let body = req.body;
         this.sessionService.inviteUserToSession(req.params.sessionId, body.emailAddress)
-            .then((session) => res.status(200).send(session))
+            .then((session) => res.status(200).send({session:session}))
             .catch((err) => res.status(400).send({error: err.message}));
     }
 
     acceptInviteToSession(req,res){
         let body = req.body;
         this.sessionService.acceptInviteToSession(req.params.sessionId, body.userId)
-            .then((session) => res.status(200).send(session))
+            .then((session) => res.status(200).send({session:session}))
             .catch((err) => res.status(400).send({error: err.message}));
     }
 
@@ -75,14 +75,6 @@ class SessionController {
             else
                 res.sendStatus(400);
         });
-    }
-
-    inviteUser(req, res) {
-        if (this.sessionService.invite(req.params.sessionId, req.body.userId)) {
-            res.sendStatus(201);
-        } else {
-            res.sendStatus(404);
-        }
     }
 
     startSession(req, res) {
@@ -119,10 +111,6 @@ class SessionController {
         this.sessionService.changeSession(req.params.sessionId, toUpdate)
             .then((session) => res.status(200).send({session: session}))
             .catch((err) => res.status(400).send({error: err.message}))
-    }
-
-    inviteToSession(req,res){
-
     }
 }
 
