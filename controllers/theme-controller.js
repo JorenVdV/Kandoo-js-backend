@@ -21,8 +21,7 @@ class ThemeController {
     }
 
     getThemes(req, res) {
-        let body = req.body;
-        this.themeService.getThemes(body.organiserId)
+        this.themeService.getThemes(req.params.organiserId)
             .then((themes) => res.status(200).send({themes: themes}))
             .catch((err) => res.status(404).send({error: err.message}));
     }

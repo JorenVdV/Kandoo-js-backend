@@ -25,11 +25,11 @@ module.exports = function(app){
         sessionController.getSessionsByTheme(req,res);
     });
 
-    app.get('/:participantId/sessions/participating', function(req,res){
+    app.get('/user/:participantId/sessions/participating', function(req,res){
         sessionController.getSessionsByParticipant(req,res);
     });
 
-    app.get('/:inviteeId/sessions/invited', function(req,res){
+    app.get('/user/:inviteeId/sessions/invited', function(req,res){
         sessionController.getSessionsByInvitee(req,res);
     });
 

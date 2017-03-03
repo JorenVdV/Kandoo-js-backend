@@ -248,7 +248,7 @@ describe('Session Controller tests', function () {
 
             it('retrieve all sessions - by participant globalTestUser', function (done) {
                 chai.request(server)
-                    .get('/' + globalTestUser._id + '/sessions/participating')
+                    .get('/user/' + globalTestUser._id + '/sessions/participating')
                     .send()
                     .end((err, res) => {
                         res.should.have.status(200);
@@ -261,7 +261,7 @@ describe('Session Controller tests', function () {
 
             it('retrieve all sessions - by participant user2', function (done) {
                 chai.request(server)
-                    .get('/' + user2._id + '/sessions/participating')
+                    .get('/user/' + user2._id + '/sessions/participating')
                     .send()
                     .end((err, res) => {
                         res.should.have.status(200);

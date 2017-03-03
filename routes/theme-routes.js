@@ -30,4 +30,8 @@ module.exports = function(app) {
     app.get('/themes', function(req,res){
         themeController.getThemes(req,res);
     });
+
+    app.get('/user/:organiserId/themes', function(req,res){
+        themeController.getThemes(req,res);
+    });
 };

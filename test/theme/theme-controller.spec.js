@@ -198,8 +198,8 @@ describe('Theme controller tests', function () {
 
             it('Retrieve themes from THEME_globalTestUser', function (done) {
                 chai.request(server)
-                    .get('/themes')
-                    .send({organiserId: THEME_globalTestUser._id})
+                    .get('/user/' + THEME_globalTestUser._id + '/themes')
+                    .send()
                     .end((err, res) => {
                         res.should.have.status(200);
                         res.body.should.have.property('themes');
@@ -218,8 +218,8 @@ describe('Theme controller tests', function () {
 
             it('Retrieve themes from user2', function (done) {
                 chai.request(server)
-                    .get('/themes')
-                    .send({organiserId: user2._id})
+                    .get('/user/' + user2._id + '/themes')
+                    .send()
                     .end((err, res) => {
                         res.should.have.status(200);
                         res.body.should.have.property('themes');
@@ -417,8 +417,8 @@ describe('Theme controller tests', function () {
                     });
             });
 
-            afterEach(async () => {
-               theme = await themeService.getTheme(theme._id);
+            afterEach(async() => {
+                theme = await themeService.getTheme(theme._id);
             });
 
             after(async function () {
