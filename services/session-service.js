@@ -9,6 +9,7 @@ class SessionService {
     constructor() {
         this.sessionRepo = require('../repositories/session-repository');
         this.userService = require('../services/user-service');
+        this.mailService = require('../services/mail-service');
     }
 
     async addSession(title, description, circleType, minCardsPerParticipant, maxCardsPerParticipant, cards, canReviewCards, canAddCards,
@@ -101,7 +102,14 @@ class SessionService {
                 throw new Error(errors.join('\n'));
         }
 
-        return await this.changeSession(sessionId, {invitees: invitees});
+        let updatedSession = await this.changeSession(sessionId, {invitees: invitees});
+
+        //send out emails
+        if(newInvitees.length > 0){
+            this.mailService.sendSessionInvite(newInvitees, session.title);
+        }
+
+        return updatedSession;
     }
 
     async acceptInviteToSession(sessionId, userId) {

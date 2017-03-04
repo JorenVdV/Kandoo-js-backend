@@ -41,6 +41,30 @@ class MailService {
         });
     }
 
+    sendSessionInvite(receivers, sessionTitle) {
+        let mailOptions = {
+            from: '"No Reply  - TeamJS" <no-reply@TeamJS.xyz>', // sender address
+            to: receivers.join(', '), // list of receivers
+            subject: 'Invited to session: ' + sessionTitle, // Subject line
+            text: 'Dear sir/madam, \n\n You have been invited to join the following session:\n\n' + sessionTitle + '\n\n Please accept or decline your invite by logging onto our platform. \n\n P.S. If you do not yet have an account, please create an account using this email address to accept your invite.', // plain text body
+            html: `
+            <b>
+            <p>Dear sir/madam</p>
+            <p>You have been invited to join the following session:</p>
+            <p>` + sessionTitle + `</p>
+            <p>Please accept or decline your invite by logging onto our platform.</p>
+            <p>P.S. If you do not yet have an account, please create an account using this email address to accept your invite.</p>
+            </b>` // html body
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                return console.log(error);
+            }
+            console.log(info);
+        });
+    }
+
 
 }
 
