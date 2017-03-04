@@ -89,6 +89,7 @@ class SessionService {
             if (!session.invitees.includes(invitee))
                 newInvitees.push(invitee + '');
         }
+        newInvitees = newInvitees.filter(currInvitee => currInvitee && currInvitee !== 'undefined');
 
         if(newInvitees.length > 0){
             let sessionParticipantsEmailAddresses = session.participants.map(user => user.emailAddress);
@@ -102,14 +103,14 @@ class SessionService {
                 throw new Error(errors.join('\n'));
         }
 
-        let updatedSession = await this.changeSession(sessionId, {invitees: invitees});
+        session = await this.changeSession(sessionId, {invitees: invitees});
 
         //send out emails
         if(newInvitees.length > 0){
             this.mailService.sendSessionInvite(newInvitees, session.title);
         }
 
-        return updatedSession;
+        return session;
     }
 
     async acceptInviteToSession(sessionId, userId) {

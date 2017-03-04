@@ -1,6 +1,7 @@
 /**
  * Created by nick on 17/02/17.
  */
+const config = require('../_config');
 
 const nodemailer = require('nodemailer');
 var mockTransport = require('../node_modules/nodemailer-mock-transport/index');
@@ -8,7 +9,16 @@ var mockTransport = require('../node_modules/nodemailer-mock-transport/index');
 class MailService {
 
     constructor() {
-        this.transporter = mockTransport({
+        this.transporter = nodemailer.createTransport(
+            {
+                service: config.mailCredentials.service,
+                auth: {
+                    user: config.mailCredentials.emailAddress,
+                    pass: config.mailCredentials.password
+                }
+            }
+        );
+        this.mockTransporter = mockTransport({
             host: "smtp.mailtrap.io",
             port: 2525,
             auth: {
@@ -19,7 +29,7 @@ class MailService {
     }
 
     getTransporter() {
-        return this.transporter;
+        return this.mockTransporter;
     }
 
 
@@ -32,7 +42,7 @@ class MailService {
             text: 'Hello world ?', // plain text body
             html: '<b>Hello world ?</b>' // html body
         };
-        let transporter = nodemailer.createTransport(this.transporter);
+        let transporter = nodemailer.createTransport(this.mockTransporter);
 
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
@@ -56,12 +66,11 @@ class MailService {
             <p>P.S. If you do not yet have an account, please create an account using this email address to accept your invite.</p>
             </b>` // html body
         };
-
-        transporter.sendMail(mailOptions, (error, info) => {
+        this.transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
                 return console.log(error);
             }
-            console.log(info);
+            // console.log(info);
         });
     }
 
