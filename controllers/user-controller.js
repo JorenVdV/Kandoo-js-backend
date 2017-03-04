@@ -32,7 +32,7 @@ class UserController {
         let body = req.body;
         this.userService.getUserByEmail(body.emailAddress).then(
             (user) => {
-                if (bcrypt.compareSync(body.password, user.securePassword))
+                if (bcrypt.compareSync(body.password, user.password))
                     res.status(200).send({user: convertToUserDTO(user)});
                 else
                     res.status(404).send({error: "Email address or password is incorrect"});

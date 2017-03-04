@@ -21,9 +21,9 @@ class UserService {
             newUser.lastname = lastname;
             newUser.emailAddress = emailAddress;
             newUser.organisation = organisation ? organisation : "";
-            newUser.password = password;
+            newUser.plainTextPassword = password;
             let salt = bcrypt.genSaltSync(saltRounds);
-            newUser.securePassword = bcrypt.hashSync(password, salt);
+            newUser.password = bcrypt.hashSync(password, salt);
 
             return await this.userRepo.createUser(newUser);
         }
@@ -45,7 +45,8 @@ class UserService {
     async validateUpdate(toUpdate) {
         if(toUpdate.password){
             let salt = bcrypt.genSaltSync(saltRounds);
-            toUpdate.securePassword = bcrypt.hashSync(toUpdate.password, salt);
+            toUpdate.plainTextPassword = toUpdate.password + '';
+            toUpdate.password = bcrypt.hashSync(toUpdate.password, salt);
         }
         return JSON.parse(JSON.stringify(toUpdate, replaceUndefinedOrNullOrEmptyObject));
     }

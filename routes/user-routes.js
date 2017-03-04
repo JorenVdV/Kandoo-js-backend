@@ -9,7 +9,6 @@ module.exports = function(app){
         userController.createUser(req,res);
     });
     app.get('/users', function(req,res){
-        console.log(req.originalUrl);
         userController.getUsers(req,res);
     });
 

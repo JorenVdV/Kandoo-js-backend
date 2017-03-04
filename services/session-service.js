@@ -67,8 +67,8 @@ class SessionService {
                 throw new Error('Cannot set a start date for started session.');
             if (session.startDate && new Date() >= session.startDate)
                 throw new Error('Cannot set a start date for a started session.');
-            // 30 seconds spare time for processing
-            if (!toUpdate.startDate >= new Date(Date.now() - 30000))
+            // 10 seconds spare time for processing
+            if (!toUpdate.startDate >= new Date(Date.now() - 10000))
                 throw new Error('Cannot set a start date in the past');
         }
         return toUpdate;
@@ -79,20 +79,36 @@ class SessionService {
         return await this.sessionRepo.deleteSession(session);
     }
 
-    async inviteUserToSession(sessionId, userEmail) {
+    async updateInvitees(sessionId, invitees) {
         let session = await this.getSession(sessionId);
-        if (session.invitees.includes(userEmail))
-            throw new Error(userEmail + ' is already invited to the session.');
-        let sessionParticipantsEmailAddresses = session.participants.map(user => user.emailAddress);
-        if (sessionParticipantsEmailAddresses.includes(userEmail))
-            throw new Error(userEmail + ' is already a participant of this session');
-        session.invitees.push(userEmail);
-        return await this.changeSession(sessionId, {invitees: session.invitees});
+
+        let newInvitees = [];
+        for (let i = 0; i <= invitees.length; i++) {
+            let invitee = invitees[i];
+            if (!session.invitees.includes(invitee))
+                newInvitees.push(invitee + '');
+        }
+
+        if(newInvitees.length > 0){
+            let sessionParticipantsEmailAddresses = session.participants.map(user => user.emailAddress);
+            let errors = [];
+            for (let i = 0; i <= newInvitees.length; i++) {
+                let invitee = newInvitees[i];
+                if (sessionParticipantsEmailAddresses.includes(invitee))
+                    errors.push(invitee + ' is already a participant of this session');
+            }
+            if (errors.length > 0)
+                throw new Error(errors.join('\n'));
+        }
+
+        return await this.changeSession(sessionId, {invitees: invitees});
     }
 
     async acceptInviteToSession(sessionId, userId) {
         let session = await this.getSession(sessionId);
         let user = await this.userService.getUserById(userId);
+        if (session.participants.includes(user._id))
+            throw new Error(user.emailAddress + ' is already participating in the session.');
         if (!session.invitees.includes(user.emailAddress))
             throw new Error(user.emailAddress + ' has not been invited to the session.');
         session.participants.push(user);
@@ -100,58 +116,58 @@ class SessionService {
         return await this.changeSession(sessionId, {invitees: session.invitees, participants: session.participants})
     }
 
-    async startSession(sessionId, callback) {
-        this.getSession(sessionId, function (session, err, sessionRepo) {
-            if (err)
-                callback(false, err);
-            if (!session.startDate || session.startDate >= new Date()) {
-                session.startDate = new Date();
-                sessionRepo.updateSession(session,
-                    (success, err) => {
-                        if (err) {
-                            callback(false, err);
-                        } else {
-                            callback(true, err);
-                        }
-                    });
-            }
-        });
+    // async startSession(sessionId, callback) {
+    //     this.getSession(sessionId, function (session, err, sessionRepo) {
+    //         if (err)
+    //             callback(false, err);
+    //         if (!session.startDate || session.startDate >= new Date()) {
+    //             session.startDate = new Date();
+    //             sessionRepo.updateSession(session,
+    //                 (success, err) => {
+    //                     if (err) {
+    //                         callback(false, err);
+    //                     } else {
+    //                         callback(true, err);
+    //                     }
+    //                 });
+    //         }
+    //     });
+    //
+    //     this.sessionRepo.updateSession(sessionId)
+    // }
+    //
+    // async stopSession(sessionId, callback) {
+    //     let session = this.getSession(sessionId);
+    //     if (session.startDate) {
+    //         session.endDate = new Date();
+    //         this.sessionRepo.updateSession();
+    //     }
+    //     return session.endDate;
+    // }
 
-        this.sessionRepo.updateSession(sessionId)
-    }
-
-    async stopSession(sessionId, callback) {
-        let session = this.getSession(sessionId);
-        if (session.startDate) {
-            session.endDate = new Date();
-            this.sessionRepo.updateSession();
-        }
-        return session.endDate;
-    }
-
-    async addTurn(sessionId, card, user, callback) {
-
-        let session = this.getSession(sessionId);
-
-        let turns = session.turns;
-        let currentCardPriority = session.amountOfCircles - 1;
-        let stopSearch = false;
-
-        turns.reverse().forEach(function (turn) {
-            if (stopSearch)
-                return;
-
-
-            if (turn.card.card._id == card._id) {
-                currentCardPriority = turn.priority;
-                stopSearch = true;
-            }
-        });
-
-        session.turns.push({priority: currentCardPriority, card: card, user: user});
-
-        return true;
-    }
+    // async addTurn(sessionId, card, user, callback) {
+    //
+    //     let session = this.getSession(sessionId);
+    //
+    //     let turns = session.turns;
+    //     let currentCardPriority = session.amountOfCircles - 1;
+    //     let stopSearch = false;
+    //
+    //     turns.reverse().forEach(function (turn) {
+    //         if (stopSearch)
+    //             return;
+    //
+    //
+    //         if (turn.card.card._id == card._id) {
+    //             currentCardPriority = turn.priority;
+    //             stopSearch = true;
+    //         }
+    //     });
+    //
+    //     session.turns.push({priority: currentCardPriority, card: card, user: user});
+    //
+    //     return true;
+    // }
 
 }
 

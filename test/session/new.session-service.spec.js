@@ -404,14 +404,19 @@ describe('Session service tests', () => {
         });
 
         it('Invite a user to a session - invitees check', async() => {
-            let newSession = await sessionService.inviteUserToSession(session._id, anotherUser.emailAddress);
+            let invitees = session.invitees;
+            invitees.push('test@test.com');
+            let newSession = await sessionService.updateInvitees(session._id, invitees);
             assert.isOk(newSession);
-            assert.isTrue(newSession.invitees.includes(anotherUser.emailAddress));
+            assert.isTrue(newSession.invitees.includes('test@test.com'));
+            session = newSession;
         });
 
         it('Invite a user to a session - unable to invite an already participating person', async() => {
+            let invitees = session.invitees;
+            invitees.push(testUser.emailAddress);
             try {
-                let newSession = await sessionService.inviteUserToSession(session._id, testUser.emailAddress);
+                let newSession = await sessionService.updateInvitees(session._id, invitees);
                 assert.isNotOk(newSession);
             } catch (err) {
                 assert.isOk(err);
@@ -419,14 +424,18 @@ describe('Session service tests', () => {
             }
         });
 
-        it('Invite a user to a session - unable to invite an already invited person', async() => {
-            try {
-                let newSession = await sessionService.inviteUserToSession(session._id, anotherUser.emailAddress);
-                assert.isNotOk(newSession);
-            } catch (err) {
-                assert.isOk(err);
-                assert.strictEqual(err.message, anotherUser.emailAddress + ' is already invited to the session.');
-            }
+        it('Update various fields of a session', async() => {
+            let updates = {title: 'Test session title update', description: 'a fun description', maxCardsPerParticipant: 10};
+            let newSession = await sessionService.changeSession(session._id, updates);
+            assert.isOk(newSession);
+            assert.strictEqual(newSession.title, 'Test session title update');
+            assert.strictEqual(newSession.description, 'a fun description');
+            assert.strictEqual(newSession.maxCardsPerParticipant, 10);
+            assert.strictEqual(newSession.circleType, session.circleType);
+            assert.strictEqual(newSession.minCardsPerParticipant, session.minCardsPerParticipant);
+            assert.strictEqual(newSession.cardsCanBeAdded, session.cardsCanBeAdded);
+            assert.strictEqual(newSession.cardsCanBeReviewed, session.cardsCanBeReviewed);
+            session = newSession;
         });
 
         after('Remove the session & user', async() => {

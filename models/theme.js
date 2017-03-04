@@ -18,5 +18,9 @@ var ThemeSchema = new Schema({
 }, {timestamps: true}, {minimize: true});
 
 ThemeSchema.set('validateBeforeSave', true);
+ThemeSchema.pre('findOneAndUpdate', function(next) {
+    this.options.runValidators = true;
+    next();
+});
 
 module.exports = mongoose.model('Theme', ThemeSchema);

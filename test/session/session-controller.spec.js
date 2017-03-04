@@ -299,23 +299,29 @@ describe('Session Controller tests', function () {
         });
 
         it('Invite a user to a session - invitees check', (done) => {
+            let invitees = session.invitees;
+            invitees.push(anotherUser.emailAddress);
             chai.request(server)
-                .put('/session/' + session._id + '/invite')
-                .send({emailAddress : anotherUser.emailAddress})
+                .put('/session/' + session._id + '/invitees')
+                .send({invitees: invitees})
                 .end((err, res) => {
                     res.should.have.status(200);
-                    res.body.should.have.property('session');
-                    let newSession = res.body.session;
-                    assert.isOk(newSession);
-                    assert.isTrue(newSession.invitees.includes(anotherUser.emailAddress));
+                    res.body.should.have.property('invitees');
+                    let sessionInvitees = res.body.invitees;
+                    assert.isOk(sessionInvitees);
+                    assert.isTrue(sessionInvitees.length > 0);
+                    assert.isTrue(sessionInvitees.includes(anotherUser.emailAddress));
+                    session.invitees = sessionInvitees;
                     done();
                 });
         });
 
         it('Invite a user to a session - unable to invite an already participating person', (done) => {
+            let invitees = session.invitees;
+            invitees.push(globalTestUser.emailAddress);
             chai.request(server)
-                .put('/session/' + session._id + '/invite')
-                .send({emailAddress : globalTestUser.emailAddress})
+                .put('/session/' + session._id + '/invitees')
+                .send({invitees: invitees})
                 .end((err, res) => {
                     res.should.have.status(400);
                     res.body.should.have.property('error');
@@ -324,14 +330,62 @@ describe('Session Controller tests', function () {
                 });
         });
 
-        it('Invite a user to a session - unable to invite an already invited person', (done) => {
+        it('Update various fields of a session', (done) => {
+            let updates = {
+                title: 'Test session title update',
+                description: 'a fun description',
+                maxCardsPerParticipant: 10
+            };
             chai.request(server)
-                .put('/session/' + session._id + '/invite')
-                .send({emailAddress : anotherUser.emailAddress})
+                .put('/session/' + session._id + '/update')
+                .send(updates)
                 .end((err, res) => {
-                    res.should.have.status(400);
-                    res.body.should.have.property('error');
-                    assert.strictEqual(res.body.error, anotherUser.emailAddress + ' is already invited to the session.');
+                    res.should.have.status(200);
+                    res.body.should.have.property('session');
+                    let newSession = res.body.session;
+                    assert.strictEqual(newSession.title, 'Test session title update');
+                    assert.strictEqual(newSession.description, 'a fun description');
+                    assert.strictEqual(newSession.maxCardsPerParticipant, 10);
+                    assert.strictEqual(newSession.circleType, session.circleType);
+                    assert.strictEqual(newSession.minCardsPerParticipant, session.minCardsPerParticipant);
+                    assert.strictEqual(newSession.cardsCanBeAdded, session.cardsCanBeAdded);
+                    assert.strictEqual(newSession.cardsCanBeReviewed, session.cardsCanBeReviewed);
+                    session = newSession;
+                    done();
+                });
+        });
+
+        it('Update all updateable fields of a session', (done) => {
+            let updates = {
+                title: 'test123',
+                description: '456tset',
+                circleType: 'threat',
+                minCardsPerParticipant: 1,
+                maxCardsPerParticipant: 20,
+                amountOfCircles: 10,
+                sessionCards: [],
+                cardsCanBeReviewed: false,
+                cardsCanBeAdded: true,
+                turnDuration: 20000
+            };
+            chai.request(server)
+                .put('/session/' + session._id + '/update')
+                .send(updates)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.have.property('session');
+                    let newSession = res.body.session;
+                    assert.strictEqual(newSession.title, 'test123');
+                    assert.strictEqual(newSession.description, '456tset');
+                    assert.strictEqual(newSession.circleType, 'threat');
+                    assert.strictEqual(newSession.minCardsPerParticipant, 1);
+                    assert.strictEqual(newSession.maxCardsPerParticipant, 20);
+                    assert.strictEqual(newSession.amountOfCircles, 10);
+                    assert.strictEqual(newSession.sessionCards.length, 0);
+                    assert.strictEqual(newSession.cardsCanBeReviewed, false);
+                    assert.strictEqual(newSession.cardsCanBeAdded, true);
+                    assert.strictEqual(newSession.turnDuration, 20000);
+                    session = newSession;
                     done();
                 });
         });

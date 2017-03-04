@@ -12,13 +12,13 @@ initialUser.firstname = "Puddingtje";
 initialUser.lastname = "Puddingske";
 initialUser.emailAddress = "test@pudding.com";
 initialUser.organisation = "Pudding Corp.";
-initialUser.password = "test";
+initialUser.plainTextPassword = "test";
 
 userRepo.readUserByEmail(initialUser.emailAddress)
     .then((user) => console.log('user with emailAddress ' + initialUser.emailAddress + ' already exists.'))
     .catch((err) => {
         console.log('user doesn\'t exist yet: ' + err.message);
-        userService.addUser(initialUser.firstname, initialUser.lastname, initialUser.emailAddress, initialUser.organisation, initialUser.password)
+        userService.addUser(initialUser.firstname, initialUser.lastname, initialUser.emailAddress, initialUser.organisation, initialUser.plainTextPassword)
             .then((user) => {
                     console.log('user created');
                     themeService.addTheme('Example', 'default theme as an example', ['example'], false, user, [])

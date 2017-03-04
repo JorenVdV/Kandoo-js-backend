@@ -49,5 +49,9 @@ var SessionSchema = new Schema({
 }, {timestamps: true}, {minimize: true});
 
 SessionSchema.set('validateBeforeSave', true);
+SessionSchema.pre('findOneAndUpdate', function(next) {
+    this.options.runValidators = true;
+    next();
+});
 
 module.exports = mongoose.model('Session', SessionSchema);

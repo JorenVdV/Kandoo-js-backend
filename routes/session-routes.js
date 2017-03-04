@@ -16,8 +16,12 @@ module.exports = function(app){
         sessionController.playTurn(req,res);
     });
 
-    app.put('/session/:sessionId/invite', function (req, res) {
-        sessionController. inviteToSession(req,res);
+    app.put('/session/:sessionId/invitees', function (req, res) {
+        sessionController.updateSessionInvitees(req,res);
+    });
+
+    app.put('/session/:sessionId/update', function(req,res){
+        sessionController.updateSession(req,res);
     });
 
 
@@ -37,11 +41,11 @@ module.exports = function(app){
         sessionController.deleteSession(req,res);
     });
 
-    app.post('/session/:sessionId/start', function (req, res) {
-        sessionController.startSession(req, res);
-    });
-
-    app.post('/session/:sessionId/stop', function (req, res) {
-        sessionController.stopSession(req, res);
-    });
+    // app.post('/session/:sessionId/start', function (req, res) {
+    //     sessionController.startSession(req, res);
+    // });
+    //
+    // app.post('/session/:sessionId/stop', function (req, res) {
+    //     sessionController.stopSession(req, res);
+    // });
 };
