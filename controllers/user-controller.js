@@ -49,7 +49,8 @@ class UserController {
             organisation: body.organisation,
             settings: body.settings,
             avatar: body.avatar,
-            password: body.password
+            password: body.password,
+            originalPassword: body.originalPassword
         };
         this.userService.changeUser(req.params.userId, toUpdate)
             .then((user) => res.status(200).send({user: convertToUserDTO(user)}))

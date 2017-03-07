@@ -164,7 +164,7 @@ describe('User service tests', function () {
         });
 
         it('Update the users password', async() => {
-            let updates = {password: 'EenLeukNieuwWW'};
+            let updates = {password: 'EenLeukNieuwWW', originalPassword: 'myAwesomePassword.123'};
             let newUser = await userService.changeUser(user._id, updates);
             assert.isOk(newUser);
             assert.strictEqual(newUser.firstname, user.firstname);

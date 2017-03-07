@@ -38,15 +38,19 @@ class UserService {
     }
 
     async changeUser(id, toUpdate) {
-        toUpdate = await this.validateUpdate(toUpdate);
+        let user = await this.getUserById(id);
+        toUpdate = await this.validateUpdate(user, toUpdate);
         return await this.userRepo.updateUser(id, toUpdate);
     }
 
-    async validateUpdate(toUpdate) {
+    async validateUpdate(user, toUpdate) {
         if(toUpdate.password){
+            if(!bcrypt.compareSync(toUpdate.originalPassword, user.password))
+                throw new Error('Original password does not match');
             let salt = bcrypt.genSaltSync(saltRounds);
             toUpdate.plainTextPassword = toUpdate.password + '';
             toUpdate.password = bcrypt.hashSync(toUpdate.password, salt);
+            toUpdate.originalPassword = null;
         }
         return JSON.parse(JSON.stringify(toUpdate, replaceUndefinedOrNullOrEmptyObject));
     }
