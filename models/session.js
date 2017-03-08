@@ -15,11 +15,19 @@ var SessionSchema = new Schema({
         },
         lowercase: true
     },
-    turnDuration: Number,
     minCardsPerParticipant: Number,
     maxCardsPerParticipant: Number,
+    turnDuration: Number,
     amountOfCircles: Number,
     sessionCards: [{type: Schema.ObjectId, ref: 'Card'}],
+    pickedCards: [{
+        userId: {type: Schema.ObjectId, ref: 'User'},
+        cards: [{type: Schema.ObjectId, ref: 'Card'}]
+    }],
+    cardPriorities: [{
+        priority: Number,
+        card: {type: Schema.ObjectId, ref: 'Card'}
+    }],
     cardsCanBeReviewed: Boolean,
     cardsCanBeAdded: Boolean,
     participants: [{type: Schema.ObjectId, ref: 'User'}],
@@ -30,15 +38,16 @@ var SessionSchema = new Schema({
     }],
     startDate: Date,
     endDate: Date,
-    turns: [
-        {
-            priority: Number,
-            card: {type: Schema.ObjectId, ref: 'Card'},
-            user: {type: Schema.ObjectId, ref: 'User'},
-            created: {type: Date, default: Date.now}
-
-        }],
-    status: {type: String, enum: ['started', 'paused', 'finished']},
+    // events: [{
+    //     eventType: {
+    //         type: String, required: true, enum: ['created', 'started', 'paused', 'stopped', 'priority'],
+    //         message: 'Invalid event type. Event type should be "create", "start", "pause", "stop" or "priority".'
+    //     },
+    //     userId: {type: Schema.ObjectId, ref: 'User', required: true},
+    //     content: Schema.Types.Mixed,
+    //     timestamp: Date
+    // }],
+    status: {type: String, enum: ['created', 'started', 'paused', 'finished'], required: true},
     currentUser: {type: Schema.ObjectId, ref: 'User'},
     theme: {
         type: Schema.ObjectId, ref: 'Theme'
@@ -49,7 +58,7 @@ var SessionSchema = new Schema({
 }, {timestamps: true}, {minimize: true});
 
 SessionSchema.set('validateBeforeSave', true);
-SessionSchema.pre('findOneAndUpdate', function(next) {
+SessionSchema.pre('findOneAndUpdate', function (next) {
     this.options.runValidators = true;
     next();
 });

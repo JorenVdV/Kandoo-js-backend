@@ -37,8 +37,8 @@ describe('Session service tests', () => {
             assert.strictEqual(session.circleType, 'opportunity');
             assert.strictEqual(session.minCardsPerParticipant, 3);
             assert.strictEqual(session.maxCardsPerParticipant, 5);
-            assert.isArray(session.cards);
-            assert.strictEqual(session.cards.length, 0);
+            assert.isArray(session.sessionCards);
+            assert.strictEqual(session.sessionCards.length, 0);
             assert.strictEqual(session.cardsCanBeReviewed, true);
             assert.strictEqual(session.cardsCanBeAdded, false);
             assert.strictEqual(session.participants.length, 1);
@@ -218,179 +218,6 @@ describe('Session service tests', () => {
         });
     });
 
-    describe('Start a session', function () {
-        console.log("Fix start a session.");
-        // describe('Start a session immediately', function () {
-        //     let start_session;
-        //     before('Create a session', function (done) {
-        //         sessionService.addSession('Test session', 'test session creation', 'opportunity', 3, 5, [],
-        //             true, false, [testUser], testTheme, testUser, null, null, null,
-        //             (session, err) => {
-        //                 assert.isNotOk(err);
-        //                 assert.isOk(session);
-        //
-        //                 assert.isTrue(!session.startDate || session.startDate > new Date());
-        //
-        //                 start_session = session;
-        //                 done();
-        //             });
-        //     });
-        //
-        //     it('Start a session instance', function (done) {
-        //         sessionService.changeSession(start_session._id, {startDate: Date.now()}, function (success, err) {
-        //             assert.isNotOk(err);
-        //             assert.isTrue(success);
-        //             // done();
-        //
-        //             sessionService.getSession(start_session._id, (session, err) => {
-        //                 assert.isNotOk(err);
-        //                 assert.isOk(session);
-        //
-        //                 assert.isOk(session.startDate && session.startDate <= new Date());
-        //                 done();
-        //             });
-        //         });
-        //     });
-        //
-        //     after('Remove the session', function (done) {
-        //         sessionService.removeSession(start_session._id, function (success, err) {
-        //             assert.isNotOk(err);
-        //             assert.isTrue(success);
-        //
-        //             done();
-        //         });
-        //     });
-        // });
-
-        console.log("Fix unable to start a session that has already started.");
-        // TODO fix me
-        // describe('A session can not be started if it already is started', function () {
-        //     let start_session_already_started;
-        //     before('Create a session', function (done) {
-        //         sessionService.addSession('Test session', 'test session creation', 'opportunity', 3, 5, [],
-        //             true, false, [testUser], testTheme, testUser, testDateInPast, null, null,
-        //             (session, err) => {
-        //                 assert.isNotOk(err);
-        //                 assert.isOk(session);
-        //
-        //                 assert.isTrue(session.startDate <= Date.now());
-        //
-        //                 start_session_already_started = session;
-        //                 done();
-        //             });
-        //     });
-        //
-        //     it('a session can not be started if it already is started', function (done) {
-        //         sessionService.changeSession(start_session_already_started._id, {startDate: testDateInPast}, function (success, err) {
-        //             assert.isOk(err);
-        //             assert.isFalse(success);
-        //
-        //             assert.strictEqual(err.message, 'Unable to start a session that has already started');
-        //             done();
-        //         });
-        //     });
-        //
-        //     after('Remove the session', function (done) {
-        //         sessionService.removeSession(start_session_already_started._id, function (success, err) {
-        //             assert.isNotOk(err);
-        //             assert.isTrue(success);
-        //
-        //             done();
-        //         });
-        //     });
-        // })
-
-        // describe('play a turn', function () {
-        //     it('should add a turn to the session with a card and it\'s priority', function (done) {
-        //
-        //         let session = sessionService
-        //             .addSession('testSession', 'testing the creation of a session', 'blue',
-        //                 60000, {min: 3, max: 10}, [], false, false, [testGlobal.testUser],
-        //                 testGlobal.testTheme._id, testGlobal.testUser, testGlobal.testDate);
-        //
-        //         sessionService.addTurn(session._id, testGlobal.card, testGlobal.testUser);
-        //
-        //
-        //         assert.strictEqual(session.turns[0].card._id, testGlobal.card._id, 'The cards should be the same');
-        //         assert.strictEqual(session.turns[0].priority, session.amountOfCircles - 1, 'The card should be 1 step closer to the middle');
-        //         assert.strictEqual(session.turns[0].user._id, testGlobal.testUser._id, 'The user of the turn should be our user');
-        //         done();
-        //     });
-        // });
-        //
-        // describe('Stop a session:', function () {
-        //     it('ends a session as an organiser', function (done) {
-        //         let session = sessionService
-        //             .addSession('testSession', 'testing the creation of a session', 'blue',
-        //                 60000, {min: 3, max: 10}, [], false, false, [testGlobal.testUser],
-        //                 testGlobal.testTheme, testGlobal.testUser);
-        //         sessionService.startSession(session._id);
-        //         sessionService.stopSession(session._id);
-        //         assert(session.endDate, 'endDate schould be defined');
-        //         done();
-        //     });
-        //
-        //     it('a session can not be stopped before it was started', function (done) {
-        //         let session = sessionService
-        //             .addSession('testSession', 'testing the creation of a session', 'blue',
-        //                 60000, {min: 3, max: 10}, [], false, false, [testGlobal.testUser],
-        //                 testGlobal.testTheme, testGlobal.testUser);
-        //         sessionService.stopSession(session._id);
-        //         assert(!session.endDate, 'endDate schould not be defined');
-        //         done();
-        //     });
-        // });
-
-        //TODO fix invite a user
-        console.error('###########################');
-        console.error('# TODO: fix invite a user #');
-        console.error('###########################');
-        // describe('Invite a user', function () {
-        //     let session;
-        //     before('setup 2 users and a session', function () {
-        //         session = sessionService
-        //             .addSession('testSession', 'testing the creation of a session', 'blue',
-        //                 60000, {min: 3, max: 10}, [], false, false, [testGlobal.testUser],
-        //                 testGlobal.testTheme, testGlobal.testUser);
-        //         sessionService.startSession(session._id);
-        //         sessionService.stopSession(session._id);
-        //         assert(session.endDate, 'endDate should be defined');
-        //     });
-        //
-        //     before('setup second user', function(done){
-        //         userService.addUser('this is a test', 'testubg', 'nickjorens@gmail.com', 'd', 'test', function(user, err){
-        //             assert.isNotOk(err);
-        //             assert.isOk(user);
-        //             testGlobal.testUser2 = user;
-        //             done();
-        //         });
-        //     });
-        //
-        //     it('invites an existing user to a session', function (done) {
-        //         sessionService.invite(session._id, testGlobal.testUser2._id);
-        //         session = sessionService.getSession(session._id);
-        //         console.log(session.invitees);
-        //         assert.equal(session.invitees[0], testGlobal.testUser2._id, 'Session invitees list should contain id from testuser2');
-        //         done();
-        //     });
-        //
-        //     it('it should have 2 emails from inviting users.', function (done) {
-        //         let mailService = require('../../services/mail-service');
-        //         mailService.getTransporter().sentMail.length.should.equal(2);
-        //         done();
-        //     });
-        //
-        //     after('Remove the test user', function (done) {
-        //         userService.removeUser(testGlobal.testUser2._id, function (succes, err) {
-        //             assert.isNotOk(err);
-        //             assert.isTrue(succes, 'user should have succesfully been deleted');
-        //             done();
-        //         })
-        //     });
-        //
-        // });
-    });
-
     describe('Update a session', function () {
         let session;
         let anotherUser;
@@ -425,7 +252,11 @@ describe('Session service tests', () => {
         });
 
         it('Update various fields of a session', async() => {
-            let updates = {title: 'Test session title update', description: 'a fun description', maxCardsPerParticipant: 10};
+            let updates = {
+                title: 'Test session title update',
+                description: 'a fun description',
+                maxCardsPerParticipant: 10
+            };
             let newSession = await sessionService.changeSession(session._id, updates);
             assert.isOk(newSession);
             assert.strictEqual(newSession.title, 'Test session title update');
@@ -445,6 +276,96 @@ describe('Session service tests', () => {
             assert.isTrue(successful);
         });
     });
+
+    describe('Start session', function () {
+        let session;
+        before('Create a session', async() => {
+            session = await sessionService.addSession('Test session', 'test session creation', 'opportunity', 3, 5, [],
+                true, false, [testUser], testTheme, testUser, testDate, null, null);
+            assert.isOk(session);
+        });
+
+        it('Start the created session', async() => {
+            let newSession = await sessionService.startSession(session._id, testUser._id);
+            assert.isOk(newSession);
+            assert.strictEqual(newSession.status, 'started');
+            // assert.strictEqual(newSession.events.length, 2);
+            // assert.isTrue(newSession.events.includes(event => event.eventType === 'start'));
+        });
+
+        after('Remove the session', async() => {
+            let successful = await sessionService.removeSession(session._id);
+            assert.isTrue(successful);
+        });
+    });
+
+    console.log('********* create tests for all cases of starting/stopping/pausing ********');
+    console.log('********* create tests for email being send to user upon invite ********');
+
+    describe('Pause session', function () {
+        let session;
+        before('Create a session', async() => {
+            session = await sessionService.addSession('Test session', 'test session creation', 'opportunity', 3, 5, [],
+                true, false, [testUser], testTheme, testUser, testDate, null, null);
+            assert.isOk(session);
+        });
+
+        before('Start the created session', async() => {
+            let newSession = await sessionService.startSession(session._id, testUser._id);
+            assert.isOk(newSession);
+            assert.strictEqual(newSession.status, 'started');
+            // assert.strictEqual(newSession.events.length, 2);
+            // assert.isTrue(newSession.events.includes(event => event.eventType === 'start'));
+        });
+
+        it('Pause the started session', async () => {
+            let newSession = await sessionService.pauseSession(session._id, testUser._id);
+            assert.isOk(newSession);
+            assert.strictEqual(newSession.status, 'paused');
+        });
+
+        after('Remove the session', async() => {
+            let successful = await sessionService.removeSession(session._id);
+            assert.isTrue(successful);
+        });
+    });
+
+    describe('Stop session', function () {
+        let session;
+        before('Create a session', async() => {
+            session = await sessionService.addSession('Test session', 'test session creation', 'opportunity', 3, 5, [],
+                true, false, [testUser], testTheme, testUser, testDate, null, null);
+            assert.isOk(session);
+        });
+
+        before('Start the created session', async() => {
+            let newSession = await sessionService.startSession(session._id, testUser._id);
+            assert.isOk(newSession);
+            assert.strictEqual(newSession.status, 'started');
+            // assert.strictEqual(newSession.events.length, 2);
+            // assert.isTrue(newSession.events.includes(event => event.eventType === 'start'));
+        });
+
+        it('Stop the started session', async () => {
+            let newSession = await sessionService.stopSession(session._id, testUser._id);
+            assert.isOk(newSession);
+            assert.strictEqual(newSession.status, 'finished');
+        });
+
+        after('Remove the session', async() => {
+            let successful = await sessionService.removeSession(session._id);
+            assert.isTrue(successful);
+        });
+    });
+
+    describe('Add a card to a session', function () {
+
+    });
+
+    describe('Pick cards from a session', function () {
+
+    });
+
 
     after('Remove test user & test theme', async() => {
         let successful = await userService.removeUser(testUser._id);

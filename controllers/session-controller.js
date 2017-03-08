@@ -94,21 +94,26 @@ class SessionController {
         });
     }
 
-    // startSession(req, res) {
-    //     let sessionId = req.params.sessionId;
-    //     if (this.sessionService.startSession(sessionId))
-    //         res.sendStatus(202);
-    //     else
-    //         res.sendStatus(400);
-    // }
-    //
-    // stopSession(req, res) {
-    //     let sessionId = req.params.sessionId;
-    //     if (this.sessionService.stopSession(sessionId))
-    //         res.sendStatus(202);
-    //     else
-    //         res.sendStatus(400);
-    // }
+    startSession(req, res) {
+        let body = req.body;
+        this.sessionService.startSession(req.params.sessionId, body.userId)
+            .then((session) => res.sendStatus(204))
+            .catch((err) => res.status(400).send({error: err.message}));
+    }
+
+    pauseSession(req, res) {
+        let body = req.body;
+        this.sessionService.pauseSession(req.params.sessionId, body.userId)
+            .then((session) => res.sendStatus(204))
+            .catch((err) => res.status(400).send({error: err.message}));
+    }
+
+    stopSession(req, res) {
+        let body = req.body;
+        this.sessionService.stopSession(req.params.sessionId, body.userId)
+            .then((session) => res.sendStatus(204))
+            .catch((err) => res.status(400).send({error: err.message}));
+    }
 
     updateSession(req, res) {
         let body = req.body;

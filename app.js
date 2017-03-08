@@ -8,7 +8,7 @@ var mongoose = require('mongoose');
 var bodyParser = require('body-parser'); //body parser to acces request bodies.
 var app = express();
 
-mongoose.connect(config.mongoURI[app.settings.env], config.options, function (err) {
+mongoose.connect(config.mongoURI[app.settings.env], function (err) {
     if (err) {
         console.log('Error connecting to the database. ' + err);
     } else {

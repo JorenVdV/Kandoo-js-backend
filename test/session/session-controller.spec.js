@@ -14,7 +14,6 @@ const sessionService = require('../../services/session-service');
 
 chai.use(chaiHttp);
 
-
 describe('Session Controller tests', function () {
     let globalTestTheme;
     let globalTestUser;
@@ -402,6 +401,106 @@ describe('Session Controller tests', function () {
     console.error('#####################################');
     console.error('# TODO: fix start a session  & turn #');
     console.error('#####################################');
+    describe('/PUT /session/:sessionId/start', function () {
+        let testSession;
+        before('Create the session', async() => {
+            testSession = await sessionService.addSession('Test session', 'test session creation', 'opportunity', 3, 5, [],
+                true, false, [globalTestUser], globalTestTheme, globalTestUser, null, null, null);
+            assert.isOk(testSession);
+        });
+
+        it('Start the session', (done) => {
+            chai.request(server)
+                .put('/session/' + testSession._id + '/start')
+                .send({userId: globalTestUser._id})
+                .end((err, res) => {
+                    res.should.have.status(204);
+                    done();
+                })
+        });
+
+        after('Check the session has started', async() => {
+            let session = await sessionService.getSession(testSession._id);
+            assert.isOk(session);
+            assert.strictEqual(session.status, 'started');
+        });
+
+        after('Remove the session', async() => {
+            let successful = await sessionService.removeSession(testSession._id);
+            assert.isTrue(successful);
+        });
+    });
+
+    describe('/PUT /session/:sessionId/pause', function () {
+        let testSession;
+        before('Create the session', async() => {
+            testSession = await sessionService.addSession('Test session', 'test session creation', 'opportunity', 3, 5, [],
+                true, false, [globalTestUser], globalTestTheme, globalTestUser, null, null, null);
+            assert.isOk(testSession);
+        });
+
+        before('Start the session', async() => {
+            testSession = await sessionService.startSession(testSession._id, globalTestUser._id);
+            assert.isOk(testSession);
+        });
+
+        it('pause the session', (done) => {
+            chai.request(server)
+                .put('/session/' + testSession._id + '/pause')
+                .send({userId: globalTestUser._id})
+                .end((err, res) => {
+                    res.should.have.status(204);
+                    done();
+                })
+        });
+
+        after('Check the session has paused', async() => {
+            let session = await sessionService.getSession(testSession._id);
+            assert.isOk(session);
+            assert.strictEqual(session.status, 'paused');
+        });
+
+        after('Remove the session', async() => {
+            let successful = await sessionService.removeSession(testSession._id);
+            assert.isTrue(successful);
+        });
+    });
+
+    describe('/PUT /session/:sessionId/stop', function () {
+        let testSession;
+        before('Create the session', async() => {
+            testSession = await sessionService.addSession('Test session', 'test session creation', 'opportunity', 3, 5, [],
+                true, false, [globalTestUser], globalTestTheme, globalTestUser, null, null, null);
+            assert.isOk(testSession);
+        });
+
+        before('Start the session', async() => {
+            testSession = await sessionService.startSession(testSession._id, globalTestUser._id);
+            assert.isOk(testSession);
+        });
+
+        it('Stop the session', (done) => {
+            chai.request(server)
+                .put('/session/' + testSession._id + '/stop')
+                .send({userId: globalTestUser._id})
+                .end((err, res) => {
+                    res.should.have.status(204);
+                    done();
+                })
+        });
+
+        after('Check the session has finished', async() => {
+            let session = await sessionService.getSession(testSession._id);
+            assert.isOk(session);
+            assert.strictEqual(session.status, 'finished');
+        });
+
+        after('Remove the session', async() => {
+            let successful = await sessionService.removeSession(testSession._id);
+            assert.isTrue(successful);
+        });
+    });
+
     // describe('start a session', function () {
     //     let session;
     //     before(function (done) {

@@ -41,11 +41,15 @@ module.exports = function(app){
         sessionController.deleteSession(req,res);
     });
 
-    // app.post('/session/:sessionId/start', function (req, res) {
-    //     sessionController.startSession(req, res);
-    // });
-    //
-    // app.post('/session/:sessionId/stop', function (req, res) {
-    //     sessionController.stopSession(req, res);
-    // });
+    app.put('/session/:sessionId/start', function (req, res) {
+        sessionController.startSession(req, res);
+    });
+
+    app.put('/session/:sessionId/pause', function (req, res) {
+        sessionController.pauseSession(req, res);
+    });
+
+    app.put('/session/:sessionId/stop', function (req, res) {
+        sessionController.stopSession(req, res);
+    });
 };

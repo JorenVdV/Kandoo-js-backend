@@ -17,10 +17,13 @@ class SessionRepository {
         return session;
     }
 
-    async readSessionById(id) {
+    async readSessionById(id, withTheme) {
         let session;
         try {
-            session = await this.sessionDao.findOne({_id: id}).populate('participants', '_id firstname lastname emailAddress');
+            let query = this.sessionDao.findOne({_id: id}).populate('participants', '_id firstname lastname emailAddress');
+            if(withTheme)
+                query = query.populate('theme');
+            session = await query.exec();//this.sessionDao.findOne({_id: id}).populate('participants', '_id firstname lastname emailAddress');
         } catch (err) {
             throw new Error('Unexpected error occurred. ' + err);
         }
@@ -30,6 +33,20 @@ class SessionRepository {
             throw new Error('Unable to find session with id: ' + id);
         }
     }
+
+    // async readSessionByIdWithTheme(id){
+    //     let session;
+    //     try {
+    //         session = await this.sessionDao.findOne({_id: id}).populate('participants', '_id firstname lastname emailAddress').populate('theme');
+    //     } catch (err) {
+    //         throw new Error('Unexpected error occurred. ' + err);
+    //     }
+    //     if (session) {
+    //         return session;
+    //     } else {
+    //         throw new Error('Unable to find session with id: ' + id);
+    //     }
+    // }
 
     async readSessionsByTheme(themeId) {
         let query = {theme: themeId};
