@@ -289,7 +289,7 @@ describe('User Controller tests', function () {
         });
 
         it('Update the users password', (done) => {
-            let updates = {password: 'EenLeukNieuwWW'};
+            let updates = {password: 'EenLeukNieuwWW', originalPassword: 'myAwesomePassword.123'};
             chai.request(server)
                 .put('/user/' + user._id + '/update')
                 .send(updates)

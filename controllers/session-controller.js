@@ -31,7 +31,7 @@ class SessionController {
             body.circleType,
             body.minCardsPerParticipant, body.maxCardsPerParticipant, body.cards,
             body.cardsCanBeReviewed, body.cardsCanBeAdded,
-            [], req.params.themeId, body.creator, body.startDate, body.amountOfCircles, body.turnDuration)
+            [body.creator], req.params.themeId, body.creator, body.startDate, body.amountOfCircles, body.turnDuration)
             .then((session) => res.status(201).send({session: session}))
             .catch((err) => res.status(404).send({error: err.message}));
     }

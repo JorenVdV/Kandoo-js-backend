@@ -31,7 +31,7 @@ class SessionService {
             session.cardsCanBeReviewed = canReviewCards;
             session.cardsCanBeAdded = canAddCards;
             session.theme = themeId;
-            session.creator = creator._id;
+            session.creator = creator;
             session.participants = participants;
             session.rounds = [];
             session.startDate = startDate ? startDate : null;
