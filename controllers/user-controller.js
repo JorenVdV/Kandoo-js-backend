@@ -2,7 +2,6 @@
  * Created by steve on 2/10/2017.
  */
 const bcrypt = require('bcrypt');
-
 function convertToUserDTO(user) {
     let userDTO = {
         _id: user._id,
@@ -16,9 +15,14 @@ function convertToUserDTO(user) {
     return userDTO;
 }
 
+
 class UserController {
     constructor() {
         this.userService = require('../services/user-service');
+    }
+
+    setIO(io){
+        this.io = io;
     }
 
     createUser(req, res) {
@@ -32,9 +36,11 @@ class UserController {
         let body = req.body;
         this.userService.getUserByEmail(body.emailAddress).then(
             (user) => {
-                if (bcrypt.compareSync(body.password, user.password))
+                if (bcrypt.compareSync(body.password, user.password)) {
+
+
                     res.status(200).send({user: convertToUserDTO(user)});
-                else
+                } else
                     res.status(404).send({error: "Email address or password is incorrect"});
             }
         ).catch((err) => res.status(404).send({error: "Email address or password is incorrect"}));

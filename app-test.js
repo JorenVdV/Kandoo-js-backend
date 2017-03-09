@@ -26,16 +26,27 @@ var port = process.env.PORT || 8000;
 
 app.use(express.static(path.join(__dirname)));
 
-
-// require("./routes")(app);
-require("./routes/user-routes")(app);
-require("./routes/session-routes")(app);
-require("./routes/theme-routes")(app);
-require("./routes/card-routes")(app);
-
 server.listen(port, function () {
     console.log("App is running on port " + port);
 });
+var io = require('socket.io')(server);
+io.on('connection', function(client) {
+    console.log('Client connected...');
+
+    client.on('join', function(data) {
+        console.log(data);
+        client.emit('messages', 'Hello from server');
+    });
+});
+
+
+// require("./routes")(app);
+require("./routes/user-routes")(app,io);
+require("./routes/session-routes")(app,io);
+require("./routes/theme-routes")(app,io);
+require("./routes/card-routes")(app,io);
+
+
 
 
 module.exports = app;

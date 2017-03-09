@@ -14,6 +14,7 @@ const bcrypt = require('bcrypt');
 
 chai.use(chaiHttp);
 
+require('../global');
 
 describe('User Controller tests', function () {
 
