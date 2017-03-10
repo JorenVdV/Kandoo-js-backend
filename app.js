@@ -7,6 +7,7 @@ var express = require('express'),
      fs = require('fs');
 
 var http = require('http');
+let cors = require('cors');
 
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser'); //body parser to acces request bodies.
@@ -21,11 +22,12 @@ mongoose.connect(config.mongoURI[app.settings.env], config.options, function (er
 });
 
 //CORS
-app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-});
+app.use(cors());
+// app.use(function (req, res, next) {
+//     res.header("Access-Control-Allow-Origin", "*");
+//     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//     next();
+// });
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({extended: true}));
 // parse application/json
