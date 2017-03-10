@@ -4,14 +4,8 @@
 let config = {};
 
 config.mongoURI = {
-    // production: 'mongodb://teamjs:team.js@146.185.153.213:27017/teamjs',
-    // test: 'mongodb://teamjs:team.js@146.185.153.213:27017/teamjs_test' //'mongodb://localhost:27021/test_local_ip2'//
-    // production: 'mongodb://teamjs:team.js@146.185.153.213:27017/teamjs',
-    production: 'mongodb://localhost:27017/teamjs',
-    test: 'mongodb://localhost:27017/teamjs_test'
-
-    // test: 'mongodb://teamjs:team.js@146.185.153.213:27017/teamjs_test'
-
+    production: 'mongodb://teamjs:team.js@146.185.153.213:27017/teamjs',
+    test: 'mongodb://teamjs:team.js@146.185.153.213:27017/teamjs_test' //'mongodb://localhost:27021/test_local_ip2'//
 };
 
 config.mailCredentials = {

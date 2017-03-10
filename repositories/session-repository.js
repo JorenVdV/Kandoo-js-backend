@@ -64,6 +64,18 @@ class SessionRepository {
         return await this.readSessions(query);
     }
 
+    async readPickedCardsByUser(sessionId, userId){
+        let cards;
+        try{
+            let query = this.sessionDao.findOne({_id:sessionId}).populate('pickedCards').populate('pickedCards.cards');
+            cards = await query.exec();
+        } catch(err){
+            throw new Error('Unexpected error occurred. ' + err);
+        }
+
+        return cards.pickedCards.find(pc => pc.userId.toString() == userId.toString());
+    }
+
     async readSessions(query) {
         let sessions;
         try {

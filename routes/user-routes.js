@@ -22,7 +22,10 @@ module.exports = function (app, io) {
 
     app.post('/login', function (req, res) {
         userController.login(req, res);
+    });
 
+    app.get('/user/:userId', function(req,res){
+        userController.getUser(req,res);
     });
 
     app.put('/user/:userId/update', function (req, res) {

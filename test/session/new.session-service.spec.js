@@ -10,6 +10,8 @@ const themeService = require('../../services/theme-service');
 const cardService = require('../../services/card-service');
 const userService = require('../../services/user-service');
 
+require('../global');
+
 describe('Session service tests', () => {
     let testUser;
     let testTheme;
@@ -345,20 +347,40 @@ describe('Session service tests', () => {
 
         });
 
-        it('let user pick cards for a session', async() => {
-            let userCards = cards.slice(0, 4);
-            let pickedCards = await sessionService.pickCards(session._id, testUser._id,userCards);
-            assert.isOk(pickedCards);
-            assert.isArray(pickedCards.cards);
-            let userCardsAsStrings = userCards.map(card => card._id.toString());
-            let pickedCardsAsStrings = pickedCards.cards.map(pickedCard => pickedCard.toString());
-            assert.strictEqual(userCardsAsStrings.length, pickedCardsAsStrings.length);
-            assert.strictEqual(pickedCards.cards.length, 4);
-            assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[0]));
-            assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[1]));
-            assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[2]));
-            assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[3]));
-        });
+        // it('let user pick cards for a session', async() => {
+        //     let userCards = cards.slice(0, 4);
+        //     let pickedCards = await sessionService.pickCards(session._id, testUser._id,userCards);
+        //     assert.isOk(pickedCards);
+        //     assert.isArray(pickedCards.cards);
+        //     let userCardsAsStrings = userCards.map(card => card._id.toString());
+        //     let pickedCardsAsStrings = pickedCards.cards.map(pickedCard => pickedCard.toString());
+        //     assert.strictEqual(userCardsAsStrings.length, pickedCardsAsStrings.length);
+        //     assert.strictEqual(pickedCards.cards.length, 4);
+        //     assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[0]));
+        //     assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[1]));
+        //     assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[2]));
+        //     assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[3]));
+        // });
+        //
+        //
+        // it('get picked cards from user', async() => {
+        //     let userCards = cards.slice(0, 4);
+        //     let pickedCards = await sessionService.getPickedCardsByUser(session._id, testUser._id);
+        //     console.log('get picked cards service tests');
+        //     console.log(pickedCards);
+        //     console.log('');
+        //     assert.isOk(pickedCards);
+        //     let userCardsAsStrings = userCards.map(card => card._id.toString());
+        //     let pickedCardsAsStrings = pickedCards.cards.map(pickedCard => pickedCard._id.toString());
+        //     assert.strictEqual(userCardsAsStrings.length, pickedCardsAsStrings.length);
+        //     assert.strictEqual(pickedCards.cards.length, 4);
+        //     assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[0]));
+        //     assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[1]));
+        //     assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[2]));
+        //     assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[3]));
+        // });
+
+
 
         after('Remove the session and the cards', async() => {
             let successful = await sessionService.removeSession(session._id);

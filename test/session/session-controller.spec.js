@@ -537,68 +537,10 @@ describe('Session Controller tests', function () {
         });
     });
 
-    // describe('start a session', function () {
-    //     let session;
-    //     before(function (done) {
-    //         session = sessionService.addSession('testSession', 'testing the creation of a session', 'blue',
-    //             60000, {min: 3, max: 10}, [], false, false, [globalTestUser],
-    //             globalTestTheme._id, globalTestUser);
-    //         done();
-    //     });
-    //     it('Should start a session', function (done) {
-    //         chai.request(server)
-    //             .post('/session/' + session._id + '/start')
-    //             .send()
-    //             .end((err, res) => {
-    //                 res.should.have.status(202);
-    //                 done();
-    //             });
-    //     });
-    //     after('clean up created stuff', function () {
-    //         it('delete  session', function (done) {
-    //             sessionService.removeSession(session._id);
-    //             done();
-    //         });
-    //     });
-    // });
-    //
-    // describe('stop a session', function () {
-    //     let session;
-    //     before(function (done) {
-    //         session = sessionService.addSession('testSession', 'testing the creation of a session', 'blue',
-    //             60000, {min: 3, max: 10}, [], false, false, [globalTestUser],
-    //             globalTestTheme._id, globalTestUser);
-    //         done();
-    //     });
-    //     it('cant stop a session if the session is not started yet', (done) => {
-    //         chai.request(server)
-    //             .post('/session/' + session._id + '/stop')
-    //             .send()
-    //             .end((err, res) => {
-    //                 res.should.have.status(400);
-    //                 done();
-    //             });
-    //     });
-    //     it('should stop a session', (done) => {
-    //         chai.request(server)
-    //             .post('/session/' + session._id + '/start')
-    //             .send()
-    //             .end((err, res) => {
-    //                 res.should.have.status(202);
-    //             });
-    //         chai.request(server)
-    //             .post('/session/' + session._id + '/stop')
-    //             .send()
-    //             .end((err, res) => {
-    //                 res.should.have.status(202);
-    //                 done();
-    //             });
-    //     });
-    //     after('clean up created stuff', function (done) {
-    //         sessionService.removeSession(session._id);
-    //         done();
-    //     });
-    // });
+    describe('/PUT /session/:sessionId/pick', function () {
+
+    });
+
     // describe('/POST /session/:sessionId/turn', function () {
     //     let sessionId;
     //     let card;

@@ -139,6 +139,10 @@ class SessionService {
         return await this.changeSession(sessionId, {invitees: session.invitees, participants: session.participants})
     }
 
+    async getPickedCardsByUser(sessionId, userId){
+        return await this.sessionRepo.readPickedCardsByUser(sessionId, userId);
+    }
+
     async pickCards(id, userId, cards) {
         console.log('pickcards');
         let session = await this.getSession(id);
