@@ -331,6 +331,32 @@ describe('User Controller tests', function () {
         })
     });
 
+    describe('/GET user/:userId', function() {
+        let user;
+        before('Create the user', async() => {
+            user = await userService.addUser('Jos', 'Van Camp', 'jos.vancamp@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
+            assert.isOk(user);
+        });
+
+        it('Get the user', (done) => {
+            chai.request(server)
+                .get('/user/' + user._id)
+                .send()
+                .end((err,res) => {
+                    res.should.have.status(200);
+                    res.body.should.have.property('user');
+                    let myUser = res.body.user;
+                    assert.strictEqual(myUser.emailAddress, user.emailAddress);
+                    done();
+                });
+        });
+
+        after('Remove the user', async () => {
+            let successful = await userService.removeUser(user._id);
+            assert.isTrue(successful);
+        })
+    });
+
     describe('/PUT user/:userId/update', function () {
         let user;
         beforeEach('Create the user', async() => {
