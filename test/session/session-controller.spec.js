@@ -539,7 +539,7 @@ describe('Session Controller tests', function () {
 
     describe('/PUT /session/:sessionId/pick', function () {
 
-    })
+    });
 
     // describe('/POST /session/:sessionId/turn', function () {
     //     let sessionId;
