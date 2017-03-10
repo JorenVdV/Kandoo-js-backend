@@ -5,7 +5,7 @@ let config = {};
 
 config.mongoURI = {
     production: 'mongodb://teamjs:team.js@146.185.153.213:27017/teamjs',
-    test: 'mongodb://teamjs:team.js@146.185.153.213:27017/teamjs_test' //'mongodb://localhost:27021/test_local_ip2'//
+    test: 'mongodb://localhost:27021/test_local_ip2',//'mongodb://teamjs:team.js@146.185.153.213:27017/teamjs_test' //
 };
 
 config.mailCredentials = {

@@ -122,6 +122,13 @@ class SessionController {
             .then((session) => res.status(200).send({session: session}))
             .catch((err) => res.status(400).send({error: err.message}))
     }
+
+    pickCardsByUserId(req, res){
+        let body = req.body;
+        this.sessionService.pickCards(req.params.sessionId, body.userId, body.cards)
+            .then((userCards) => res.sendStatus(204))
+            .catch((err) => res.sendStatus(400).send({error:err.message}));
+    }
 }
 
 module.exports = new SessionController();

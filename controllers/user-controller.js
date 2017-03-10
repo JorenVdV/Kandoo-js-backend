@@ -67,6 +67,13 @@ class UserController {
     //     ).catch((err) => res.status(404).send({error: "Email address or password is incorrect"}));
     // }
 
+    getUser(req,res){
+        console.log("TEST MEH");
+        this.userService.getUserById(req.params.userId)
+            .then((user) => res.status(200).send({user: convertToUserDTO(user)}))
+            .catch((err) => res.status(404).send({error: err.message}));
+    }
+
     updateUser(req, res) {
         let body = req.body;
         let toUpdate = {
