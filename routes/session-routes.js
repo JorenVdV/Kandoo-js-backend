@@ -20,6 +20,10 @@ module.exports = function(app){
         sessionController.updateSessionInvitees(req,res);
     });
 
+    app.put('/session/:sessionId/accept', function(req,res){
+        sessionController.acceptInviteToSession(req,res);
+    });
+
     app.put('/session/:sessionId/update', function(req,res){
         sessionController.updateSession(req,res);
     });

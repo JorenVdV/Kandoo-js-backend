@@ -10,7 +10,9 @@ var assert = chai.assert;
 var should = chai.should();
 var server = require('../../app-test');
 const userService = require('../../services/user-service');
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const config = require('../../_config');
 
 chai.use(chaiHttp);
 
@@ -203,13 +205,17 @@ describe('User Controller tests', function () {
                     .send({emailAddress: 'joren.vdv@kdg.be', password: 'Pudding'})
                     .end((err, res) => {
                         res.should.have.status(200);
-                        res.body.should.have.property('user');
-                        assert.isOk(res.body.user, 'the user should be defined');
-                        assert.strictEqual(res.body.user.firstname, LOGINUser_user.firstname);
-                        assert.strictEqual(res.body.user.lastname, LOGINUser_user.lastname);
-                        assert.strictEqual(res.body.user.emailAddress, LOGINUser_user.emailAddress);
+                        res.body.should.have.property('userId');
+                        res.body.should.have.property('token');
+                        assert.isOk(res.body.userId, 'the user should be defined');
+                        assert.isOk(res.body.token, 'the token should be defined');
+                        let payload = jwt.verify(res.body.token, config.jwt.secret);
+                        assert.strictEqual(payload.userId.toString(), res.body.userId.toString());
+                        // assert.strictEqual(res.body.user.firstname, LOGINUser_user.firstname);
+                        // assert.strictEqual(res.body.user.lastname, LOGINUser_user.lastname);
+                        // assert.strictEqual(res.body.user.emailAddress, LOGINUser_user.emailAddress);
                         // assert.strictEqual(res.body.user.password, LOGINUser_user.password);
-                        assert.strictEqual(res.body.user.organisation, LOGINUser_user.organisation);
+                        // assert.strictEqual(res.body.user.organisation, LOGINUser_user.organisation);
                         done();
                     });
             });
@@ -309,9 +315,9 @@ describe('User Controller tests', function () {
                 .send({emailAddress: 'jos.vancamp@teamjs.xyz', password: 'EenLeukNieuwWW'})
                 .end((err, res) => {
                     res.should.have.status(200);
-                    res.body.should.have.property('user');
-                    assert.isOk(res.body.user, 'the user should be defined');
-                    assert.strictEqual(res.body.user.emailAddress, 'jos.vancamp@teamjs.xyz');
+                    res.body.should.have.property('userId');
+                    assert.isOk(res.body.userId, 'the user should be defined');
+                    assert.isOk(res.body.token, 'jos.vancamp@teamjs.xyz');
                     done();
                 });
         });

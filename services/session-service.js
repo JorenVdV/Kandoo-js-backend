@@ -127,6 +127,7 @@ class SessionService {
     }
 
     async acceptInviteToSession(sessionId, userId) {
+        console.log('accept invite');
         let session = await this.getSession(sessionId);
         let user = await this.userService.getUserById(userId);
         if (session.participants.includes(user._id))
@@ -139,6 +140,7 @@ class SessionService {
     }
 
     async pickCards(id, userId, cards) {
+        console.log('pickcards');
         let session = await this.getSession(id);
 
         if(!session.participants.map(user => user._id).includes(userId))

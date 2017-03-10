@@ -76,7 +76,7 @@ class SessionController {
     acceptInviteToSession(req, res) {
         let body = req.body;
         this.sessionService.acceptInviteToSession(req.params.sessionId, body.userId)
-            .then((session) => res.status(200).send({session: session}))
+            .then((session) => res.sendStatus(204))
             .catch((err) => res.status(400).send({error: err.message}));
     }
 

@@ -1,7 +1,9 @@
 /**
  * Created by steve on 2/10/2017.
  */
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const config = require('../_config');
 
 function convertToUserDTO(user) {
     let userDTO = {
@@ -32,8 +34,15 @@ class UserController {
         let body = req.body;
         this.userService.getUserByEmail(body.emailAddress).then(
             (user) => {
-                if (bcrypt.compareSync(body.password, user.password))
-                    res.status(200).send({user: convertToUserDTO(user)});
+                if (bcrypt.compareSync(body.password, user.password)) {
+                    let payload = {
+                        userId: user._id
+                    };
+                    let token = jwt.sign(payload, config.jwt.secret, config.jwt.options);
+                    res.status(200).send(
+                        {userId: user._id, token: token});
+                }
+                // res.status(200).send({user: convertToUserDTO(user)});
                 else
                     res.status(404).send({error: "Email address or password is incorrect"});
             }

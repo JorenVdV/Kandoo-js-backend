@@ -18,9 +18,10 @@ class SessionRepository {
     }
 
     async readSessionById(id, withTheme) {
+        console.log('picked cards ophalen adhv userid');
         let session;
         try {
-            let query = this.sessionDao.findOne({_id: id}).populate('participants', '_id firstname lastname emailAddress');
+            let query = this.sessionDao.findOne({_id: id}).populate('participants', '_id firstname lastname emailAddress').populate('sessionCards cardPriorities');
             if(withTheme)
                 query = query.populate('theme');
             session = await query.exec();//this.sessionDao.findOne({_id: id}).populate('participants', '_id firstname lastname emailAddress');

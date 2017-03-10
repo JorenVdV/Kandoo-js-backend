@@ -6,7 +6,6 @@ const assert = chai.assert;
 const themeService = require('../../services/theme-service');
 const userService = require('../../services/user-service');
 
-
 describe("theme service tests", function () {
     let user1;
     let user2;

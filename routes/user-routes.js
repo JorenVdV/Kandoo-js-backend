@@ -1,7 +1,7 @@
 /**
  * Created by steve on 2/10/2017.
  */
-
+const Auth = require('../controllers/authentication-controller');
 const userController = require('../controllers/user-controller');
 
 module.exports = function(app){

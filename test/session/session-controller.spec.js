@@ -397,6 +397,42 @@ describe('Session Controller tests', function () {
         });
     });
 
+    describe('/PUT /session/:sessionId/accept', function () {
+        let session;
+        let anotherUser;
+        before('Create a session & invite anotherUser to the session', async() => {
+            session = await sessionService.addSession('Test session', 'test session creation', 'opportunity', 3, 5, [],
+                true, false, [globalTestUser], globalTestTheme, globalTestUser, null, null, null);
+            assert.isOk(session);
+
+            anotherUser = await userService.addUser('blem', 'Kalob', 'blemkalob@iets.be', null, 'blemkalbo');
+            assert.isOk(anotherUser);
+
+            let invitees = session.invitees;
+            invitees.push(anotherUser.emailAddress);
+            session = await sessionService.updateInvitees(session._id, invitees);
+            assert.isOk(session);
+        });
+
+        it('Accept the invite to the session', (done) => {
+            console.log(' add tests for failures - accepting invite');
+            chai.request(server)
+                .put('/session/' + session._id + '/accept')
+                .send({userId: anotherUser._id})
+                .end((err, res) => {
+                    res.should.have.status(204);
+                    done();
+                });
+        });
+
+        after('Remove the session & user', async() => {
+            let successful = await sessionService.removeSession(session._id);
+            assert.isTrue(successful);
+            successful = await userService.removeUser(anotherUser._id);
+            assert.isTrue(successful);
+        });
+    });
+
     //TODO fix start a session  & turn
     console.error('#####################################');
     console.error('# TODO: fix start a session  & turn #');

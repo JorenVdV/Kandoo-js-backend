@@ -7,7 +7,7 @@ const assert = chai.assert;
 
 const sessionService = require('../../services/session-service');
 const themeService = require('../../services/theme-service');
-// const cardService = require('../../services/card-service');
+const cardService = require('../../services/card-service');
 const userService = require('../../services/user-service');
 
 describe('Session service tests', () => {
@@ -277,6 +277,83 @@ describe('Session service tests', () => {
         });
     });
 
+    describe('Accept an invite to a session', function () {
+        let session;
+        let anotherUser;
+        before('Create a session', async() => {
+            session = await sessionService.addSession('Test session', 'test session creation', 'opportunity', 3, 5, [],
+                true, false, [testUser], testTheme, testUser, null, null, null);
+            assert.isOk(session);
+
+            anotherUser = await userService.addUser('blem', 'Kalob', 'blemkalob@iets.be', null, 'blemkalbo');
+            assert.isOk(anotherUser);
+        });
+
+        before('Invite anotherUser to the session', async() => {
+            let invitees = session.invitees;
+            invitees.push(anotherUser.emailAddress);
+            let newSession = await sessionService.updateInvitees(session._id, invitees);
+            assert.isOk(newSession);
+            assert.isTrue(newSession.invitees.includes(anotherUser.emailAddress));
+            session = newSession;
+        });
+
+        it('Accept invite to a session', async() => {
+            let newSession = await sessionService.acceptInviteToSession(session._id, anotherUser._id);
+            assert.isOk(newSession);
+            assert.isTrue(newSession.participants.map(user => user._id.toString()).includes(anotherUser._id.toString()));
+        });
+
+        after('Remove the session & user', async() => {
+            let successful = await sessionService.removeSession(session._id);
+            assert.isTrue(successful);
+            successful = await userService.removeUser(anotherUser._id);
+            assert.isTrue(successful);
+        });
+    });
+
+    describe('Pick cards for a session', function () {
+        let session;
+        let cards = [];
+        before('Create a session with multiple cards', async() => {
+            session = await sessionService.addSession('Test session', 'test session creation', 'opportunity', 3, 5, [],
+                true, false, [testUser], testTheme, testUser, null, null, null);
+            assert.isOk(session);
+
+            cards.push(await cardService.addCard("first card", testTheme._id));
+            cards.push(await cardService.addCard("second card", testTheme._id));
+            cards.push(await cardService.addCard("third card", testTheme._id));
+            cards.push(await cardService.addCard("fourth card", testTheme._id));
+            cards.push(await cardService.addCard("fifth card", testTheme._id));
+            cards.push(await cardService.addCard("sixth card", testTheme._id));
+
+            let toUpdate = {
+                sessionCards: session.sessionCards
+            };
+
+            cards.forEach(function (card) {
+                toUpdate.sessionCards.push(card);
+            });
+
+            session = await sessionService.changeSession(session._id, toUpdate);
+            assert.isOk(session);
+            assert.strictEqual(session.sessionCards.length, 6);
+        });
+
+        it('let user pick cards for a session', async() => {
+
+        });
+
+        after('Remove the session and the cards', async() => {
+            let successful = await sessionService.removeSession(session._id);
+            assert.isTrue(successful);
+            cards.forEach(async function (card) {
+               let successful = await cardService.removeCard(card._id);
+               assert.isTrue(successful);
+            });
+        });
+    });
+
     describe('Start session', function () {
         let session;
         before('Create a session', async() => {
@@ -318,7 +395,7 @@ describe('Session service tests', () => {
             // assert.isTrue(newSession.events.includes(event => event.eventType === 'start'));
         });
 
-        it('Pause the started session', async () => {
+        it('Pause the started session', async() => {
             let newSession = await sessionService.pauseSession(session._id, testUser._id);
             assert.isOk(newSession);
             assert.strictEqual(newSession.status, 'paused');
@@ -346,7 +423,7 @@ describe('Session service tests', () => {
             // assert.isTrue(newSession.events.includes(event => event.eventType === 'start'));
         });
 
-        it('Stop the started session', async () => {
+        it('Stop the started session', async() => {
             let newSession = await sessionService.stopSession(session._id, testUser._id);
             assert.isOk(newSession);
             assert.strictEqual(newSession.status, 'finished');
