@@ -38,8 +38,10 @@ class UserController {
 
     login(req, res) {
         let body = req.body;
-        console.log('User Controller - update User updaterequest:');
+        console.log('User Controller - login:');
         console.log('email: ' + body.emailAddress + ' pw: ' + body.password);
+        console.log('Body that enters the method: ');
+        console.log(body);
         this.userService.getUserByEmail(body.emailAddress).then(
             (user) => {
                 console.log('User has been found, comparing hashes:');
@@ -95,6 +97,8 @@ class UserController {
         };
         console.log('User Controller - update User updaterequest:');
         console.log(toUpdate);
+        console.log('Body that enters the method: ');
+        console.log(body);
         this.userService.changeUser(req.params.userId, toUpdate)
             .then((user) => {
                 console.log('Update successful: ');
