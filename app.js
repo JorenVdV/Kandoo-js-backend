@@ -37,8 +37,8 @@ const sslOptions = {
     cert: fs.readFileSync('ssl/self-signed/server.crt')
 };
 
-// var server = https.createServer(sslOptions, app);
-var server = http.createServer(app);
+var server = https.createServer(sslOptions, app);
+// var server = http.createServer(app);
 
 var port = process.env.PORT || 8000;
 
