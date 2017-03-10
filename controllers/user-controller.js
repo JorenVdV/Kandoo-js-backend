@@ -35,24 +35,37 @@ class UserController {
             .catch((err) => res.status(404).send({error: err.message}));
     }
 
+
     login(req, res) {
         let body = req.body;
         this.userService.getUserByEmail(body.emailAddress).then(
             (user) => {
                 if (bcrypt.compareSync(body.password, user.password)) {
-                    let payload = {
-                        userId: user._id
-                    };
-                    let token = jwt.sign(payload, config.jwt.secret, config.jwt.options);
-                    res.status(200).send(
-                        {userId: user._id, token: token});
-                }
-                // res.status(200).send({user: convertToUserDTO(user)});else
-                else
+                    res.status(200).send({user: convertToUserDTO(user)});
+                } else
                     res.status(404).send({error: "Email address or password is incorrect"});
             }
         ).catch((err) => res.status(404).send({error: "Email address or password is incorrect"}));
     }
+
+    // login(req, res) {
+    //     let body = req.body;
+    //     this.userService.getUserByEmail(body.emailAddress).then(
+    //         (user) => {
+    //             if (bcrypt.compareSync(body.password, user.password)) {
+    //                 let payload = {
+    //                     userId: user._id
+    //                 };
+    //                 let token = jwt.sign(payload, config.jwt.secret, config.jwt.options);
+    //                 res.status(200).send(
+    //                     {userId: user._id, token: token});
+    //             }
+    //             // res.status(200).send({user: convertToUserDTO(user)});else
+    //             else
+    //                 res.status(404).send({error: "Email address or password is incorrect"});
+    //         }
+    //     ).catch((err) => res.status(404).send({error: "Email address or password is incorrect"}));
+    // }
 
     updateUser(req, res) {
         let body = req.body;
