@@ -4,23 +4,32 @@
 const Auth = require('../controllers/authentication-controller');
 const userController = require('../controllers/user-controller');
 
-module.exports = function(app){
-    app.post('/register', function(req,res){
-        userController.createUser(req,res);
+
+module.exports = function (app, io) {
+
+    const userController = require('../controllers/user-controller');
+
+
+
+    // userController.setIO(io);
+
+    app.post('/register', function (req, res) {
+        userController.createUser(req, res);
     });
-    app.get('/users', function(req,res){
-        userController.getUsers(req,res);
+    app.get('/users', function (req, res) {
+        userController.getUsers(req, res);
     });
 
-    app.post('/login', function(req,res){
-       userController.login(req,res);
+    app.post('/login', function (req, res) {
+        userController.login(req, res);
+
     });
 
-    app.put('/user/:userId/update', function(req,res){
-        userController.updateUser(req,res);
+    app.put('/user/:userId/update', function (req, res) {
+        userController.updateUser(req, res);
     });
 
-    app.delete('/user/:userId/delete', function(req,res){
-       userController.deleteUser(req,res);
+    app.delete('/user/:userId/delete', function (req, res) {
+        userController.deleteUser(req, res);
     });
 };

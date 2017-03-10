@@ -16,6 +16,7 @@ const config = require('../../_config');
 
 chai.use(chaiHttp);
 
+require('../global');
 
 describe('User Controller tests', function () {
 

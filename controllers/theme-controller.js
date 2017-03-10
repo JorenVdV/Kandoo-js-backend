@@ -5,6 +5,11 @@ class ThemeController {
     constructor() {
         this.themeService = require('../services/theme-service');
         this.userService = require('../services/user-service');
+
+
+    }
+    setIO(io){
+        this.io = io;
     }
 
     createTheme(req, res) {
@@ -15,6 +20,13 @@ class ThemeController {
     }
 
     getTheme(req, res) {
+        try{
+            this.io.emit('themes');
+            console.log('SOCKET.IO - Emitted Themes event')
+        }catch(exception){
+            console.log(exception);
+        }
+
         this.themeService.getTheme(req.params.themeId)
             .then((theme) => res.status(200).send({theme: theme}))
             .catch((err) => res.status(404).send({error: err.message}));

@@ -18,9 +18,14 @@ function convertToUserDTO(user) {
     return userDTO;
 }
 
+
 class UserController {
     constructor() {
         this.userService = require('../services/user-service');
+    }
+
+    setIO(io) {
+        this.io = io;
     }
 
     createUser(req, res) {
@@ -42,7 +47,7 @@ class UserController {
                     res.status(200).send(
                         {userId: user._id, token: token});
                 }
-                // res.status(200).send({user: convertToUserDTO(user)});
+                // res.status(200).send({user: convertToUserDTO(user)});else
                 else
                     res.status(404).send({error: "Email address or password is incorrect"});
             }
