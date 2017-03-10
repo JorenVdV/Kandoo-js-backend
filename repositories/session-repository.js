@@ -18,7 +18,7 @@ class SessionRepository {
     }
 
     async readSessionById(id, withTheme) {
-        console.log('picked cards ophalen adhv userid');
+        // console.log('picked cards ophalen adhv userid');
         let session;
         try {
             let query = this.sessionDao.findOne({_id: id}).populate('participants', '_id firstname lastname emailAddress').populate('sessionCards cardPriorities');
@@ -82,7 +82,7 @@ class SessionRepository {
     async updateSession(sessionId, toUpdate) {
         let session;
         try {
-            session = await this.sessionDao.findByIdAndUpdate(sessionId, toUpdate, {new:true}).populate('participants', '_id firstname lastname emailAddress');
+            session = await this.sessionDao.findByIdAndUpdate(sessionId, toUpdate, {new:true}).populate('participants', '_id firstname lastname emailAddress').populate('pickedCards');
         } catch (err) {
             throw new Error('Unexpected error occurred. ' + err);
         }

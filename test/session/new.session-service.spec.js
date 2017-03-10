@@ -320,6 +320,9 @@ describe('Session service tests', () => {
                 true, false, [testUser], testTheme, testUser, null, null, null);
             assert.isOk(session);
 
+            console.log(session.participants);
+            console.log(testUser);
+
             cards.push(await cardService.addCard("first card", testTheme._id));
             cards.push(await cardService.addCard("second card", testTheme._id));
             cards.push(await cardService.addCard("third card", testTheme._id));
@@ -338,18 +341,31 @@ describe('Session service tests', () => {
             session = await sessionService.changeSession(session._id, toUpdate);
             assert.isOk(session);
             assert.strictEqual(session.sessionCards.length, 6);
+
+
         });
 
         it('let user pick cards for a session', async() => {
-
+            let userCards = cards.slice(0, 4);
+            let pickedCards = await sessionService.pickCards(session._id, testUser._id,userCards);
+            assert.isOk(pickedCards);
+            assert.isArray(pickedCards.cards);
+            let userCardsAsStrings = userCards.map(card => card._id.toString());
+            let pickedCardsAsStrings = pickedCards.cards.map(pickedCard => pickedCard.toString());
+            assert.strictEqual(userCardsAsStrings.length, pickedCardsAsStrings.length);
+            assert.strictEqual(pickedCards.cards.length, 4);
+            assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[0]));
+            assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[1]));
+            assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[2]));
+            assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[3]));
         });
 
         after('Remove the session and the cards', async() => {
             let successful = await sessionService.removeSession(session._id);
             assert.isTrue(successful);
             cards.forEach(async function (card) {
-               let successful = await cardService.removeCard(card._id);
-               assert.isTrue(successful);
+                let successful = await cardService.removeCard(card._id);
+                assert.isTrue(successful);
             });
         });
     });
@@ -438,11 +454,6 @@ describe('Session service tests', () => {
     describe('Add a card to a session', function () {
 
     });
-
-    describe('Pick cards from a session', function () {
-
-    });
-
 
     after('Remove test user & test theme', async() => {
         let successful = await userService.removeUser(testUser._id);

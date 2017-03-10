@@ -143,7 +143,7 @@ class SessionService {
         console.log('pickcards');
         let session = await this.getSession(id);
 
-        if(!session.participants.map(user => user._id).includes(userId))
+        if(!session.participants.map(user => user._id.toString()).includes(userId.toString()))
             throw new Error('User is not a participant of this session');
 
         let toUpdate = {};
@@ -158,7 +158,15 @@ class SessionService {
             });
         }
         let updatedSession = await this.sessionRepo.updateSession(id, toUpdate);
-        return updatedSession.pickedCards.find(pc => pc.userId == userId);
+        console.log('service - pickedCards - updatedSession');
+        console.log(updatedSession.pickedCards);
+        let cardsPickedByUser = updatedSession.pickedCards.find((obj => obj.userId.toString() === userId.toString()));
+        console.log('service - pickedCards - cardsPickedByUser');
+        console.log(cardsPickedByUser);
+        cardsPickedByUser = updatedSession.pickedCards[0];
+        console.log('service - pickedCards - cardsPickedByUser');
+        console.log(cardsPickedByUser);
+        return cardsPickedByUser;
     }
 
     async addCard(id, description) {
