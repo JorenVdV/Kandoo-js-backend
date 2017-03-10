@@ -44,8 +44,8 @@ class UserService {
     }
 
     async validateUpdate(user, toUpdate) {
-        if(toUpdate.password){
-            if(!bcrypt.compareSync(toUpdate.originalPassword, user.password))
+        if (toUpdate.password) {
+            if (!bcrypt.compareSync(toUpdate.originalPassword, user.password))
                 throw new Error('Original password does not match');
             let salt = bcrypt.genSaltSync(saltRounds);
             toUpdate.plainTextPassword = toUpdate.password + '';
@@ -65,6 +65,12 @@ class UserService {
 
     async getUsers() {
         return await this.userRepo.readUsers();
+    }
+
+    sendSocketMessage(user, name, data) {
+        user.websockets.forEach(function (socket) {
+            socket.emit(name, data);
+        })
     }
 
 }
