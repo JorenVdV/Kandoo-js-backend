@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
 
-var server = require('http').Server(app);
+var server = require('http').createServer(app);
 
 var port = process.env.PORT || 8000;
 

@@ -2,9 +2,11 @@ process.env.NODE_ENV = 'production';
 
 var config = require('./_config');
 var express = require('express'),
-     http = require('http'),
-    path = require('path');
+     // https = require('https'),
+    path = require('path'),
+     fs = require('fs');
 
+var http = require('http');
 
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser'); //body parser to acces request bodies.
@@ -29,7 +31,14 @@ app.use(bodyParser.urlencoded({extended: true}));
 // parse application/json
 app.use(bodyParser.json());
 
-var server = http.Server(app);
+
+// const sslOptions = {
+//     key: fs.readFileSync('ssl/self-signed/server.key'),
+//     cert: fs.readFileSync('ssl/self-signed/server.crt')
+// };
+
+// var server = https.createServer(sslOptions, app);
+var server = http.createServer(app);
 
 var port = process.env.PORT || 8000;
 
@@ -38,7 +47,6 @@ app.use(express.static(path.join(__dirname)));
 
 server.listen(port, function () {
     console.log("App is running on port " + port);
-
 });
 var io = require('socket.io')(server);
 io.on('connection', function(client) {
