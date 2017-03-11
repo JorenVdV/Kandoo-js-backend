@@ -541,7 +541,8 @@ describe('Session Controller tests', function () {
     describe('/PUT /session/:sessionId/pick', function () {
         let session;
         let cards = [];
-        before('Create the session', async() => {
+        before('Create the session', async function() {
+            this.timeout(15000);
             session = await sessionService.addSession('Test session', 'test session creation', 'opportunity', 3, 5, [],
                 true, false, [globalTestUser], globalTestTheme, globalTestUser, null, null, null);
             assert.isOk(session);
@@ -564,7 +565,7 @@ describe('Session Controller tests', function () {
             session = await sessionService.changeSession(session._id, toUpdate);
             assert.isOk(session);
             assert.strictEqual(session.sessionCards.length, 6);
-        }).timeout(15000);
+        });
 
         it('Pick cards of the session', (done) => {
             chai.request(server)

@@ -317,7 +317,8 @@ describe('Session service tests', () => {
     describe('Pick cards for a session', function () {
         let session;
         let cards = [];
-        before('Create a session with multiple cards', async() => {
+        before('Create a session with multiple cards', async function () {
+            this.timeout(15000);
             session = await sessionService.addSession('Test session', 'test session creation', 'opportunity', 3, 5, [],
                 true, false, [testUser], testTheme, testUser, null, null, null);
             assert.isOk(session);
@@ -342,7 +343,7 @@ describe('Session service tests', () => {
             assert.strictEqual(session.sessionCards.length, 6);
 
 
-        }).timeout(15000);
+        });
 
         it('let user pick cards for a session', async() => {
             let userCards = cards.slice(0, 4);
