@@ -342,7 +342,7 @@ describe('Session service tests', () => {
             assert.strictEqual(session.sessionCards.length, 6);
 
 
-        });
+        }).timeout(15000);
 
         it('let user pick cards for a session', async() => {
             let userCards = cards.slice(0, 4);

@@ -564,7 +564,7 @@ describe('Session Controller tests', function () {
             session = await sessionService.changeSession(session._id, toUpdate);
             assert.isOk(session);
             assert.strictEqual(session.sessionCards.length, 6);
-        });
+        }).timeout(15000);
 
         it('Pick cards of the session', (done) => {
             chai.request(server)
