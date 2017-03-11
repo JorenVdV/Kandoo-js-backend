@@ -11,7 +11,7 @@ module.exports = function (app, io) {
 
 
 
-    // userController.setIO(io);
+    userController.setIO(io);
 
     app.post('/register', function (req, res) {
         userController.createUser(req, res);

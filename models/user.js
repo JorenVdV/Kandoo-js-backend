@@ -34,10 +34,11 @@ var UserSchema = new Schema({
     },
     organisation: String,
     settings: [],
+    websockets: [],
 }, {timestamps: true}, {minimize: true});
 
 UserSchema.set('validateBeforeSave', true);
-UserSchema.pre('findOneAndUpdate', function(next) {
+UserSchema.pre('findOneAndUpdate', function (next) {
     this.options.runValidators = true;
     next();
 });
