@@ -28,6 +28,10 @@ module.exports = function(app){
         sessionController.updateSession(req,res);
     });
 
+    app.put('/session/:sessionId/pick', function(req,res){
+        sessionController.pickCardsByUserId(req,res);
+    });
+
 
     app.get('/theme/:themeId/sessions', function(req,res){
         sessionController.getSessionsByTheme(req,res);

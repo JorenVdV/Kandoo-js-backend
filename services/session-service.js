@@ -139,15 +139,15 @@ class SessionService {
         return await this.changeSession(sessionId, {invitees: session.invitees, participants: session.participants})
     }
 
-    async getPickedCardsByUser(sessionId, userId){
+    async getPickedCardsByUser(sessionId, userId) {
         return await this.sessionRepo.readPickedCardsByUser(sessionId, userId);
     }
 
     async pickCards(id, userId, cards) {
-        console.log('pickcards');
+        // console.log('pickcards');
         let session = await this.getSession(id);
 
-        if(!session.participants.map(user => user._id.toString()).includes(userId.toString()))
+        if (!session.participants.map(user => user._id.toString()).includes(userId.toString()))
             throw new Error('User is not a participant of this session');
 
         let toUpdate = {};
@@ -162,21 +162,21 @@ class SessionService {
             });
         }
         let updatedSession = await this.sessionRepo.updateSession(id, toUpdate);
-        console.log('service - pickedCards - updatedSession');
-        console.log(updatedSession.pickedCards);
+        // console.log('service - pickedCards - updatedSession');
+        // console.log(updatedSession.pickedCards);
         let cardsPickedByUser = updatedSession.pickedCards.find((obj => obj.userId.toString() === userId.toString()));
-        console.log('service - pickedCards - cardsPickedByUser');
-        console.log(cardsPickedByUser);
-        cardsPickedByUser = updatedSession.pickedCards[0];
-        console.log('service - pickedCards - cardsPickedByUser');
-        console.log(cardsPickedByUser);
+        // console.log('service - pickedCards - cardsPickedByUser');
+        // console.log(cardsPickedByUser);
+        // cardsPickedByUser = updatedSession.pickedCards[0];
+        // console.log('service - pickedCards - cardsPickedByUser');
+        // console.log(cardsPickedByUser);
         return cardsPickedByUser;
     }
 
     async addCard(id, description) {
         let session = await this.getSession(id);
 
-        if(!session.cardsCanBeAdded)
+        if (!session.cardsCanBeAdded)
             throw new Error('Session does not allow cards to be added');
 
         let card = await this.cardService.addCard(description, session.theme);
@@ -189,7 +189,7 @@ class SessionService {
         let theme = session.theme;
         let organisers = theme.organisers;
 
-        if(!organisers.map(user => user.toString()).includes(userId.toString()))
+        if (!organisers.map(user => user.toString()).includes(userId.toString()))
             throw new Error('User is not an organiser of this session');
 
         let toUpdate = {};
@@ -205,13 +205,19 @@ class SessionService {
         // });
         toUpdate.status = 'started';
         toUpdate.startDate = new Date();
+        toUpdate.currentUser = session.participants[0];
         toUpdate.cardPriorities = [];
 
-        for (let i = 0; i < session.pickedCards.length; i++) {
-            let currUserCards = session.pickedCards[i].cards;
+        let sessionPickedCards = session.pickedCards;
+
+        for (let i = 0; i < sessionPickedCards.length; i++) {
+            let currUserCards = sessionPickedCards[i].cards;
             for (let y = 0; y < currUserCards.length; y++) {
-                if (!toUpdate.cardPriorities.includes(cardPriority => cardPriority.card == currUserCards[y]))
+                if (toUpdate.cardPriorities.findIndex(cardPriority => cardPriority.card.toString() === currUserCards[y].toString()) === -1){
                     toUpdate.cardPriorities.push({priority: 0, card: currUserCards[y]});
+                    // console.log('toUpdate.cardPriorities did not yet contain card with id: ' + currUserCards[y].toString());
+                }
+
             }
 
         }
@@ -224,14 +230,14 @@ class SessionService {
         let theme = session.theme;
         let organisers = theme.organisers;
 
-        if(!organisers.map(user => user.toString()).includes(userId.toString()))
+        if (!organisers.map(user => user.toString()).includes(userId.toString()))
             throw new Error('User is not an organiser of this session');
 
 
         let toUpdate = {};
 
         // toUpdate.events = session.events;
-        if(session.status === 'created')
+        if (session.status === 'created')
             throw new Error('Unable to pause a not yet started session');
         if (session.status === 'finished')
             throw new Error('Unable to pause an already finished session');
@@ -255,7 +261,7 @@ class SessionService {
         let theme = session.theme;
         let organisers = theme.organisers;
 
-        if(!organisers.map(user => user.toString()).includes(userId.toString()))
+        if (!organisers.map(user => user.toString()).includes(userId.toString()))
             throw new Error('User is not an organiser of this session');
 
         let toUpdate = {};
@@ -280,27 +286,44 @@ class SessionService {
         return await this.sessionRepo.updateSession(sessionId, toUpdate)
     }
 
-    async userTurn(sessionId, userId, cardId) {
+    async playTurn(sessionId, userId, cardId) {
         let session = await this.getSession(sessionId);
         let toUpdate = {};
 
         if (session.status === 'paused' || session.status === 'stopped')
             throw new Error('Cannot perform a turn when the session is paused or stopped');
 
-        if (session.currentUser !== userId)
+        if (session.currentUser._id.toString() !== userId.toString())
             throw new Error('Only the current user can complete his turn');
 
-        toUpdate.events = session.events;
+        // toUpdate.events = session.events;
 
-        toUpdate.events.push({
-            eventType: 'priority',
-            userId: userId,
-            content: cardId,
-            timestamp: Date.now()
-        });
+        // toUpdate.events.push({
+        //     eventType: 'priority',
+        //     userId: userId,
+        //     content: cardId,
+        //     timestamp: Date.now()
+        // });
 
         toUpdate.cardPriorities = session.cardPriorities;
-        toUpdate.cardPriorities.find(cardPriorities => cardPriorities.card == cardId).priority++;
+        // console.log('cardPriorities');
+        // console.log(toUpdate.cardPriorities);
+        toUpdate.cardPriorities.find(cardPriorities => cardPriorities.card.toString() == cardId.toString()).priority++;
+
+        let participants = session.participants;
+        let indexOfCurrUser = participants.findIndex((participant) => participant._id.toString() === userId.toString());
+        // console.log('indexOfCurrUser: ' + indexOfCurrUser);
+
+        let indexOfNextUser;
+        if (indexOfCurrUser === participants.length)
+            indexOfNextUser = 0;
+        else
+            indexOfNextUser = indexOfCurrUser + 1;
+
+        // console.log('indexOfCurrUser: ' + indexOfNextUser);
+        toUpdate.currentUser = participants[indexOfNextUser];
+        // console.log(userId);
+        // console.log(toUpdate.currentUser._id);
 
         return await this.sessionRepo.updateSession(sessionId, toUpdate);
     }
