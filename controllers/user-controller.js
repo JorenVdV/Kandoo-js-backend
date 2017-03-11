@@ -38,23 +38,15 @@ class UserController {
 
     login(req, res) {
         let body = req.body;
-        console.log('User Controller - login:');
-        console.log('email: ' + body.emailAddress + ' pw: ' + body.password);
-        console.log('Body that enters the method: ');
-        console.log(body);
         this.userService.getUserByEmail(body.emailAddress).then(
             (user) => {
-                console.log('User has been found, comparing hashes:');
-                console.log(user);
                 if (bcrypt.compareSync(body.password, user.password)) {
-                    console.log('Hash is correct, returning userDTO');
                     res.status(200).send({user: convertToUserDTO(user)});
                 } else {
-                    console.log('Hash is incorrect');
                     res.status(404).send({error: "Email address or password is incorrect"});
                 }
             }
-        ).catch((err) => {console.log('User has not been found, error: '); console.log(err.message); res.status(404).send({error: "Email address or password is incorrect"})});
+        ).catch((err) => res.status(404).send({error: "Email address or password is incorrect"}));
     }
 
     // login(req, res) {
@@ -95,19 +87,11 @@ class UserController {
             password: body.password,
             originalPassword: body.originalPassword
         };
-        console.log('User Controller - update User updaterequest:');
-        console.log(toUpdate);
-        console.log('Body that enters the method: ');
-        console.log(body);
         this.userService.changeUser(req.params.userId, toUpdate)
             .then((user) => {
-                console.log('Update successful: ');
-                console.log(convertToUserDTO(user));
                 res.status(200).send({user: convertToUserDTO(user)});
             })
             .catch((err) => {
-                console.log('Update not successful: ');
-                console.log(err.message);
                 res.status(400).send({error: err.message})
             })
     }

@@ -322,9 +322,6 @@ describe('Session service tests', () => {
                 true, false, [testUser], testTheme, testUser, null, null, null);
             assert.isOk(session);
 
-            console.log(session.participants);
-            console.log(testUser);
-
             cards.push(await cardService.addCard("first card", testTheme._id));
             cards.push(await cardService.addCard("second card", testTheme._id));
             cards.push(await cardService.addCard("third card", testTheme._id));
@@ -347,38 +344,38 @@ describe('Session service tests', () => {
 
         });
 
-        // it('let user pick cards for a session', async() => {
-        //     let userCards = cards.slice(0, 4);
-        //     let pickedCards = await sessionService.pickCards(session._id, testUser._id,userCards);
-        //     assert.isOk(pickedCards);
-        //     assert.isArray(pickedCards.cards);
-        //     let userCardsAsStrings = userCards.map(card => card._id.toString());
-        //     let pickedCardsAsStrings = pickedCards.cards.map(pickedCard => pickedCard.toString());
-        //     assert.strictEqual(userCardsAsStrings.length, pickedCardsAsStrings.length);
-        //     assert.strictEqual(pickedCards.cards.length, 4);
-        //     assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[0]));
-        //     assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[1]));
-        //     assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[2]));
-        //     assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[3]));
-        // });
-        //
-        //
-        // it('get picked cards from user', async() => {
-        //     let userCards = cards.slice(0, 4);
-        //     let pickedCards = await sessionService.getPickedCardsByUser(session._id, testUser._id);
-        //     console.log('get picked cards service tests');
-        //     console.log(pickedCards);
-        //     console.log('');
-        //     assert.isOk(pickedCards);
-        //     let userCardsAsStrings = userCards.map(card => card._id.toString());
-        //     let pickedCardsAsStrings = pickedCards.cards.map(pickedCard => pickedCard._id.toString());
-        //     assert.strictEqual(userCardsAsStrings.length, pickedCardsAsStrings.length);
-        //     assert.strictEqual(pickedCards.cards.length, 4);
-        //     assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[0]));
-        //     assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[1]));
-        //     assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[2]));
-        //     assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[3]));
-        // });
+        it('let user pick cards for a session', async() => {
+            let userCards = cards.slice(0, 4);
+            let pickedCards = await sessionService.pickCards(session._id, testUser._id,userCards);
+            assert.isOk(pickedCards);
+            assert.isArray(pickedCards.cards);
+            let userCardsAsStrings = userCards.map(card => card._id.toString());
+            let pickedCardsAsStrings = pickedCards.cards.map(pickedCard => pickedCard.toString());
+            assert.strictEqual(userCardsAsStrings.length, pickedCardsAsStrings.length);
+            assert.strictEqual(pickedCards.cards.length, 4);
+            assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[0]));
+            assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[1]));
+            assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[2]));
+            assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[3]));
+        });
+
+
+        it('get picked cards from user', async() => {
+            let userCards = cards.slice(0, 4);
+            let pickedCards = await sessionService.getPickedCardsByUser(session._id, testUser._id);
+            console.log('get picked cards service tests');
+            console.log(pickedCards);
+            console.log('');
+            assert.isOk(pickedCards);
+            let userCardsAsStrings = userCards.map(card => card._id.toString());
+            let pickedCardsAsStrings = pickedCards.cards.map(pickedCard => pickedCard._id.toString());
+            assert.strictEqual(userCardsAsStrings.length, pickedCardsAsStrings.length);
+            assert.strictEqual(pickedCards.cards.length, 4);
+            assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[0]));
+            assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[1]));
+            assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[2]));
+            assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[3]));
+        });
 
 
 

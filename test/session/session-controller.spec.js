@@ -11,6 +11,7 @@ const server = require('../../app-test');
 const themeService = require('../../services/theme-service');
 const userService = require('../../services/user-service');
 const sessionService = require('../../services/session-service');
+const cardService = require('../../services/card-service');
 
 chai.use(chaiHttp);
 
@@ -538,7 +539,52 @@ describe('Session Controller tests', function () {
     });
 
     describe('/PUT /session/:sessionId/pick', function () {
+        let session;
+        let cards = [];
+        before('Create the session', async() => {
+            session = await sessionService.addSession('Test session', 'test session creation', 'opportunity', 3, 5, [],
+                true, false, [globalTestUser], globalTestTheme, globalTestUser, null, null, null);
+            assert.isOk(session);
 
+            cards.push(await cardService.addCard("first card", globalTestTheme._id));
+            cards.push(await cardService.addCard("second card", globalTestTheme._id));
+            cards.push(await cardService.addCard("third card", globalTestTheme._id));
+            cards.push(await cardService.addCard("fourth card", globalTestTheme._id));
+            cards.push(await cardService.addCard("fifth card", globalTestTheme._id));
+            cards.push(await cardService.addCard("sixth card", globalTestTheme._id));
+
+            let toUpdate = {
+                sessionCards: session.sessionCards
+            };
+
+            cards.forEach(function (card) {
+                toUpdate.sessionCards.push(card);
+            });
+
+            session = await sessionService.changeSession(session._id, toUpdate);
+            assert.isOk(session);
+            assert.strictEqual(session.sessionCards.length, 6);
+        });
+
+        it('Pick cards of the session', (done) => {
+            chai.request(server)
+                .put('/session/' + session._id + '/start')
+                .send({userId: globalTestUser._id})
+                .end((err, res) => {
+                    res.should.have.status(204);
+                    done();
+                })
+        });
+
+
+        after('Remove the session', async() => {
+            let successful = await sessionService.removeSession(session._id);
+            assert.isTrue(successful);
+            cards.forEach(async function (card) {
+                let successful = await cardService.removeCard(card._id);
+                assert.isTrue(successful);
+            });
+        });
     });
 
     // describe('/POST /session/:sessionId/turn', function () {
