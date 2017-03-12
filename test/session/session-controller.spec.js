@@ -542,7 +542,7 @@ describe('Session Controller tests', function () {
     describe('/PUT /session/:sessionId/pick', function () {
         let session;
         let cards = [];
-        before('Create the session', async function() {
+        before('Create the session', async function () {
             this.timeout(15000);
             session = await sessionService.addSession('Test session', 'test session creation', 'opportunity', 3, 5, [],
                 true, false, [globalTestUser], globalTestTheme, globalTestUser, null, null, null);
@@ -686,21 +686,21 @@ describe('Session Controller tests', function () {
         it('Play a turn', (done) => {
             let card = cards[3];
             chai.request(server)
-                        .put('/session/' + session._id + '/turn')
-                        .send({userId: globalTestUser._id, cardId: card._id})
-                        .end((err, res) => {
-                            res.should.have.status(200);
-                            res.body.should.have.property('currentUser');
-                            assert.strictEqual(res.body.currentUser.firstname + ' ' + res.body.currentUser.lastname, anotherUser.firstname + ' ' + anotherUser.lastname);
-                            res.body.should.have.property('cardPriorities');
-                            assert.isArray(res.body.cardPriorities);
-                            let cardPriorities = res.body.cardPriorities;
-                            let sum = cardPriorities.map(cardPriority => cardPriority.priority).reduce(function (accumulated, currValue) {
-                                return accumulated + currValue;
-                            }, 0);
-                            assert.strictEqual(sum, 1);
-                            done();
-                        });
+                .put('/session/' + session._id + '/turn')
+                .send({userId: globalTestUser._id, cardId: card._id})
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.have.property('currentUser');
+                    assert.strictEqual(res.body.currentUser.firstname + ' ' + res.body.currentUser.lastname, anotherUser.firstname + ' ' + anotherUser.lastname);
+                    res.body.should.have.property('cardPriorities');
+                    assert.isArray(res.body.cardPriorities);
+                    let cardPriorities = res.body.cardPriorities;
+                    let sum = cardPriorities.map(cardPriority => cardPriority.priority).reduce(function (accumulated, currValue) {
+                        return accumulated + currValue;
+                    }, 0);
+                    assert.strictEqual(sum, 1);
+                    done();
+                });
         });
 
         after('Remove the created objects', async() => {
@@ -714,6 +714,63 @@ describe('Session Controller tests', function () {
             });
         });
     });
+
+    describe('/GET /user/:userId/sessions/invited', () => {
+        let session1;
+        let session2;
+        let anotherUser1;
+
+        before('Create the users', async() => {
+            anotherUser1 = await userService.addUser('blem', 'Kalob', 'blemkalob@iets.be', null, 'blemkalbo');
+            assert.isOk(anotherUser1);
+        });
+
+        before('Create the sessions', async() => {
+            session1 = await sessionService.addSession('Test session', 'test session creation', 'opportunity', 3, 5, [],
+                true, false, [globalTestUser], globalTestTheme, globalTestUser, null, null, null);
+            assert.isOk(session1);
+
+            session2 = await sessionService.addSession('Test session 2', 'test session creation', 'opportunity', 3, 5, [],
+                true, false, [globalTestUser], globalTestTheme, globalTestUser, null, null, null);
+            assert.isOk(session2);
+        });
+
+        before('Invite the users to their sessions', async function () {
+            let invitees = session1.invitees;
+            invitees.push(anotherUser1.emailAddress);
+            session1 = await sessionService.updateInvitees(session1._id, invitees);
+            assert.isOk(session1);
+            assert.isTrue(session1.invitees.includes(anotherUser1.emailAddress));
+        });
+
+        it('Get sessions by invitee - anotherUser1', (done) => {
+            chai.request(server)
+                .get('/user/' + anotherUser1._id + '/sessions/invited')
+                .send()
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.have.property('sessions');
+                    assert.isOk(res.body.sessions);
+                    assert.isArray(res.body.sessions);
+                    assert.strictEqual(res.body.sessions.length, 1);
+                    let sessionsToTitle = res.body.sessions.map(session => session.title);
+                    assert.isTrue(sessionsToTitle.includes('Test session'));
+                    done();
+                });
+
+        });
+
+        after('Remove the sessions & user', async() => {
+            let successful = await userService.removeUser(anotherUser1._id);
+            assert.isTrue(successful);
+            successful = await sessionService.removeSession(session1._id);
+            assert.isTrue(successful);
+            successful = await sessionService.removeSession(session2._id);
+            assert.isTrue(successful);
+        });
+
+    });
+
     // describe('/POST /session/:sessionId/turn', function () {
     //     let sessionId;
     //     let card;

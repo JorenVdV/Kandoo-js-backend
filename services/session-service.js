@@ -60,8 +60,8 @@ class SessionService {
     }
 
     async getSessionsByInvitee(inviteeId) {
-        let email = this.userService.getUserById(inviteeId).emailAddress;
-        return await this.sessionRepo.readSessionsByInvitee(email);
+        let user = await this.userService.getUserById(inviteeId);
+        return await this.sessionRepo.readSessionsByInvitee(user.emailAddress);
     }
 
     async getSessionsByParticipant(participantId) {

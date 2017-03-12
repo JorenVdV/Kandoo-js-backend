@@ -220,6 +220,103 @@ describe('Session service tests', () => {
         });
     });
 
+    describe('Get sessions by invitee', () => {
+        let session1;
+        let session2;
+        let session3;
+        let anotherUser1;
+        let anotherUser2;
+
+        before('Create the users', async () => {
+            anotherUser1 = await userService.addUser('blem', 'Kalob', 'blemkalob@iets.be', null, 'blemkalbo');
+            assert.isOk(anotherUser1);
+            anotherUser2 = await userService.addUser('Jonas', 'Verlanders', 'jonasVerlanders@teamjs.be', null, 'jonas123');
+            assert.isOk(anotherUser2);
+        });
+
+        before('Create the sessions', async () => {
+            session1 = await sessionService.addSession('Test session', 'test session creation', 'opportunity', 3, 5, [],
+                true, false, [testUser], testTheme, testUser, testDate, null, null);
+            assert.isOk(session1);
+
+            session2 = await sessionService.addSession('Test session 2', 'test session creation', 'opportunity', 3, 5, [],
+                true, false, [testUser], testTheme, testUser, testDate, null, null);
+            assert.isOk(session2);
+
+            session3 = await sessionService.addSession('Test session 3', 'test session creation', 'opportunity', 3, 5, [],
+                true, false, [testUser], testTheme, testUser, testDate, null, null);
+            assert.isOk(session3);
+        });
+
+        before('Invite the users to their sessions', async function () {
+            this.timeout(10000);
+            let invitees = session1.invitees;
+            invitees.push(anotherUser1.emailAddress);
+            session1 = await sessionService.updateInvitees(session1._id, invitees);
+            assert.isOk(session1);
+            assert.isTrue(session1.invitees.includes(anotherUser1.emailAddress));
+
+            invitees = session2.invitees;
+            invitees.push(anotherUser1.emailAddress);
+            session2 = await sessionService.updateInvitees(session2._id, invitees);
+            assert.isOk(session2);
+            assert.isTrue(session2.invitees.includes(anotherUser1.emailAddress));
+
+            invitees = session2.invitees;
+            invitees.push(anotherUser2.emailAddress);
+            session2 = await sessionService.updateInvitees(session2._id, invitees);
+            assert.isOk(session2);
+            assert.isTrue(session2.invitees.includes(anotherUser2.emailAddress));
+
+            invitees = session3.invitees;
+            invitees.push(anotherUser2.emailAddress);
+            session3 = await sessionService.updateInvitees(session3._id, invitees);
+            assert.isOk(session3);
+            assert.isTrue(session3.invitees.includes(anotherUser2.emailAddress));
+        });
+
+        it('Get sessions by invitee - anotherUser1', async() => {
+            let sessions = await sessionService.getSessionsByInvitee(anotherUser1._id);
+            assert.isOk(sessions);
+            assert.isArray(sessions);
+            assert.strictEqual(sessions.length, 2);
+            let sessionsToTitle = sessions.map(session => session.title);
+            assert.isTrue(sessionsToTitle.includes('Test session'));
+            assert.isTrue(sessionsToTitle.includes('Test session 2'));
+        });
+
+        it('Get sessions by invitee - anotherUser2', async() => {
+            let sessions = await sessionService.getSessionsByInvitee(anotherUser2._id);
+            assert.isOk(sessions);
+            assert.isArray(sessions);
+            assert.strictEqual(sessions.length, 2);
+            let sessionsToTitle = sessions.map(session => session.title);
+            assert.isTrue(sessionsToTitle.includes('Test session 2'));
+            assert.isTrue(sessionsToTitle.includes('Test session 3'));
+        });
+
+        after('Remove the users', async () => {
+            let successful = await userService.removeUser(anotherUser1._id);
+            assert.isTrue(successful);
+            successful = await userService.removeUser(anotherUser2._id);
+            assert.isTrue(successful);
+        });
+
+        after('Remove the sessions', async() => {
+            let successful = await sessionService.removeSession(session1._id);
+            assert.isTrue(successful);
+            successful = await sessionService.removeSession(session2._id);
+            assert.isTrue(successful);
+            successful = await sessionService.removeSession(session3._id);
+            assert.isTrue(successful);
+        });
+
+    });
+
+    describe('Get sessions by participant', () => {
+
+    });
+
     describe('Update a session', function () {
         let session;
         let anotherUser;
