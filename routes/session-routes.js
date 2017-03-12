@@ -12,7 +12,7 @@ module.exports = function(app){
         sessionController.getSession(req,res);
     });
 
-    app.post('/session/:sessionId/turn', function (req, res) {
+    app.put('/session/:sessionId/turn', function (req, res) {
         sessionController.playTurn(req,res);
     });
 

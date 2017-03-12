@@ -314,11 +314,9 @@ class SessionService {
         let indexOfCurrUser = participants.findIndex((participant) => participant._id.toString() === userId.toString());
         // console.log('indexOfCurrUser: ' + indexOfCurrUser);
 
-        let indexOfNextUser;
-        if (indexOfCurrUser === participants.length)
+        let indexOfNextUser = indexOfCurrUser + 1;
+        if (indexOfNextUser === participants.length)
             indexOfNextUser = 0;
-        else
-            indexOfNextUser = indexOfCurrUser + 1;
 
         // console.log('indexOfCurrUser: ' + indexOfNextUser);
         toUpdate.currentUser = participants[indexOfNextUser];

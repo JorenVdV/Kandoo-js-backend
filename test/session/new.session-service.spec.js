@@ -364,9 +364,9 @@ describe('Session service tests', () => {
         it('get picked cards from user', async() => {
             let userCards = cards.slice(0, 4);
             let pickedCards = await sessionService.getPickedCardsByUser(session._id, testUser._id);
-            console.log('get picked cards service tests');
-            console.log(pickedCards);
-            console.log('');
+            // console.log('get picked cards service tests');
+            // console.log(pickedCards);
+            // console.log('');
             assert.isOk(pickedCards);
             let userCardsAsStrings = userCards.map(card => card._id.toString());
             let pickedCardsAsStrings = pickedCards.cards.map(pickedCard => pickedCard._id.toString());
@@ -591,10 +591,32 @@ describe('Session service tests', () => {
             assert.strictEqual(sum, 1);
 
             assert.strictEqual(newSession.currentUser._id.toString(),anotherUser._id.toString());
+
+            session = newSession;
         });
 
         it('Play another turn', async() => {
+            let randomCard = Math.floor((Math.random() * 5) + 0);
+            let cardPriority = session.cardPriorities.find(cardPriority => cardPriority.card.toString() === cards[randomCard]._id.toString()).priority;
+            assert.isTrue(session.currentUser._id.toString() === anotherUser._id.toString());
 
+            let newSession = await sessionService.playTurn(session._id, anotherUser._id, cards[randomCard]._id);
+            // console.log(newSession);
+            assert.isOk(newSession);
+            assert.isTrue(newSession.currentUser._id.toString() === testUser._id.toString());
+
+            let cardPriorities = newSession.cardPriorities;
+            let newCardPriority = newSession.cardPriorities.find(cardPriority => cardPriority.card.toString() === cards[randomCard]._id.toString()).priority;
+            assert.strictEqual(cardPriority + 1, newCardPriority);
+
+            let sum = cardPriorities.map(cardPriority => cardPriority.priority).reduce(function (accumulated, currValue) {
+                return accumulated + currValue;
+            }, 0);
+            assert.strictEqual(sum, 2);
+
+            assert.strictEqual(newSession.currentUser._id.toString(),testUser._id.toString());
+
+            session = newSession;
         });
 
         after('Remove the created objects', async() => {

@@ -81,17 +81,14 @@ class SessionController {
     }
 
     playTurn(req, res) {
-        this.userService.findUserById(req.params.userId, function (user, err) {
-            let cardService = require('../services/card-service');
-            let sessionService = require('../services/session-service');
-
-            let card = cardService.find(req.params.cardId);
-
-            if (sessionService.addTurn(req.params.sessionId, card, user))
-                res.sendStatus(201);
-            else
-                res.sendStatus(400);
-        });
+        let body = req.body;
+        this.sessionService.playTurn(req.params.sessionId, body.userId, body.cardId)
+            .then((session) => {
+                let currentUser = session.currentUser;
+                currentUser._id = undefined;
+                res.status(200).send({currentUser: currentUser, cardPriorities: session.cardPriorities})
+            })
+            .catch((err) => res.status(400).send({error: err.message}));
     }
 
     startSession(req, res) {
@@ -123,11 +120,11 @@ class SessionController {
             .catch((err) => res.status(400).send({error: err.message}))
     }
 
-    pickCardsByUserId(req, res){
+    pickCardsByUserId(req, res) {
         let body = req.body;
         this.sessionService.pickCards(req.params.sessionId, body.userId, body.cards)
             .then((userCards) => res.sendStatus(204))
-            .catch((err) => res.sendStatus(400).send({error:err.message}));
+            .catch((err) => res.sendStatus(400).send({error: err.message}));
     }
 }
 
