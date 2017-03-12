@@ -487,7 +487,8 @@ describe('Session service tests', () => {
             assert.isOk(session);
         });
 
-        before('Add cards to the session', async() => {
+        before('Add cards to the session', async function () {
+            this.timeout(10000);
             cards.push(await cardService.addCard("first card", testTheme._id));
             cards.push(await cardService.addCard("second card", testTheme._id));
             cards.push(await cardService.addCard("third card", testTheme._id));

@@ -603,7 +603,8 @@ describe('Session Controller tests', function () {
             assert.isOk(session);
         });
 
-        before('Add cards to the session', async() => {
+        before('Add cards to the session', async function () {
+            this.timeout(10000);
             cards.push(await cardService.addCard("first card", globalTestTheme._id));
             cards.push(await cardService.addCard("second card", globalTestTheme._id));
             cards.push(await cardService.addCard("third card", globalTestTheme._id));
