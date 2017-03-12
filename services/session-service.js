@@ -127,7 +127,6 @@ class SessionService {
     }
 
     async acceptInviteToSession(sessionId, userId) {
-        console.log('accept invite');
         let session = await this.getSession(sessionId);
         let user = await this.userService.getUserById(userId);
         if (session.participants.includes(user._id))
@@ -196,7 +195,7 @@ class SessionService {
 
         // toUpdate.events = session.events;
         if (session.status !== 'created')
-            throw new Error('Unable to start an already started session');
+            throw new Error('Unable to start an already started/finished session');
         // toUpdate.events.push({
         //     eventType: 'start',
         //     userId: userId,

@@ -435,10 +435,6 @@ describe('Session Controller tests', function () {
         });
     });
 
-    //TODO fix start a session  & turn
-    console.error('#####################################');
-    console.error('# TODO: fix start a session  & turn #');
-    console.error('#####################################');
     describe('/PUT /session/:sessionId/start', function () {
         let testSession;
         before('Create the session', async() => {
@@ -771,55 +767,54 @@ describe('Session Controller tests', function () {
 
     });
 
-    // describe('/POST /session/:sessionId/turn', function () {
-    //     let sessionId;
-    //     let card;
-    //     before('should create a session to use and add a card to the theme', function (done) {
-    //         this.sessionId = 0;
-    //         let session = {
-    //             title: 'Welke pudding eten we deze week?',
-    //             description: 'Test om sessie aan te maken',
-    //             circleType: 'blue',
-    //             turnDuration: 60000,
-    //             cardsPerParticipant: {min: 2, max: 5},
-    //             cards: [],
-    //             cardsCanBeReviewed: false,
-    //             cardsCanBeAdded: false,
-    //             creator: globalTestUser,
-    //             startDate: null
-    //         };
-    //         chai.request(server)
-    //             .post('/theme/' + globalTestTheme._id + '/session')
-    //             .send(session)
-    //             .end((err, res) => {
-    //                 res.should.have.status(201);
-    //                 res.body.should.have.property('session');
-    //                 let resSession = res.body.session;
-    //                 this.sessionId = resSession._id;
-    //                 done();
-    //             });
-    //
-    //
-    //         card = {description: 'This is a test description'};
-    //         card = cardService.addCard(card.description);
-    //         themeService.addCard(globalTestTheme._id, card, function (theme, err) {
-    //
-    //         });
-    //
-    //     });
-    //     it('should add a turn to the session', function (done) {
-    //         chai.request(server)
-    //             .post('/session/' + this.sessionId + '/turn')
-    //             .send({userId: globalTestUser._id, cardId: card._id})
-    //             .end((err, res) => {
-    //                 res.should.have.status(201);
-    //                 done();
-    //             });
-    //     });
-    //     after('clean up created stuff', function () {
-    //         sessionService.removeSession(sessionId);
-    //     });
-    // });
+    describe('/GET /user/:userId/sessions/participating', () => {
+        let session1;
+        let session2;
+        let anotherUser1;
+
+        before('Create the users', async() => {
+            anotherUser1 = await userService.addUser('blem', 'Kalob', 'blemkalob@iets.be', null, 'blemkalbo');
+            assert.isOk(anotherUser1);
+        });
+
+        before('Create the sessions', async() => {
+            session1 = await sessionService.addSession('Test session', 'test session creation', 'opportunity', 3, 5, [],
+                true, false, [globalTestUser], globalTestTheme, globalTestUser, null, null, null);
+            assert.isOk(session1);
+
+            session2 = await sessionService.addSession('Test session 2', 'test session creation', 'opportunity', 3, 5, [],
+                true, false, [globalTestUser, anotherUser1], globalTestTheme, globalTestUser, null, null, null);
+            assert.isOk(session2);
+        });
+
+        it('Get sessions by participant - anotherUser1', (done) => {
+            chai.request(server)
+                .get('/user/' + anotherUser1._id + '/sessions/participating')
+                .send()
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.have.property('sessions');
+                    assert.isOk(res.body.sessions);
+                    assert.isArray(res.body.sessions);
+                    assert.strictEqual(res.body.sessions.length, 1);
+                    let sessionsToTitle = res.body.sessions.map(session => session.title);
+                    assert.isTrue(sessionsToTitle.includes('Test session 2'));
+                    done();
+                });
+
+        });
+
+        after('Remove the sessions & user', async() => {
+            let successful = await userService.removeUser(anotherUser1._id);
+            assert.isTrue(successful);
+            successful = await sessionService.removeSession(session1._id);
+            assert.isTrue(successful);
+            successful = await sessionService.removeSession(session2._id);
+            assert.isTrue(successful);
+        });
+
+    });
+
 
     after('remove testuser & test theme', async function () {
         let successful = await userService.removeUser(globalTestUser._id);

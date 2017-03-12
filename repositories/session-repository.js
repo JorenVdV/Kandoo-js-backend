@@ -34,21 +34,6 @@ class SessionRepository {
             throw new Error('Unable to find session with id: ' + id);
         }
     }
-
-    // async readSessionByIdWithTheme(id){
-    //     let session;
-    //     try {
-    //         session = await this.sessionDao.findOne({_id: id}).populate('participants', '_id firstname lastname emailAddress').populate('theme');
-    //     } catch (err) {
-    //         throw new Error('Unexpected error occurred. ' + err);
-    //     }
-    //     if (session) {
-    //         return session;
-    //     } else {
-    //         throw new Error('Unable to find session with id: ' + id);
-    //     }
-    // }
-
     async readSessionsByTheme(themeId) {
         let query = {theme: themeId};
         return await this.readSessions(query);

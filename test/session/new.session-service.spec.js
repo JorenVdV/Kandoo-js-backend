@@ -314,7 +314,68 @@ describe('Session service tests', () => {
     });
 
     describe('Get sessions by participant', () => {
+        let session1;
+        let session2;
+        let session3;
+        let anotherUser1;
+        let anotherUser2;
 
+        before('Create the users', async () => {
+            anotherUser1 = await userService.addUser('blem', 'Kalob', 'blemkalob@iets.be', null, 'blemkalbo');
+            assert.isOk(anotherUser1);
+            anotherUser2 = await userService.addUser('Jonas', 'Verlanders', 'jonasVerlanders@teamjs.be', null, 'jonas123');
+            assert.isOk(anotherUser2);
+        });
+
+        before('Create the sessions', async () => {
+            session1 = await sessionService.addSession('Test session', 'test session creation', 'opportunity', 3, 5, [],
+                true, false, [testUser, anotherUser1], testTheme, testUser, testDate, null, null);
+            assert.isOk(session1);
+
+            session2 = await sessionService.addSession('Test session 2', 'test session creation', 'opportunity', 3, 5, [],
+                true, false, [testUser, anotherUser1, anotherUser2], testTheme, testUser, testDate, null, null);
+            assert.isOk(session2);
+
+            session3 = await sessionService.addSession('Test session 3', 'test session creation', 'opportunity', 3, 5, [],
+                true, false, [testUser, anotherUser2], testTheme, testUser, testDate, null, null);
+            assert.isOk(session3);
+        });
+
+        it('Get sessions by participant - anotherUser1', async() => {
+            let sessions = await sessionService.getSessionsByParticipant(anotherUser1._id);
+            assert.isOk(sessions);
+            assert.isArray(sessions);
+            assert.strictEqual(sessions.length, 2);
+            let sessionsToTitle = sessions.map(session => session.title);
+            assert.isTrue(sessionsToTitle.includes('Test session'));
+            assert.isTrue(sessionsToTitle.includes('Test session 2'));
+        });
+
+        it('Get sessions by participant - anotherUser2', async() => {
+            let sessions = await sessionService.getSessionsByParticipant(anotherUser2._id);
+            assert.isOk(sessions);
+            assert.isArray(sessions);
+            assert.strictEqual(sessions.length, 2);
+            let sessionsToTitle = sessions.map(session => session.title);
+            assert.isTrue(sessionsToTitle.includes('Test session 2'));
+            assert.isTrue(sessionsToTitle.includes('Test session 3'));
+        });
+
+        after('Remove the users', async () => {
+            let successful = await userService.removeUser(anotherUser1._id);
+            assert.isTrue(successful);
+            successful = await userService.removeUser(anotherUser2._id);
+            assert.isTrue(successful);
+        });
+
+        after('Remove the sessions', async() => {
+            let successful = await sessionService.removeSession(session1._id);
+            assert.isTrue(successful);
+            successful = await sessionService.removeSession(session2._id);
+            assert.isTrue(successful);
+            successful = await sessionService.removeSession(session3._id);
+            assert.isTrue(successful);
+        });
     });
 
     describe('Update a session', function () {
@@ -487,10 +548,24 @@ describe('Session service tests', () => {
 
     describe('Start session', function () {
         let session;
-        before('Create a session', async() => {
+        let anotherUser;
+        before('Create a session and another user', async() => {
             session = await sessionService.addSession('Test session', 'test session creation', 'opportunity', 3, 5, [],
                 true, false, [testUser], testTheme, testUser, testDate, null, null);
             assert.isOk(session);
+
+            anotherUser = await userService.addUser('Joren', 'Herksens', 'joren.herksens@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
+            assert.isOk(testUser);
+        });
+
+        it('Unable to pause the created session', async() => {
+            try{
+                let newSession = await sessionService.pauseSession(session._id, testUser._id);
+                assert.isNotOk(newSession);
+            }catch(err){
+                assert.isOk(err);
+                assert.strictEqual(err.message, 'Unable to pause a not yet started session');
+            }
         });
 
         it('Start the created session', async() => {
@@ -501,14 +576,34 @@ describe('Session service tests', () => {
             // assert.isTrue(newSession.events.includes(event => event.eventType === 'start'));
         });
 
-        after('Remove the session', async() => {
+        it('Start the created session - not an organiser', async() => {
+            try{
+                let newSession = await sessionService.startSession(session._id, anotherUser._id);
+                assert.isNotOk(newSession);
+            }catch(err){
+                assert.isOk(err);
+                assert.strictEqual(err.message, 'User is not an organiser of this session');
+            }
+        });
+
+        it('Start the created session - already started', async() => {
+            try{
+                let newSession = await sessionService.startSession(session._id, testUser._id);
+                assert.isNotOk(newSession);
+            }catch(err){
+                assert.isOk(err);
+                assert.strictEqual(err.message, 'Unable to start an already started/finished session');
+            }
+        });
+
+        after('Remove the session and user', async() => {
             let successful = await sessionService.removeSession(session._id);
+            assert.isTrue(successful);
+
+            successful = await userService.removeUser(anotherUser._id);
             assert.isTrue(successful);
         });
     });
-
-    console.log('********* create tests for all cases of starting/stopping/pausing ********');
-    console.log('********* create tests for email being send to user upon invite ********');
 
     describe('Pause session', function () {
         let session;
@@ -530,6 +625,12 @@ describe('Session service tests', () => {
             let newSession = await sessionService.pauseSession(session._id, testUser._id);
             assert.isOk(newSession);
             assert.strictEqual(newSession.status, 'paused');
+        });
+
+        it('Unpause the paused session', async() => {
+            let newSession = await sessionService.pauseSession(session._id, testUser._id);
+            assert.isOk(newSession);
+            assert.strictEqual(newSession.status, 'started');
         });
 
         after('Remove the session', async() => {
@@ -558,6 +659,26 @@ describe('Session service tests', () => {
             let newSession = await sessionService.stopSession(session._id, testUser._id);
             assert.isOk(newSession);
             assert.strictEqual(newSession.status, 'finished');
+        });
+
+        it('Unable to start the stopped session', async() => {
+            try{
+                let newSession = await sessionService.startSession(session._id, testUser._id);
+                assert.isNotOk(newSession);
+            }catch(err){
+                assert.isOk(err);
+                assert.strictEqual(err.message, 'Unable to start an already started/finished session');
+            }
+        });
+
+        it('Unable to pause the stopped session', async() => {
+            try{
+                let newSession = await sessionService.pauseSession(session._id, testUser._id);
+                assert.isNotOk(newSession);
+            }catch(err){
+                assert.isOk(err);
+                assert.strictEqual(err.message, 'Unable to pause an already finished session');
+            }
         });
 
         after('Remove the session', async() => {
