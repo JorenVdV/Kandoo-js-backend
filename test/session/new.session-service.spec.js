@@ -113,6 +113,35 @@ describe('Session service tests', () => {
         });
     });
 
+    describe('Copy a session', () => {
+        let session;
+        before('Create a session', async() => {
+            session = await sessionService.addSession('Test session', 'test session creation', 'opportunity', 3, 5, [],
+                true, false, [testUser], testTheme, testUser, null, null, null);
+            assert.isOk(session);
+        });
+
+        it('Copy the existing session', async() => {
+            session = await sessionService.getSession(session._id);
+            let newSession = await sessionService.copySession(session._id);
+            assert.isOk(newSession);
+            assert.strictEqual(session.title, newSession.title);
+            assert.strictEqual(session.description, newSession.description);
+            assert.strictEqual(session.circleType, newSession.circleType);
+            assert.strictEqual(session.minCardsPerParticipant, newSession.minCardsPerParticipant);
+            assert.strictEqual(session.maxCardsPerParticipant, newSession.maxCardsPerParticipant);
+            assert.strictEqual(session.cardsCanBeAdded, newSession.cardsCanBeAdded);
+            assert.strictEqual(session.cardsCanBeReviewed, newSession.cardsCanBeReviewed);
+            assert.strictEqual(session.theme.toString(), newSession.theme.toString());
+            assert.strictEqual(session.participants[0]._id.toString(), newSession.participants[0]._id.toString());
+        });
+
+        after('Remove the session', async() => {
+            let successful = await sessionService.removeSession(session._id);
+            assert.isTrue(successful);
+        });
+    });
+
     describe('Remove a session', () => {
         let remove_session;
         before('Create a session', async() => {

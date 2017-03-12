@@ -51,6 +51,30 @@ class SessionService {
         }
     }
 
+    async copySession(sessionId){
+        let session = await this.getSession(sessionId);
+        let newSession = new Session();
+        newSession.title = session.title;
+        newSession.description = session.description;
+        newSession.circleType = session.circleType;
+        newSession.turnDuration = session.turnDuration;
+        newSession.minCardsPerParticipant = session.minCardsPerParticipant;
+        newSession.maxCardsPerParticipant = session.maxCardsPerParticipant;
+        newSession.amountOfCircles = session.amountOfCircles;
+        newSession.sessionCards = session.sessionCards;
+        newSession.cardsCanBeReviewed = session.canReviewCards;
+        newSession.cardsCanBeAdded = session.canAddCards;
+        newSession.theme = session.themeId;
+        newSession.creator = session.creator;
+        newSession.participants = [session.creator];
+        newSession.rounds = [];
+        newSession.cards = [];
+        newSession.pickedCards = [];
+
+        session.status = 'created';
+        return await this.sessionRepo.createSession(session);
+    }
+
     async getSession(sessionId) {
         return await this.sessionRepo.readSessionById(sessionId);
     }
