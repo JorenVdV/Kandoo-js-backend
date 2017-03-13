@@ -61,6 +61,17 @@ class SessionRepository {
         return cards.pickedCards.find(pc => pc.userId.toString() == userId.toString());
     }
 
+    async readSessionEvents(sessionId){
+        let session;
+        try{
+            session = await this.sessionDao.findOne({_id:sessionId}, 'events');
+        } catch(err){
+            throw new Error('Unexpected error occurred. ' + err);
+        }
+
+        return session.events;
+    }
+
     async readSessions(query) {
         let sessions;
         try {

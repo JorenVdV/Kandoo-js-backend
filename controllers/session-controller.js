@@ -37,7 +37,7 @@ class SessionController {
     }
 
     copySession(req, res) {
-        this.sessionService.copySession(req.params.sessionId)
+        this.sessionService.copySession(req.params.sessionId, req.body.userId)
             .then((session) => res.status(201).send({session: session}))
             .catch((err) => res.status(400).send({error: err.message}));
     }

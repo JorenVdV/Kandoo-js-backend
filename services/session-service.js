@@ -37,21 +37,15 @@ class SessionService {
             session.startDate = startDate ? startDate : null;
             session.cards = [];
             session.pickedCards = [];
+            session.events = [];
 
-            // let event = {
-            //     eventType: 'create',
-            //     content: true,
-            //     userId: creator,
-            //     timestamp: Date.now()
-            // };
-            // session.events = [event];
             session.status = 'created';
 
             return await this.sessionRepo.createSession(session);
         }
     }
 
-    async copySession(sessionId) {
+    async copySession(sessionId, userId) {
         let session = await this.getSession(sessionId);
         let newSession = new Session();
         newSession.title = session.title;
@@ -65,8 +59,8 @@ class SessionService {
         newSession.cardsCanBeReviewed = session.cardsCanBeReviewed;
         newSession.cardsCanBeAdded = session.cardsCanBeAdded;
         newSession.theme = session.theme;
-        newSession.creator = session.creator;
-        newSession.participants = [session.creator];
+        newSession.creator = userId;
+        newSession.participants = [userId];
         newSession.startDate = null;
         newSession.rounds = [];
         newSession.cards = [];
@@ -196,17 +190,6 @@ class SessionService {
         return cardsPickedByUser;
     }
 
-    async addCard(id, description) {
-        let session = await this.getSession(id);
-
-        if (!session.cardsCanBeAdded)
-            throw new Error('Session does not allow cards to be added');
-
-        let card = await this.cardService.addCard(description, session.theme);
-        session.sessionCards.push(card);
-        return await this.sessionRepo.updateSession(id, {sessionCards: session.sessionCards})
-    }
-
     async startSession(sessionId, userId) {
         let session = await this.sessionRepo.readSessionById(sessionId, true);
         let theme = session.theme;
@@ -217,15 +200,13 @@ class SessionService {
 
         let toUpdate = {};
 
-        // toUpdate.events = session.events;
-        if (session.status !== 'created')
+        if (session.status !== 'created') {
             throw new Error('Unable to start an already started/finished session');
-        // toUpdate.events.push({
-        //     eventType: 'start',
-        //     userId: userId,
-        //     content: true,
-        //     timestamp: Date.now()
-        // });
+        }
+
+        toUpdate.events = session.events;
+        toUpdate.events.push(this.getEvent(userId, 'start'));
+
         toUpdate.status = 'started';
         toUpdate.startDate = new Date();
         toUpdate.currentUser = session.participants[0];
@@ -259,18 +240,17 @@ class SessionService {
 
         let toUpdate = {};
 
-        // toUpdate.events = session.events;
-        if (session.status === 'created')
+        if (session.status === 'created') {
             throw new Error('Unable to pause a not yet started session');
-        if (session.status === 'finished')
-            throw new Error('Unable to pause an already finished session');
+        }
+
+        toUpdate.events = session.events;
+        toUpdate.events.push(this.getEvent(userId, 'pause'));
+
         toUpdate.status = session.status;
-        // toUpdate.events.push({
-        //     eventType: 'pause',
-        //     userId: userId,
-        //     content: true,
-        //     timestamp: Date.now()
-        // });
+        if (toUpdate.status === 'finished') {
+            throw new Error('Unable to pause an already finished session');
+        }
         if (toUpdate.status === 'started') {
             toUpdate.status = 'paused';
         } else {
@@ -297,13 +277,9 @@ class SessionService {
         }
         toUpdate.status = 'finished';
 
-        // toUpdate.events = session.events;
-        // toUpdate.events.push({
-        //     eventType: 'stop',
-        //     userId: userId,
-        //     content: true,
-        //     timestamp: Date.now()
-        // });
+        toUpdate.events = session.events;
+        toUpdate.events.push(this.getEvent(userId, 'stop'));
+
         toUpdate.endDate = new Date();
 
         return await this.sessionRepo.updateSession(sessionId, toUpdate)
@@ -319,34 +295,52 @@ class SessionService {
         if (session.currentUser._id.toString() !== userId.toString())
             throw new Error('Only the current user can complete his turn');
 
-        // toUpdate.events = session.events;
-
-        // toUpdate.events.push({
-        //     eventType: 'priority',
-        //     userId: userId,
-        //     content: cardId,
-        //     timestamp: Date.now()
-        // });
+        toUpdate.events = session.events;
+        toUpdate.events.push(this.getEvent(userId, 'turn', cardId));
 
         toUpdate.cardPriorities = session.cardPriorities;
-        // console.log('cardPriorities');
-        // console.log(toUpdate.cardPriorities);
         toUpdate.cardPriorities.find(cardPriorities => cardPriorities.card._id.toString() == cardId.toString()).priority++;
 
         let participants = session.participants;
         let indexOfCurrUser = participants.findIndex((participant) => participant._id.toString() === userId.toString());
-        // console.log('indexOfCurrUser: ' + indexOfCurrUser);
 
         let indexOfNextUser = indexOfCurrUser + 1;
         if (indexOfNextUser === participants.length)
             indexOfNextUser = 0;
 
-        // console.log('indexOfCurrUser: ' + indexOfNextUser);
         toUpdate.currentUser = participants[indexOfNextUser];
-        // console.log(userId);
-        // console.log(toUpdate.currentUser._id);
 
         return await this.sessionRepo.updateSession(sessionId, toUpdate);
+    }
+
+    async getEvents(sessionId){
+        return await this.sessionRepo.readSessionEvents(sessionId);
+    }
+
+    getEvent(userId, eventType, content) {
+        let event = {};
+
+        switch (eventType) {
+            case 'message':
+                event.eventType = 'message';
+                break;
+            case 'start':
+                event.eventType = 'start';
+                break;
+            case 'stop':
+                event.eventType = 'stop';
+                break;
+            case 'pause':
+                event.eventType = 'pause';
+                break;
+            case 'turn':
+                event.eventType = 'turn';
+                break;
+        }
+        if (content)
+            event.content = content;
+        event.userId = userId;
+        return event
     }
 
 }
