@@ -660,7 +660,7 @@ describe('Session Controller tests', function () {
             assert.strictEqual(newSession.status, 'started');
             assert.strictEqual(newSession.cardPriorities.length, 6);
 
-            let cardPrioritiesAsStrings = newSession.cardPriorities.map(cardPriority => cardPriority.card.toString());
+            let cardPrioritiesAsStrings = newSession.cardPriorities.map(cardPriority => cardPriority.card._id.toString());
             let cardsAsStrings = cards.map(card => card._id.toString());
 
             assert.isTrue(cardPrioritiesAsStrings.includes(cardsAsStrings[0]));

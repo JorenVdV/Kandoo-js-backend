@@ -331,7 +331,7 @@ class SessionService {
         toUpdate.cardPriorities = session.cardPriorities;
         // console.log('cardPriorities');
         // console.log(toUpdate.cardPriorities);
-        toUpdate.cardPriorities.find(cardPriorities => cardPriorities.card.toString() == cardId.toString()).priority++;
+        toUpdate.cardPriorities.find(cardPriorities => cardPriorities.card._id.toString() == cardId.toString()).priority++;
 
         let participants = session.participants;
         let indexOfCurrUser = participants.findIndex((participant) => participant._id.toString() === userId.toString());

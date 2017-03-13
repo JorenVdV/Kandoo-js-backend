@@ -882,8 +882,9 @@ describe('Session service tests', () => {
             assert.strictEqual(newSession.status, 'started');
             assert.strictEqual(newSession.cardPriorities.length, 6);
 
-            let cardPrioritiesAsStrings = newSession.cardPriorities.map(cardPriority => cardPriority.card.toString());
+            let cardPrioritiesAsStrings = newSession.cardPriorities.map(cardPriority => cardPriority.card._id.toString());
             let cardsAsStrings = cards.map(card => card._id.toString());
+
 
             assert.isTrue(cardPrioritiesAsStrings.includes(cardsAsStrings[0]));
             assert.isTrue(cardPrioritiesAsStrings.includes(cardsAsStrings[1]));
@@ -903,7 +904,7 @@ describe('Session service tests', () => {
 
         it('Play a turn', async() => {
             let randomCard = Math.floor((Math.random() * 5) + 0);
-            let cardPriority = session.cardPriorities.find(cardPriority => cardPriority.card.toString() === cards[randomCard]._id.toString()).priority;
+            let cardPriority = session.cardPriorities.find(cardPriority => cardPriority.card._id.toString() === cards[randomCard]._id.toString()).priority;
             assert.isTrue(session.currentUser._id.toString() === testUser._id.toString());
 
             let newSession = await sessionService.playTurn(session._id, testUser._id, cards[randomCard]._id);
@@ -911,7 +912,7 @@ describe('Session service tests', () => {
             assert.isTrue(newSession.currentUser._id.toString() === anotherUser._id.toString());
 
             let cardPriorities = newSession.cardPriorities;
-            let newCardPriority = newSession.cardPriorities.find(cardPriority => cardPriority.card.toString() === cards[randomCard]._id.toString()).priority;
+            let newCardPriority = newSession.cardPriorities.find(cardPriority => cardPriority.card._id.toString() === cards[randomCard]._id.toString()).priority;
             assert.strictEqual(cardPriority + 1, newCardPriority);
 
             let sum = cardPriorities.map(cardPriority => cardPriority.priority).reduce(function (accumulated, currValue) {
@@ -926,7 +927,7 @@ describe('Session service tests', () => {
 
         it('Play another turn', async() => {
             let randomCard = Math.floor((Math.random() * 5) + 0);
-            let cardPriority = session.cardPriorities.find(cardPriority => cardPriority.card.toString() === cards[randomCard]._id.toString()).priority;
+            let cardPriority = session.cardPriorities.find(cardPriority => cardPriority.card._id.toString() === cards[randomCard]._id.toString()).priority;
             assert.isTrue(session.currentUser._id.toString() === anotherUser._id.toString());
 
             let newSession = await sessionService.playTurn(session._id, anotherUser._id, cards[randomCard]._id);
@@ -935,7 +936,7 @@ describe('Session service tests', () => {
             assert.isTrue(newSession.currentUser._id.toString() === testUser._id.toString());
 
             let cardPriorities = newSession.cardPriorities;
-            let newCardPriority = newSession.cardPriorities.find(cardPriority => cardPriority.card.toString() === cards[randomCard]._id.toString()).priority;
+            let newCardPriority = newSession.cardPriorities.find(cardPriority => cardPriority.card._id.toString() === cards[randomCard]._id.toString()).priority;
             assert.strictEqual(cardPriority + 1, newCardPriority);
 
             let sum = cardPriorities.map(cardPriority => cardPriority.priority).reduce(function (accumulated, currValue) {

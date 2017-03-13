@@ -21,7 +21,7 @@ class SessionRepository {
         // console.log('picked cards ophalen adhv userid');
         let session;
         try {
-            let query = this.sessionDao.findOne({_id: id}).populate('participants', '_id firstname lastname emailAddress').populate('currentUser', '_id firstname lastname').populate('sessionCards cardPriorities');
+            let query = this.sessionDao.findOne({_id: id}).populate('participants', '_id firstname lastname emailAddress').populate('currentUser', '_id firstname lastname').populate('sessionCards cardPriorities').populate('cardPriorities.card');
             if(withTheme)
                 query = query.populate('theme');
             session = await query.exec();//this.sessionDao.findOne({_id: id}).populate('participants', '_id firstname lastname emailAddress');
@@ -79,7 +79,7 @@ class SessionRepository {
     async updateSession(sessionId, toUpdate) {
         let session;
         try {
-            session = await this.sessionDao.findByIdAndUpdate(sessionId, toUpdate, {new:true}).populate('currentUser', '_id firstname lastname').populate('participants', '_id firstname lastname emailAddress').populate('pickedCards');
+            session = await this.sessionDao.findByIdAndUpdate(sessionId, toUpdate, {new:true}).populate('currentUser', '_id firstname lastname').populate('participants', '_id firstname lastname emailAddress').populate('').populate('pickedCards sessionCards cardPriorities').populate('cardPriorities.card');
         } catch (err) {
             throw new Error('Unexpected error occurred. ' + err);
         }
