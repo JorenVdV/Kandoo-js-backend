@@ -115,6 +115,7 @@ describe('Session service tests', () => {
 
     describe('Copy a session', () => {
         let session;
+        let newSession;
         before('Create a session', async() => {
             session = await sessionService.addSession('Test session', 'test session creation', 'opportunity', 3, 5, [],
                 true, false, [testUser], testTheme, testUser, null, null, null);
@@ -123,7 +124,7 @@ describe('Session service tests', () => {
 
         it('Copy the existing session', async() => {
             session = await sessionService.getSession(session._id);
-            let newSession = await sessionService.copySession(session._id);
+            newSession = await sessionService.copySession(session._id);
             assert.isOk(newSession);
             assert.strictEqual(session.title, newSession.title);
             assert.strictEqual(session.description, newSession.description);
@@ -133,11 +134,13 @@ describe('Session service tests', () => {
             assert.strictEqual(session.cardsCanBeAdded, newSession.cardsCanBeAdded);
             assert.strictEqual(session.cardsCanBeReviewed, newSession.cardsCanBeReviewed);
             assert.strictEqual(session.theme.toString(), newSession.theme.toString());
-            assert.strictEqual(session.participants[0]._id.toString(), newSession.participants[0]._id.toString());
+            assert.strictEqual(session.participants[0]._id.toString(), newSession.participants[0].toString());
         });
 
         after('Remove the session', async() => {
             let successful = await sessionService.removeSession(session._id);
+            assert.isTrue(successful);
+            successful = await sessionService.removeSession(newSession._id);
             assert.isTrue(successful);
         });
     });
@@ -547,7 +550,6 @@ describe('Session service tests', () => {
             assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[3]));
         });
 
-
         it('get picked cards from user', async() => {
             let userCards = cards.slice(0, 4);
             let pickedCards = await sessionService.getPickedCardsByUser(session._id, testUser._id);
@@ -563,6 +565,85 @@ describe('Session service tests', () => {
             assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[1]));
             assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[2]));
             assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[3]));
+        });
+
+        after('Remove the session and the cards', async() => {
+            let successful = await sessionService.removeSession(session._id);
+            assert.isTrue(successful);
+            cards.forEach(async function (card) {
+                let successful = await cardService.removeCard(card._id);
+                assert.isTrue(successful);
+            });
+        });
+    });
+
+    describe('Pick cards for a session multiple times', function () {
+        let session;
+        let cards = [];
+        before('Create a session with multiple cards', async function () {
+            this.timeout(15000);
+            session = await sessionService.addSession('Test session', 'test session creation', 'opportunity', 1, 6, [],
+                true, false, [testUser], testTheme, testUser, null, null, null);
+            assert.isOk(session);
+
+            cards.push(await cardService.addCard("first card", testTheme._id));
+            cards.push(await cardService.addCard("second card", testTheme._id));
+            cards.push(await cardService.addCard("third card", testTheme._id));
+            cards.push(await cardService.addCard("fourth card", testTheme._id));
+            cards.push(await cardService.addCard("fifth card", testTheme._id));
+            cards.push(await cardService.addCard("sixth card", testTheme._id));
+
+            let toUpdate = {
+                sessionCards: session.sessionCards
+            };
+
+            cards.forEach(function (card) {
+                toUpdate.sessionCards.push(card);
+            });
+
+            session = await sessionService.changeSession(session._id, toUpdate);
+            assert.isOk(session);
+            assert.strictEqual(session.sessionCards.length, 6);
+
+
+        });
+
+        it('let user pick cards for a session - first time picking', async() => {
+            let userCards = cards.slice(0, 2);
+            let pickedCards = await sessionService.pickCards(session._id, testUser._id, userCards);
+            assert.isOk(pickedCards);
+            assert.isArray(pickedCards.cards);
+            let userCardsAsStrings = userCards.map(card => card._id.toString());
+            let pickedCardsAsStrings = pickedCards.cards.map(pickedCard => pickedCard.toString());
+            assert.strictEqual(userCardsAsStrings.length, pickedCardsAsStrings.length);
+            assert.strictEqual(pickedCards.cards.length, 2);
+            assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[0]));
+            assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[1]));
+        });
+
+        it('let user pick cards for a session - second time picking - update cards', async() => {
+            let userCards = cards.slice(2, 4);
+            let pickedCards = await sessionService.pickCards(session._id, testUser._id, userCards);
+            assert.isOk(pickedCards);
+            assert.isArray(pickedCards.cards);
+            let userCardsAsStrings = userCards.map(card => card._id.toString());
+            let pickedCardsAsStrings = pickedCards.cards.map(pickedCard => pickedCard.toString());
+            assert.strictEqual(userCardsAsStrings.length, pickedCardsAsStrings.length);
+            assert.strictEqual(pickedCards.cards.length, 2);
+            assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[0]));
+            assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[1]));
+        });
+
+        it('get picked cards from user - should be equal to third picking', async() => {
+            let userCards = cards.slice(2,4);
+            let pickedCards = await sessionService.getPickedCardsByUser(session._id, testUser._id);
+            assert.isOk(pickedCards);
+            let userCardsAsStrings = userCards.map(card => card._id.toString());
+            let pickedCardsAsStrings = pickedCards.cards.map(pickedCard => pickedCard._id.toString());
+            assert.strictEqual(userCardsAsStrings.length, pickedCardsAsStrings.length);
+            assert.strictEqual(pickedCards.cards.length, 2);
+            assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[0]));
+            assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[1]));
         });
 
         after('Remove the session and the cards', async() => {

@@ -9,7 +9,6 @@ const Card = require('../models/card');
 
 const mongoose = require('mongoose');
 const config = require('../_config');
-//'mongodb://localhost:27021/testTesten'
 
 before('Open connection to test database', function (done) {
     if (mongoose.connection.readyState === 0) {

@@ -36,6 +36,12 @@ class SessionController {
             .catch((err) => res.status(404).send({error: err.message}));
     }
 
+    copySession(req, res) {
+        this.sessionService.copySession(req.params.sessionId)
+            .then((session) => res.status(201).send({session: session}))
+            .catch((err) => res.status(400).send({error: err.message}));
+    }
+
     getSession(req, res) {
         this.sessionService.getSession(req.params.sessionId)
             .then((session) => res.status(200).send({session: session}))

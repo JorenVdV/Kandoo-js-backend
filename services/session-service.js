@@ -51,7 +51,7 @@ class SessionService {
         }
     }
 
-    async copySession(sessionId){
+    async copySession(sessionId) {
         let session = await this.getSession(sessionId);
         let newSession = new Session();
         newSession.title = session.title;
@@ -62,17 +62,18 @@ class SessionService {
         newSession.maxCardsPerParticipant = session.maxCardsPerParticipant;
         newSession.amountOfCircles = session.amountOfCircles;
         newSession.sessionCards = session.sessionCards;
-        newSession.cardsCanBeReviewed = session.canReviewCards;
-        newSession.cardsCanBeAdded = session.canAddCards;
-        newSession.theme = session.themeId;
+        newSession.cardsCanBeReviewed = session.cardsCanBeReviewed;
+        newSession.cardsCanBeAdded = session.cardsCanBeAdded;
+        newSession.theme = session.theme;
         newSession.creator = session.creator;
         newSession.participants = [session.creator];
+        newSession.startDate = null;
         newSession.rounds = [];
         newSession.cards = [];
         newSession.pickedCards = [];
 
-        session.status = 'created';
-        return await this.sessionRepo.createSession(session);
+        newSession.status = 'created';
+        return await this.sessionRepo.createSession(newSession);
     }
 
     async getSession(sessionId) {
@@ -167,7 +168,6 @@ class SessionService {
     }
 
     async pickCards(id, userId, cards) {
-        // console.log('pickcards');
         let session = await this.getSession(id);
 
         if (!session.participants.map(user => user._id.toString()).includes(userId.toString()))
@@ -175,8 +175,8 @@ class SessionService {
 
         let toUpdate = {};
         toUpdate.pickedCards = session.pickedCards;
-        if (toUpdate.pickedCards.map(pc => pc.cards.userId).includes(userId)) {
-            let index = toUpdate.pickedCards.findIndex(pc => pc.userId == userId);
+        if (toUpdate.pickedCards.findIndex(pc => pc.userId.toString() === userId.toString()) !== -1) {
+            let index = toUpdate.pickedCards.findIndex(pc => pc.userId.toString() === userId.toString());
             toUpdate.pickedCards[index].cards = cards;
         } else {
             toUpdate.pickedCards.push({
@@ -236,7 +236,7 @@ class SessionService {
         for (let i = 0; i < sessionPickedCards.length; i++) {
             let currUserCards = sessionPickedCards[i].cards;
             for (let y = 0; y < currUserCards.length; y++) {
-                if (toUpdate.cardPriorities.findIndex(cardPriority => cardPriority.card.toString() === currUserCards[y].toString()) === -1){
+                if (toUpdate.cardPriorities.findIndex(cardPriority => cardPriority.card.toString() === currUserCards[y].toString()) === -1) {
                     toUpdate.cardPriorities.push({priority: 0, card: currUserCards[y]});
                     // console.log('toUpdate.cardPriorities did not yet contain card with id: ' + currUserCards[y].toString());
                 }

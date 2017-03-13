@@ -815,6 +815,39 @@ describe('Session Controller tests', function () {
 
     });
 
+    describe('/POST /session/:sessionId/copy', function () {
+        let session;
+        let copiedSession;
+
+        before('Create a session', async() => {
+            session = await sessionService.addSession('Welke pudding eten we deze week?', 'Test om sessie aan te maken', 'opportunity',
+                2, 5, [],
+                true, false, [globalTestUser], globalTestTheme, globalTestUser, null, null, null);
+            assert.isOk(session);
+        });
+
+        it('Copy the session', (done) => {
+            chai.request(server)
+                .post('/session/' + session._id + '/copy')
+                .send({})
+                .end((err, res) => {
+                    res.should.have.status(201);
+                    res.body.should.have.property('session');
+                    copiedSession = res.body.session;
+                    assert.strictEqual(copiedSession.title, session.title);
+                    assert.strictEqual(copiedSession.description, session.description);
+                    done();
+                });
+        });
+
+        after('Remove the two sessions', async() => {
+            let successful = await sessionService.removeSession(session._id);
+            assert.isTrue(successful);
+            successful = await sessionService.removeSession(copiedSession._id);
+            assert.isTrue(successful);
+        });
+    });
+
 
     after('remove testuser & test theme', async function () {
         let successful = await userService.removeUser(globalTestUser._id);

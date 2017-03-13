@@ -8,6 +8,10 @@ module.exports = function(app){
         sessionController.createSession(req,res);
     });
 
+    app.post('/session/:sessionId/copy', function(req,res){
+        sessionController.copySession(req,res);
+    });
+
     app.get('/session/:sessionId', function(req,res){
         sessionController.getSession(req,res);
     });
