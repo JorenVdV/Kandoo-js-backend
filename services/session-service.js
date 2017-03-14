@@ -299,7 +299,12 @@ class SessionService {
         toUpdate.events.push(this.getEvent(userId, 'turn', cardId));
 
         toUpdate.cardPriorities = session.cardPriorities;
-        toUpdate.cardPriorities.find(cardPriorities => cardPriorities.card._id.toString() == cardId.toString()).priority++;
+        let cardIndex = toUpdate.cardPriorities.findIndex(cardPriorities => cardPriorities.card._id.toString() == cardId.toString());
+        if (cardIndex === -1)
+            throw new Error('Unable to find card with id: ' + cardId + 'in this session.');
+
+        toUpdate.cardPriorities[cardIndex].priority++;
+        // toUpdate.cardPriorities.find(cardPriorities => cardPriorities.card._id.toString() == cardId.toString()).priority++;
 
         let participants = session.participants;
         let indexOfCurrUser = participants.findIndex((participant) => participant._id.toString() === userId.toString());
@@ -313,7 +318,7 @@ class SessionService {
         return await this.sessionRepo.updateSession(sessionId, toUpdate);
     }
 
-    async getEvents(sessionId){
+    async getEvents(sessionId) {
         return await this.sessionRepo.readSessionEvents(sessionId);
     }
 
