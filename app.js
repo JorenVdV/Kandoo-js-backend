@@ -47,27 +47,9 @@ server.listen(port, function () {
 });
 
 
-var io = require('socket.io')(server);
-io.on('connection', function (client) {
-    console.log('Client connected...');
-
-    client.on('loggedin', function (data) {
-
-        var userService = require('./services/user-service');
-
-        userService.getUserById(data).then(
-            (user) => {
-                console.log('The user: ' + user.firstname + ' connected!');
-                user.websockets.push(client);
-                userService.sendSocketMessage(user, 'messages', 'Socket registered on the server!');
-            }
-        ).catch();
-
-
-        // client.emit('messages', 'Hello from server');
-    });
-});
-
+let SocketService = require('./services/socket-service');
+global.sockets = [];
+global.socketService = new SocketService(require('socket.io')(server));
 
 require("./routes/user-routes")(app);
 require("./routes/session-routes")(app);

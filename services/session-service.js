@@ -4,6 +4,9 @@
 const Session = require('../models/session');
 
 const replaceUndefinedOrNullOrEmptyObject = require('../_helpers/replacers');
+const socketService = require('../services/socket-service');
+const userService = require('../services/user-service');
+
 
 class SessionService {
     constructor() {
@@ -11,6 +14,7 @@ class SessionService {
         this.userService = require('../services/user-service');
         this.mailService = require('../services/mail-service');
         this.cardService = require('../services/card-service');
+
         // this.themeService = require('../services/theme-service');
     }
 
@@ -51,7 +55,7 @@ class SessionService {
         }
     }
 
-    async copySession(sessionId){
+    async copySession(sessionId) {
         let session = await this.getSession(sessionId);
         let newSession = new Session();
         newSession.title = session.title;
@@ -236,7 +240,7 @@ class SessionService {
         for (let i = 0; i < sessionPickedCards.length; i++) {
             let currUserCards = sessionPickedCards[i].cards;
             for (let y = 0; y < currUserCards.length; y++) {
-                if (toUpdate.cardPriorities.findIndex(cardPriority => cardPriority.card.toString() === currUserCards[y].toString()) === -1){
+                if (toUpdate.cardPriorities.findIndex(cardPriority => cardPriority.card.toString() === currUserCards[y].toString()) === -1) {
                     toUpdate.cardPriorities.push({priority: 0, card: currUserCards[y]});
                     // console.log('toUpdate.cardPriorities did not yet contain card with id: ' + currUserCards[y].toString());
                 }
@@ -244,6 +248,14 @@ class SessionService {
             }
 
         }
+
+        session.populate('participants');
+
+        //Send notification to all users!
+        session.participants.forEach(function (user) {
+            // console.log(user);
+            global.socketService.sendNotification(global.socketService.getSocketofUser(user._id), "session_started", session);
+        });
 
         return await this.sessionRepo.updateSession(sessionId, toUpdate)
     }
