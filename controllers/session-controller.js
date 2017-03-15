@@ -36,6 +36,12 @@ class SessionController {
             .catch((err) => res.status(404).send({error: err.message}));
     }
 
+    copySession(req, res) {
+        this.sessionService.copySession(req.params.sessionId, req.body.userId)
+            .then((session) => res.status(201).send({session: session}))
+            .catch((err) => res.status(400).send({error: err.message}));
+    }
+
     getSession(req, res) {
         this.sessionService.getSession(req.params.sessionId)
             .then((session) => res.status(200).send({session: session}))
@@ -82,7 +88,7 @@ class SessionController {
 
     playTurn(req, res) {
         let body = req.body;
-        this.sessionService.playTurn(req.params.sessionId, body.userId, body.cardId)
+        this.sessionService.playTurn(req.params.sessionId, body.userId, body.cardId, body.circlePosition)
             .then((session) => {
                 let currentUser = session.currentUser;
                 currentUser._id = undefined;
@@ -124,6 +130,12 @@ class SessionController {
         let body = req.body;
         this.sessionService.pickCards(req.params.sessionId, body.userId, body.cards)
             .then((userCards) => res.sendStatus(204))
+            .catch((err) => res.sendStatus(400).send({error: err.message}));
+    }
+
+    getEvents(req, res) {
+        this.sessionService.getEvents(req.params.sessionId)
+            .then((events) => res.status(200).send({events: events}))
             .catch((err) => res.sendStatus(400).send({error: err.message}));
     }
 }

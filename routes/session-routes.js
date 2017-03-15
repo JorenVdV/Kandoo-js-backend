@@ -8,6 +8,10 @@ module.exports = function(app){
         sessionController.createSession(req,res);
     });
 
+    app.post('/session/:sessionId/copy', function(req,res){
+        sessionController.copySession(req,res);
+    });
+
     app.get('/session/:sessionId', function(req,res){
         sessionController.getSession(req,res);
     });
@@ -59,5 +63,9 @@ module.exports = function(app){
 
     app.put('/session/:sessionId/stop', function (req, res) {
         sessionController.stopSession(req, res);
+    });
+
+    app.get('/session/:sessionId/history', function (req, res) {
+        sessionController.getEvents(req, res);
     });
 };

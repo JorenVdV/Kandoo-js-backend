@@ -14,7 +14,6 @@ class SessionService {
         this.userService = require('../services/user-service');
         this.mailService = require('../services/mail-service');
         this.cardService = require('../services/card-service');
-
         // this.themeService = require('../services/theme-service');
     }
 
@@ -41,6 +40,7 @@ class SessionService {
             session.startDate = startDate ? startDate : null;
             session.cards = [];
             session.pickedCards = [];
+            session.events = [];
 
             // let event = {
             //     eventType: 'create',
@@ -55,7 +55,7 @@ class SessionService {
         }
     }
 
-    async copySession(sessionId) {
+    async copySession(sessionId, userId) {
         let session = await this.getSession(sessionId);
         let newSession = new Session();
         newSession.title = session.title;
@@ -66,17 +66,18 @@ class SessionService {
         newSession.maxCardsPerParticipant = session.maxCardsPerParticipant;
         newSession.amountOfCircles = session.amountOfCircles;
         newSession.sessionCards = session.sessionCards;
-        newSession.cardsCanBeReviewed = session.canReviewCards;
-        newSession.cardsCanBeAdded = session.canAddCards;
-        newSession.theme = session.themeId;
-        newSession.creator = session.creator;
-        newSession.participants = [session.creator];
+        newSession.cardsCanBeReviewed = session.cardsCanBeReviewed;
+        newSession.cardsCanBeAdded = session.cardsCanBeAdded;
+        newSession.theme = session.theme;
+        newSession.creator = userId;
+        newSession.participants = [userId];
+        newSession.startDate = null;
         newSession.rounds = [];
         newSession.cards = [];
         newSession.pickedCards = [];
 
-        session.status = 'created';
-        return await this.sessionRepo.createSession(session);
+        newSession.status = 'created';
+        return await this.sessionRepo.createSession(newSession);
     }
 
     async getSession(sessionId) {
@@ -171,7 +172,6 @@ class SessionService {
     }
 
     async pickCards(id, userId, cards) {
-        // console.log('pickcards');
         let session = await this.getSession(id);
 
         if (!session.participants.map(user => user._id.toString()).includes(userId.toString()))
@@ -179,8 +179,8 @@ class SessionService {
 
         let toUpdate = {};
         toUpdate.pickedCards = session.pickedCards;
-        if (toUpdate.pickedCards.map(pc => pc.cards.userId).includes(userId)) {
-            let index = toUpdate.pickedCards.findIndex(pc => pc.userId == userId);
+        if (toUpdate.pickedCards.findIndex(pc => pc.userId.toString() === userId.toString()) !== -1) {
+            let index = toUpdate.pickedCards.findIndex(pc => pc.userId.toString() === userId.toString());
             toUpdate.pickedCards[index].cards = cards;
         } else {
             toUpdate.pickedCards.push({
@@ -189,26 +189,8 @@ class SessionService {
             });
         }
         let updatedSession = await this.sessionRepo.updateSession(id, toUpdate);
-        // console.log('service - pickedCards - updatedSession');
-        // console.log(updatedSession.pickedCards);
         let cardsPickedByUser = updatedSession.pickedCards.find((obj => obj.userId.toString() === userId.toString()));
-        // console.log('service - pickedCards - cardsPickedByUser');
-        // console.log(cardsPickedByUser);
-        // cardsPickedByUser = updatedSession.pickedCards[0];
-        // console.log('service - pickedCards - cardsPickedByUser');
-        // console.log(cardsPickedByUser);
         return cardsPickedByUser;
-    }
-
-    async addCard(id, description) {
-        let session = await this.getSession(id);
-
-        if (!session.cardsCanBeAdded)
-            throw new Error('Session does not allow cards to be added');
-
-        let card = await this.cardService.addCard(description, session.theme);
-        session.sessionCards.push(card);
-        return await this.sessionRepo.updateSession(id, {sessionCards: session.sessionCards})
     }
 
     async startSession(sessionId, userId) {
@@ -221,15 +203,13 @@ class SessionService {
 
         let toUpdate = {};
 
-        // toUpdate.events = session.events;
-        if (session.status !== 'created')
+        if (session.status !== 'created') {
             throw new Error('Unable to start an already started/finished session');
-        // toUpdate.events.push({
-        //     eventType: 'start',
-        //     userId: userId,
-        //     content: true,
-        //     timestamp: Date.now()
-        // });
+        }
+
+        toUpdate.events = session.events;
+        toUpdate.events.push(this.getEvent(userId, 'start'));
+
         toUpdate.status = 'started';
         toUpdate.startDate = new Date();
         toUpdate.currentUser = session.participants[0];
@@ -271,18 +251,17 @@ class SessionService {
 
         let toUpdate = {};
 
-        // toUpdate.events = session.events;
-        if (session.status === 'created')
+        if (session.status === 'created') {
             throw new Error('Unable to pause a not yet started session');
-        if (session.status === 'finished')
-            throw new Error('Unable to pause an already finished session');
+        }
+
+        toUpdate.events = session.events;
+        toUpdate.events.push(this.getEvent(userId, 'pause'));
+
         toUpdate.status = session.status;
-        // toUpdate.events.push({
-        //     eventType: 'pause',
-        //     userId: userId,
-        //     content: true,
-        //     timestamp: Date.now()
-        // });
+        if (toUpdate.status === 'finished') {
+            throw new Error('Unable to pause an already finished session');
+        }
         if (toUpdate.status === 'started') {
             toUpdate.status = 'paused';
         } else {
@@ -309,19 +288,15 @@ class SessionService {
         }
         toUpdate.status = 'finished';
 
-        // toUpdate.events = session.events;
-        // toUpdate.events.push({
-        //     eventType: 'stop',
-        //     userId: userId,
-        //     content: true,
-        //     timestamp: Date.now()
-        // });
+        toUpdate.events = session.events;
+        toUpdate.events.push(this.getEvent(userId, 'stop'));
+
         toUpdate.endDate = new Date();
 
         return await this.sessionRepo.updateSession(sessionId, toUpdate)
     }
 
-    async playTurn(sessionId, userId, cardId) {
+    async playTurn(sessionId, userId, cardId, circlePosition) {
         let session = await this.getSession(sessionId);
         let toUpdate = {};
 
@@ -331,34 +306,57 @@ class SessionService {
         if (session.currentUser._id.toString() !== userId.toString())
             throw new Error('Only the current user can complete his turn');
 
-        // toUpdate.events = session.events;
-
-        // toUpdate.events.push({
-        //     eventType: 'priority',
-        //     userId: userId,
-        //     content: cardId,
-        //     timestamp: Date.now()
-        // });
+        toUpdate.events = session.events;
+        toUpdate.events.push(this.getEvent(userId, 'turn', cardId));
 
         toUpdate.cardPriorities = session.cardPriorities;
-        // console.log('cardPriorities');
-        // console.log(toUpdate.cardPriorities);
-        toUpdate.cardPriorities.find(cardPriorities => cardPriorities.card.toString() == cardId.toString()).priority++;
+        let cardIndex = toUpdate.cardPriorities.findIndex(cardPriorities => cardPriorities.card._id.toString() == cardId.toString());
+        if (cardIndex === -1)
+            throw new Error('Unable to find card with id: ' + cardId + 'in this session.');
+
+        toUpdate.cardPriorities[cardIndex].priority++;
+        toUpdate.cardPriorities[cardIndex].circlePosition = circlePosition;
 
         let participants = session.participants;
         let indexOfCurrUser = participants.findIndex((participant) => participant._id.toString() === userId.toString());
-        // console.log('indexOfCurrUser: ' + indexOfCurrUser);
 
         let indexOfNextUser = indexOfCurrUser + 1;
         if (indexOfNextUser === participants.length)
             indexOfNextUser = 0;
 
-        // console.log('indexOfCurrUser: ' + indexOfNextUser);
         toUpdate.currentUser = participants[indexOfNextUser];
-        // console.log(userId);
-        // console.log(toUpdate.currentUser._id);
 
         return await this.sessionRepo.updateSession(sessionId, toUpdate);
+    }
+
+    async getEvents(sessionId) {
+        return await this.sessionRepo.readSessionEvents(sessionId);
+    }
+
+    getEvent(userId, eventType, content) {
+        let event = {};
+
+        switch (eventType) {
+            case 'message':
+                event.eventType = 'message';
+                break;
+            case 'start':
+                event.eventType = 'start';
+                break;
+            case 'stop':
+                event.eventType = 'stop';
+                break;
+            case 'pause':
+                event.eventType = 'pause';
+                break;
+            case 'turn':
+                event.eventType = 'turn';
+                break;
+        }
+        if (content)
+            event.content = content;
+        event.userId = userId;
+        return event
     }
 
 }

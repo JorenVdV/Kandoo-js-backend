@@ -26,7 +26,8 @@ var SessionSchema = new Schema({
     }],
     cardPriorities: [{
         priority: Number,
-        card: {type: Schema.ObjectId, ref: 'Card'}
+        card: {type: Schema.ObjectId, ref: 'Card'},
+        circlePosition: String
     }],
     cardsCanBeReviewed: Boolean,
     cardsCanBeAdded: Boolean,
@@ -38,15 +39,15 @@ var SessionSchema = new Schema({
     }],
     startDate: Date,
     endDate: Date,
-    // events: [{
-    //     eventType: {
-    //         type: String, required: true, enum: ['created', 'started', 'paused', 'stopped', 'priority'],
-    //         message: 'Invalid event type. Event type should be "create", "start", "pause", "stop" or "priority".'
-    //     },
-    //     userId: {type: Schema.ObjectId, ref: 'User', required: true},
-    //     content: Schema.Types.Mixed,
-    //     timestamp: Date
-    // }],
+    events: [{
+        eventType: {
+            type: String, required: true, enum: ['start', 'pause', 'stop', 'turn', 'message'],
+            message: 'Invalid event type. Event type should be "message", "start", "pause", "stop" or "turn".'
+        },
+        userId: {type: Schema.ObjectId, ref: 'User', required: true},
+        content: Schema.Types.Mixed,
+        timestamp: {type: Date, default: Date.now}
+    }],
     status: {type: String, enum: ['created', 'started', 'paused', 'finished'], required: true},
     currentUser: {type: Schema.ObjectId, ref: 'User'},
     theme: {

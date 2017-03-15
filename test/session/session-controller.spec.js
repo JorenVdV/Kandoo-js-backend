@@ -660,7 +660,7 @@ describe('Session Controller tests', function () {
             assert.strictEqual(newSession.status, 'started');
             assert.strictEqual(newSession.cardPriorities.length, 6);
 
-            let cardPrioritiesAsStrings = newSession.cardPriorities.map(cardPriority => cardPriority.card.toString());
+            let cardPrioritiesAsStrings = newSession.cardPriorities.map(cardPriority => cardPriority.card._id.toString());
             let cardsAsStrings = cards.map(card => card._id.toString());
 
             assert.isTrue(cardPrioritiesAsStrings.includes(cardsAsStrings[0]));
@@ -815,6 +815,167 @@ describe('Session Controller tests', function () {
 
     });
 
+    describe('/POST /session/:sessionId/copy', function () {
+        let session;
+        let copiedSession;
+
+        before('Create a session', async() => {
+            session = await sessionService.addSession('Welke pudding eten we deze week?', 'Test om sessie aan te maken', 'opportunity',
+                2, 5, [],
+                true, false, [globalTestUser], globalTestTheme, globalTestUser, null, null, null);
+            assert.isOk(session);
+        });
+
+        it('Copy the session', (done) => {
+            chai.request(server)
+                .post('/session/' + session._id + '/copy')
+                .send({})
+                .end((err, res) => {
+                    res.should.have.status(201);
+                    res.body.should.have.property('session');
+                    copiedSession = res.body.session;
+                    assert.strictEqual(copiedSession.title, session.title);
+                    assert.strictEqual(copiedSession.description, session.description);
+                    done();
+                });
+        });
+
+        after('Remove the two sessions', async() => {
+            let successful = await sessionService.removeSession(session._id);
+            assert.isTrue(successful);
+            successful = await sessionService.removeSession(copiedSession._id);
+            assert.isTrue(successful);
+        });
+    });
+
+    describe('Test playing the game - events', function () {
+        let session;
+        let cards = [];
+        let anotherUser;
+        let turns = [];
+
+        before('Create anotherUser and session of which both anotherUser and testUser are a participant', async() => {
+            anotherUser = await userService.addUser('blem', 'Kalob', 'blemkalob@iets.be', null, 'blemkalbo');
+            assert.isOk(anotherUser);
+
+            session = await sessionService.addSession('Test session', 'test session creation', 'opportunity', 3, 5, [],
+                true, false, [globalTestUser, anotherUser], globalTestTheme, globalTestUser, null, null, null);
+            assert.isOk(session);
+        });
+
+        before('Add cards to the session', async function () {
+            this.timeout(10000);
+            cards.push(await cardService.addCard("first card", globalTestTheme._id));
+            cards.push(await cardService.addCard("second card", globalTestTheme._id));
+            cards.push(await cardService.addCard("third card", globalTestTheme._id));
+            cards.push(await cardService.addCard("fourth card", globalTestTheme._id));
+            cards.push(await cardService.addCard("fifth card", globalTestTheme._id));
+            cards.push(await cardService.addCard("sixth card", globalTestTheme._id));
+
+            let toUpdate = {
+                sessionCards: session.sessionCards
+            };
+
+            cards.forEach(function (card) {
+                toUpdate.sessionCards.push(card);
+            });
+
+            session = await sessionService.changeSession(session._id, toUpdate);
+            assert.isOk(session);
+            assert.strictEqual(session.sessionCards.length, 6);
+        });
+
+        before('Pick cards for the session - testUser', async() => {
+            let userCards = cards.slice(0, 4);
+            let pickedCards = await sessionService.pickCards(session._id, globalTestUser._id, userCards);
+            assert.isOk(pickedCards);
+            assert.isArray(pickedCards.cards);
+            let userCardsAsStrings = userCards.map(card => card._id.toString());
+            let pickedCardsAsStrings = pickedCards.cards.map(pickedCard => pickedCard.toString());
+            assert.strictEqual(userCardsAsStrings.length, pickedCardsAsStrings.length);
+            assert.strictEqual(pickedCards.cards.length, 4);
+            assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[0]));
+            assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[1]));
+            assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[2]));
+            assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[3]));
+        });
+
+        before('Pick cards for the session - anotherUser', async() => {
+            let userCards = cards.slice(2);
+            let pickedCards = await sessionService.pickCards(session._id, anotherUser._id, userCards);
+            assert.isOk(pickedCards);
+            assert.isArray(pickedCards.cards);
+            let userCardsAsStrings = userCards.map(card => card._id.toString());
+
+            let pickedCardsAsStrings = pickedCards.cards.map(pickedCard => pickedCard.toString());
+
+            assert.strictEqual(userCardsAsStrings.length, pickedCardsAsStrings.length);
+            assert.strictEqual(pickedCards.cards.length, 4);
+            assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[0]));
+            assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[1]));
+            assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[2]));
+            assert.isTrue(pickedCardsAsStrings.includes(userCardsAsStrings[3]));
+        });
+
+        before('Perform events', async function() {
+            this.timeout(15000);
+            session = await sessionService.startSession(session._id, globalTestUser._id);
+            assert.isOk(session);
+
+            let randomCard = Math.floor((Math.random() * 5) + 0);
+            assert.isTrue(session.currentUser._id.toString() === globalTestUser._id.toString());
+            session = await sessionService.playTurn(session._id, globalTestUser._id, cards[randomCard]._id);
+            turns.push(cards[randomCard]._id);
+            assert.isOk(session);
+
+            session = await sessionService.pauseSession(session._id, globalTestUser._id);
+            assert.isOk(session);
+
+            session = await sessionService.pauseSession(session._id, globalTestUser._id);
+            assert.isOk(session);
+
+            randomCard = Math.floor((Math.random() * 5) + 0);
+            assert.isTrue(session.currentUser._id.toString() === anotherUser._id.toString());
+            session = await sessionService.playTurn(session._id, anotherUser._id, cards[randomCard]._id);
+            turns.push(cards[randomCard]._id);
+            assert.isOk(session);
+        });
+
+        it('Retrieve the events of a session', (done) => {
+            chai.request(server)
+                .get('/session/' + session._id + '/history')
+                .send()
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.have.property('events');
+
+                    let events = res.body.events;
+                    assert.isArray(events);
+                    assert.strictEqual(events.length, 5);
+
+                    assert.strictEqual(events[0].eventType, 'start');
+                    assert.strictEqual(events[1].eventType, 'turn');
+                    assert.strictEqual(events[1].content.toString(), turns[0].toString());
+                    assert.strictEqual(events[2].eventType, 'pause');
+                    assert.strictEqual(events[3].eventType, 'pause');
+                    assert.strictEqual(events[4].eventType, 'turn');
+                    assert.strictEqual(events[4].content.toString(), turns[1].toString());
+
+                    done();
+                });
+        });
+
+        after('Remove the created objects', async() => {
+            let successful = await sessionService.removeSession(session._id);
+            assert.isTrue(successful);
+            successful = await userService.removeUser(anotherUser._id);
+            assert.isTrue(successful);
+            cards.forEach(async function (card) {
+                let successful = await cardService.removeCard(card._id);
+                assert.isTrue(successful);
+            });
+        });
+    });
 
     after('remove testuser & test theme', async function () {
         let successful = await userService.removeUser(globalTestUser._id);
