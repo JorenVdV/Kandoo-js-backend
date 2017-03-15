@@ -90,9 +90,7 @@ class SessionController {
         let body = req.body;
         this.sessionService.playTurn(req.params.sessionId, body.userId, body.cardId, body.circlePosition)
             .then((session) => {
-                let currentUser = session.currentUser;
-                currentUser._id = undefined;
-                res.status(200).send({currentUser: currentUser, cardPriorities: session.cardPriorities})
+                res.status(200).send({currentUser: session.currentUser, cardPriorities: session.cardPriorities})
             })
             .catch((err) => res.status(400).send({error: err.message}));
     }
