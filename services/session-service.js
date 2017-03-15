@@ -296,7 +296,7 @@ class SessionService {
         return await this.sessionRepo.updateSession(sessionId, toUpdate)
     }
 
-    async playTurn(sessionId, userId, cardId, circlePosition) {
+    async playTurn(sessionId, userId, cardId, circlePosition = '') {
         let session = await this.getSession(sessionId);
         let toUpdate = {};
 
