@@ -221,7 +221,7 @@ class SessionService {
             let currUserCards = sessionPickedCards[i].cards;
             for (let y = 0; y < currUserCards.length; y++) {
                 if (toUpdate.cardPriorities.findIndex(cardPriority => cardPriority.card.toString() === currUserCards[y].toString()) === -1) {
-                    toUpdate.cardPriorities.push({priority: 0, card: currUserCards[y]});
+                    toUpdate.cardPriorities.push({priority: 0, card: currUserCards[y], circlePosition: ''});
                     // console.log('toUpdate.cardPriorities did not yet contain card with id: ' + currUserCards[y].toString());
                 }
 
