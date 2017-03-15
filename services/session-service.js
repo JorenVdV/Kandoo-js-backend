@@ -232,10 +232,10 @@ class SessionService {
         session.populate('participants');
 
         //Send notification to all users!
-        session.participants.forEach(function (user) {
-            // console.log(user);
-            global.socketService.sendNotification(global.socketService.getSocketofUser(user._id), "session_started", session);
-        });
+        // session.participants.forEach(function (user) {
+        //     console.log(user);
+            // global.socketService.sendNotification(global.socketService.getSocketofUser(user._id), "session_started", session);
+        // });
 
         return await this.sessionRepo.updateSession(sessionId, toUpdate)
     }

@@ -67,10 +67,10 @@ class UserService {
         return await this.userRepo.readUsers();
     }
 
-    sendSocketMessage(user, name, data) {
-        var socket = socketService.getSocketofUser(user._id);
-        socketService.sendNotification(socket, name, data)
-    }
+    // sendSocketMessage(user, name, data) {
+    //     var socket = socketService.getSocketofUser(user._id);
+    //     socketService.sendNotification(socket, name, data)
+    // }
 
 }
 
