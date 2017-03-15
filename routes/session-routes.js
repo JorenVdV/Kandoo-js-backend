@@ -64,4 +64,8 @@ module.exports = function(app){
     app.put('/session/:sessionId/stop', function (req, res) {
         sessionController.stopSession(req, res);
     });
+
+    app.get('/session/:sessionId/history', function (req, res) {
+        sessionController.getEvents(req, res);
+    });
 };

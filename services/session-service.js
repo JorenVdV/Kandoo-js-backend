@@ -179,14 +179,7 @@ class SessionService {
             });
         }
         let updatedSession = await this.sessionRepo.updateSession(id, toUpdate);
-        // console.log('service - pickedCards - updatedSession');
-        // console.log(updatedSession.pickedCards);
         let cardsPickedByUser = updatedSession.pickedCards.find((obj => obj.userId.toString() === userId.toString()));
-        // console.log('service - pickedCards - cardsPickedByUser');
-        // console.log(cardsPickedByUser);
-        // cardsPickedByUser = updatedSession.pickedCards[0];
-        // console.log('service - pickedCards - cardsPickedByUser');
-        // console.log(cardsPickedByUser);
         return cardsPickedByUser;
     }
 
@@ -285,7 +278,7 @@ class SessionService {
         return await this.sessionRepo.updateSession(sessionId, toUpdate)
     }
 
-    async playTurn(sessionId, userId, cardId) {
+    async playTurn(sessionId, userId, cardId, circlePosition) {
         let session = await this.getSession(sessionId);
         let toUpdate = {};
 
@@ -304,7 +297,7 @@ class SessionService {
             throw new Error('Unable to find card with id: ' + cardId + 'in this session.');
 
         toUpdate.cardPriorities[cardIndex].priority++;
-        // toUpdate.cardPriorities.find(cardPriorities => cardPriorities.card._id.toString() == cardId.toString()).priority++;
+        toUpdate.cardPriorities[cardIndex].circlePosition = circlePosition;
 
         let participants = session.participants;
         let indexOfCurrUser = participants.findIndex((participant) => participant._id.toString() === userId.toString());

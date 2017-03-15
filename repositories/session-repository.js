@@ -21,7 +21,7 @@ class SessionRepository {
         // console.log('picked cards ophalen adhv userid');
         let session;
         try {
-            let query = this.sessionDao.findOne({_id: id}).populate('participants', '_id firstname lastname emailAddress').populate('currentUser', '_id firstname lastname').populate('sessionCards cardPriorities').populate('cardPriorities.card');
+            let query = this.sessionDao.findOne({_id: id}).populate('participants', '_id firstname lastname emailAddress').populate('currentUser', '_id firstname lastname').populate('sessionCards cardPriorities').populate('cardPriorities.card').populate('theme', 'organisers');
             if(withTheme)
                 query = query.populate('theme');
             session = await query.exec();//this.sessionDao.findOne({_id: id}).populate('participants', '_id firstname lastname emailAddress');
@@ -75,7 +75,7 @@ class SessionRepository {
     async readSessions(query) {
         let sessions;
         try {
-            sessions = await this.sessionDao.find(query).populate('participants', '_id firstname lastname emailAddress');
+            sessions = await this.sessionDao.find(query).populate('participants', '_id firstname lastname emailAddress').populate('theme', 'organisers');
         } catch (err) {
             throw new Error('Unexpected error occurred. ' + err);
         }
@@ -90,7 +90,7 @@ class SessionRepository {
     async updateSession(sessionId, toUpdate) {
         let session;
         try {
-            session = await this.sessionDao.findByIdAndUpdate(sessionId, toUpdate, {new:true}).populate('currentUser', '_id firstname lastname').populate('participants', '_id firstname lastname emailAddress').populate('').populate('pickedCards sessionCards cardPriorities').populate('cardPriorities.card');
+            session = await this.sessionDao.findByIdAndUpdate(sessionId, toUpdate, {new:true}).populate('currentUser', '_id firstname lastname').populate('participants', '_id firstname lastname emailAddress').populate('').populate('pickedCards sessionCards cardPriorities').populate('cardPriorities.card').populate('theme', 'organisers');
         } catch (err) {
             throw new Error('Unexpected error occurred. ' + err);
         }

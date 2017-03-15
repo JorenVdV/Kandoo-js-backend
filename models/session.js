@@ -26,7 +26,8 @@ var SessionSchema = new Schema({
     }],
     cardPriorities: [{
         priority: Number,
-        card: {type: Schema.ObjectId, ref: 'Card'}
+        card: {type: Schema.ObjectId, ref: 'Card'},
+        circlePosition: String
     }],
     cardsCanBeReviewed: Boolean,
     cardsCanBeAdded: Boolean,
