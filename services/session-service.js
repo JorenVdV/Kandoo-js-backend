@@ -4,6 +4,9 @@
 const Session = require('../models/session');
 
 const replaceUndefinedOrNullOrEmptyObject = require('../_helpers/replacers');
+const socketService = require('../services/socket-service');
+const userService = require('../services/user-service');
+
 
 class SessionService {
     constructor() {
@@ -39,6 +42,13 @@ class SessionService {
             session.pickedCards = [];
             session.events = [];
 
+            // let event = {
+            //     eventType: 'create',
+            //     content: true,
+            //     userId: creator,
+            //     timestamp: Date.now()
+            // };
+            // session.events = [event];
             session.status = 'created';
 
             return await this.sessionRepo.createSession(session);
@@ -211,13 +221,21 @@ class SessionService {
             let currUserCards = sessionPickedCards[i].cards;
             for (let y = 0; y < currUserCards.length; y++) {
                 if (toUpdate.cardPriorities.findIndex(cardPriority => cardPriority.card.toString() === currUserCards[y].toString()) === -1) {
-                    toUpdate.cardPriorities.push({priority: 0, card: currUserCards[y]});
+                    toUpdate.cardPriorities.push({priority: 0, card: currUserCards[y], circlePosition: ''});
                     // console.log('toUpdate.cardPriorities did not yet contain card with id: ' + currUserCards[y].toString());
                 }
 
             }
 
         }
+
+        session.populate('participants');
+
+        //Send notification to all users!
+        // session.participants.forEach(function (user) {
+        //     console.log(user);
+            // global.socketService.sendNotification(global.socketService.getSocketofUser(user._id), "session_started", session);
+        // });
 
         return await this.sessionRepo.updateSession(sessionId, toUpdate)
     }
@@ -278,7 +296,7 @@ class SessionService {
         return await this.sessionRepo.updateSession(sessionId, toUpdate)
     }
 
-    async playTurn(sessionId, userId, cardId, circlePosition) {
+    async playTurn(sessionId, userId, cardId, circlePosition = '') {
         let session = await this.getSession(sessionId);
         let toUpdate = {};
 

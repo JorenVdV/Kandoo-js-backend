@@ -34,7 +34,6 @@ var UserSchema = new Schema({
     },
     organisation: String,
     settings: [],
-    websockets: [],
 }, {timestamps: true}, {minimize: true});
 
 UserSchema.set('validateBeforeSave', true);

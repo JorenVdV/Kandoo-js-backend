@@ -8,7 +8,7 @@ class UserRepository {
     async readUserById(id) {
         let user;
         try {
-            user = await this.userDao.findOne({_id: id});
+            user = await this.userDao.findOne({_id: id}).populate('websockets');
         } catch (err) {
             throw new Error('Unexpected error occurred. ' + err);
         }
