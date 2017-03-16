@@ -14,6 +14,7 @@ class SessionService {
         this.userService = require('../services/user-service');
         this.mailService = require('../services/mail-service');
         this.cardService = require('../services/card-service');
+        this.socketService = require('../services/socket-service');
         // this.themeService = require('../services/theme-service');
     }
 
@@ -231,11 +232,7 @@ class SessionService {
 
         session.populate('participants');
 
-        //Send notification to all users!
-        // session.participants.forEach(function (user) {
-        //     console.log(user);
-        // global.socketService.sendNotification(global.socketService.getSocketofUser(user._id), "session_started", session);
-        // });
+        this.socketService.sendNotification('', "session_started", session);
 
         return await this.sessionRepo.updateSession(sessionId, toUpdate)
     }

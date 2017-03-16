@@ -49,6 +49,7 @@ server.listen(port, function () {
 
 let SocketService = require('./services/socket-service');
 global.sockets = [];
+global.io = require('socket.io')(server);
 // global.socketService = new SocketService(require('socket.io')(server));
 
 require("./routes/user-routes")(app);
