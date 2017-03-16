@@ -230,12 +230,12 @@ class SessionService {
 
         }
 
+        session.populate('participants');
 
         this.socketService.sendNotification('', "session_started", session);
 
         return await this.sessionRepo.updateSession(sessionId, toUpdate)
     }
-
 
     async pauseSession(sessionId, userId) {
         let session = await this.sessionRepo.readSessionById(sessionId, true);
@@ -304,16 +304,22 @@ class SessionService {
             throw new Error('Only the current user can complete his turn');
 
         toUpdate.events = session.events;
-        toUpdate.events.push(this.getEvent(userId, 'turn', cardId));
+        if (cardId) {
+            toUpdate.events.push(this.getEvent(userId, 'turn', cardId));
 
-        toUpdate.cardPriorities = session.cardPriorities;
-        let cardIndex = toUpdate.cardPriorities.findIndex(cardPriorities => cardPriorities.card._id.toString() == cardId.toString());
-        if (cardIndex === -1)
-            throw new Error('Unable to find card with id: ' + cardId + 'in this session.');
+            toUpdate.cardPriorities = session.cardPriorities;
 
-        toUpdate.cardPriorities[cardIndex].priority++;
-        toUpdate.cardPriorities[cardIndex].circlePosition = circlePosition;
+            let cardIndex = toUpdate.cardPriorities.findIndex(cardPriorities => cardPriorities.card._id.toString() == cardId.toString());
+            if (cardIndex === -1)
+                throw new Error('Unable to find card with id: ' + cardId + 'in this session.');
 
+            if (toUpdate.cardPriorities[cardIndex].priority === session.amountOfCircles)
+                throw new Error('Unable to increase the priority above the maximum amount of circles (' + session.amountOfCircles + ')');
+            toUpdate.cardPriorities[cardIndex].priority++;
+            toUpdate.cardPriorities[cardIndex].circlePosition = circlePosition;
+        } else {
+            toUpdate.events.push(this.getEvent(userId, 'emptyTurn'));
+        }
         let participants = session.participants;
         let indexOfCurrUser = participants.findIndex((participant) => participant._id.toString() === userId.toString());
 
