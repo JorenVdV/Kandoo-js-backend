@@ -88,6 +88,7 @@ class SessionController {
 
     playTurn(req, res) {
         let body = req.body;
+        console.log('Controller - req.body: ');
         console.log(req.body);
         this.sessionService.playTurn(req.params.sessionId, body.userId, body.cardId, body.circlePosition)
             .then((session) => {
