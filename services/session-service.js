@@ -232,7 +232,7 @@ class SessionService {
 
         session.populate('participants');
 
-        this.socketService.sendNotification('', "session_started", session);
+        // this.socketService.sendNotification('', "session_started", session);
 
         return await this.sessionRepo.updateSession(sessionId, toUpdate)
     }
