@@ -1,4 +1,4 @@
-process.env.NODE_ENV = 'test';//'production';
+process.env.NODE_ENV = 'production';
 
 var config = require('./_config');
 var express = require('express'),

@@ -234,7 +234,7 @@ class SessionService {
         //Send notification to all users!
         // session.participants.forEach(function (user) {
         //     console.log(user);
-            // global.socketService.sendNotification(global.socketService.getSocketofUser(user._id), "session_started", session);
+        // global.socketService.sendNotification(global.socketService.getSocketofUser(user._id), "session_started", session);
         // });
 
         return await this.sessionRepo.updateSession(sessionId, toUpdate)
@@ -316,6 +316,8 @@ class SessionService {
             if (cardIndex === -1)
                 throw new Error('Unable to find card with id: ' + cardId + 'in this session.');
 
+            if (toUpdate.cardPriorities[cardIndex].priority === session.amountOfCircles)
+                throw new Error('Unable to increase the priority above the maximum amount of circles (' + session.amountOfCircles + ')');
             toUpdate.cardPriorities[cardIndex].priority++;
             toUpdate.cardPriorities[cardIndex].circlePosition = circlePosition;
         } else {
