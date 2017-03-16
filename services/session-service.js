@@ -303,6 +303,9 @@ class SessionService {
 
         console.log('checked status');
 
+        console.log('Session:');
+        console.log(session);
+
         if (session.currentUser._id.toString() !== userId.toString())
             throw new Error('Only the current user can complete his turn');
 
