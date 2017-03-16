@@ -4,7 +4,7 @@
   "description": "backend for KandooJS - TeamJS",
   "main": "app.js",
   "scripts": {
-    "test": "mocha --recursive --reporter spec",
+    "test": "mocha ./test/session/session-controller.spec.js --recursive --reporter spec",
     "start": "nodejs app.js"
   },
   "engines": {

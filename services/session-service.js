@@ -289,16 +289,19 @@ class SessionService {
             throw new Error('Only the current user can complete his turn');
 
         toUpdate.events = session.events;
-        toUpdate.events.push(this.getEvent(userId, 'turn', cardId));
+        if (cardId) {
+            toUpdate.events.push(this.getEvent(userId, 'turn', cardId));
 
-        toUpdate.cardPriorities = session.cardPriorities;
-        let cardIndex = toUpdate.cardPriorities.findIndex(cardPriorities => cardPriorities.card._id.toString() == cardId.toString());
-        if (cardIndex === -1)
-            throw new Error('Unable to find card with id: ' + cardId + 'in this session.');
+            toUpdate.cardPriorities = session.cardPriorities;
+            let cardIndex = toUpdate.cardPriorities.findIndex(cardPriorities => cardPriorities.card._id.toString() == cardId.toString());
+            if (cardIndex === -1)
+                throw new Error('Unable to find card with id: ' + cardId + 'in this session.');
 
-        toUpdate.cardPriorities[cardIndex].priority++;
-        toUpdate.cardPriorities[cardIndex].circlePosition = circlePosition;
-
+            toUpdate.cardPriorities[cardIndex].priority++;
+            toUpdate.cardPriorities[cardIndex].circlePosition = circlePosition;
+        } else {
+            toUpdate.events.push(this.getEvent(userId, 'emptyTurn'));
+        }
         let participants = session.participants;
         let indexOfCurrUser = participants.findIndex((participant) => participant._id.toString() === userId.toString());
 

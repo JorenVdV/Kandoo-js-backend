@@ -41,8 +41,8 @@ var SessionSchema = new Schema({
     endDate: Date,
     events: [{
         eventType: {
-            type: String, required: true, enum: ['start', 'pause', 'stop', 'turn', 'message'],
-            message: 'Invalid event type. Event type should be "message", "start", "pause", "stop" or "turn".'
+            type: String, required: true, enum: ['start', 'pause', 'stop', 'turn', 'emptyTurn', 'message'],
+            message: 'Invalid event type. Event type should be "message", "start", "pause", "stop", "turn" or "emptyTurn".'
         },
         userId: {type: Schema.ObjectId, ref: 'User', required: true},
         content: Schema.Types.Mixed,
