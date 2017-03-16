@@ -300,31 +300,48 @@ class SessionService {
         let session = await this.getSession(sessionId);
         let toUpdate = {};
 
+        console.log('retrieved session - playTurn');
         if (session.status === 'paused' || session.status === 'stopped')
             throw new Error('Cannot perform a turn when the session is paused or stopped');
+
+        console.log('checked status');
 
         if (session.currentUser._id.toString() !== userId.toString())
             throw new Error('Only the current user can complete his turn');
 
+        console.log('checked current user');
+
         toUpdate.events = session.events;
         if (cardId) {
+            console.log('cardId present');
             toUpdate.events.push(this.getEvent(userId, 'turn', cardId));
 
             toUpdate.cardPriorities = session.cardPriorities;
 
+            console.log('looking for cardIndex');
             let cardIndex = toUpdate.cardPriorities.findIndex(cardPriorities => cardPriorities.card._id.toString() == cardId.toString());
+            console.log('cardIndex: ' + cardIndex);
             if (cardIndex === -1)
                 throw new Error('Unable to find card with id: ' + cardId + 'in this session.');
 
-            if (toUpdate.cardPriorities[cardIndex].priority === session.amountOfCircles)
+            console.log('cardIndex is not -1');
+
+            if (toUpdate.cardPriorities[cardIndex].priority >= session.amountOfCircles)
                 throw new Error('Unable to increase the priority above the maximum amount of circles (' + session.amountOfCircles + ')');
+
+            console.log('cardPriorities is < amountOfCircles');
+
             toUpdate.cardPriorities[cardIndex].priority++;
             toUpdate.cardPriorities[cardIndex].circlePosition = circlePosition;
+            console.log('updated cardPriority');
         } else {
             toUpdate.events.push(this.getEvent(userId, 'emptyTurn'));
         }
+
         let participants = session.participants;
+        console.log('looking for currentUSer index');
         let indexOfCurrUser = participants.findIndex((participant) => participant._id.toString() === userId.toString());
+        console.log('indexOfCurrUser: ' + indexOfCurrUser);
 
         let indexOfNextUser = indexOfCurrUser + 1;
         if (indexOfNextUser === participants.length)
