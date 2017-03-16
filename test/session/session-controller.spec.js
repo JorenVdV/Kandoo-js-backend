@@ -27,21 +27,22 @@ describe('Session Controller tests', function () {
         assert.isOk(globalTestUser);
         globalTestTheme = await themeService.addTheme('testTheme', 'a theme to use in the test', 'test', 'false', globalTestUser, []);
         assert.isOk(globalTestTheme);
+        globalTestUser_token = 'bla';
     });
 
-    before('Login the testUser', (done) => {
-        chai.request(server)
-            .post('/login')
-            .send({emailAddress: 'test.user@teamjs.xyz', password: "test"})
-            .end((err,res) => {
-                res.should.have.status(200);
-                res.body.should.have.property('token');
-                res.body.should.have.property('userId');
-                assert.strictEqual(res.body.userId.toString(), globalTestUser._id.toString());
-                globalTestUser_token = res.body.token;
-                done();
-            })
-    });
+    // before('Login the testUser', (done) => {
+    //     chai.request(server)
+    //         .post('/login')
+    //         .send({emailAddress: 'test.user@teamjs.xyz', password: "test"})
+    //         .end((err,res) => {
+    //             res.should.have.status(200);
+    //             res.body.should.have.property('token');
+    //             res.body.should.have.property('userId');
+    //             assert.strictEqual(res.body.userId.toString(), globalTestUser._id.toString());
+    //             globalTestUser_token = res.body.token;
+    //             done();
+    //         })
+    // });
 
     describe('/POST /theme/:themeId/session', function () {
         let created_session;

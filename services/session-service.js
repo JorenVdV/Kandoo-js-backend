@@ -311,6 +311,7 @@ class SessionService {
             toUpdate.events.push(this.getEvent(userId, 'turn', cardId));
 
             toUpdate.cardPriorities = session.cardPriorities;
+
             let cardIndex = toUpdate.cardPriorities.findIndex(cardPriorities => cardPriorities.card._id.toString() == cardId.toString());
             if (cardIndex === -1)
                 throw new Error('Unable to find card with id: ' + cardId + 'in this session.');
