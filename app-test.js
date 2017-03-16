@@ -30,7 +30,7 @@ server.listen(port, function () {
     console.log("App is running on port " + port);
 });
 
-global.io = require('socket.io')(server);
+// global.io = require('socket.io')(server);
 // var io = require('socket.io')(server);
 // io.on('connection', function(client) {
 //     console.log('Client connected...');
