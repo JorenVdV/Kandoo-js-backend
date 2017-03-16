@@ -14,7 +14,7 @@ class ChatMessageController {
     }
 
     readMessagesBySessionId(req, res) {
-        this.chatMessageService.getCardById(req.params.sessionId)
+        this.chatMessageService.getMessagesBySessionId(req.params.sessionId, body.limit)
             .then((messages) => res.status(200).send({messages: messages}))
             .catch((err) => res.status(404).send({error: err.message}));
     }
