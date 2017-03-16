@@ -38,7 +38,7 @@ class UserController {
 
     login(req, res) {
         let body = req.body;
-        this.userService.getUserByEmail(body.emailAddress).then(
+        this.userService.getUserByEmail(body.emailAddress.toLowerCase()).then(
             (user) => {
                 if (bcrypt.compareSync(body.password, user.password)) {
                     res.status(200).send({user: convertToUserDTO(user)});
@@ -51,7 +51,7 @@ class UserController {
 
     // login(req, res) {
     //     let body = req.body;
-    //     this.userService.getUserByEmail(body.emailAddress).then(
+    //     this.userService.getUserByEmail(body.emailAddress.toLowerCase()).then(
     //         (user) => {
     //             if (bcrypt.compareSync(body.password, user.password)) {
     //                 let payload = {

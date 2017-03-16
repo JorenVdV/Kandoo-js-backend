@@ -29,15 +29,17 @@ app.use(express.static(path.join(__dirname)));
 server.listen(port, function () {
     console.log("App is running on port " + port);
 });
-var io = require('socket.io')(server);
-io.on('connection', function(client) {
-    console.log('Client connected...');
 
-    client.on('join', function(data) {
-        console.log(data);
-        client.emit('messages', 'Hello from server');
-    });
-});
+// global.io = require('socket.io')(server);
+// var io = require('socket.io')(server);
+// io.on('connection', function(client) {
+//     console.log('Client connected...');
+//
+//     client.on('join', function(data) {
+//         console.log(data);
+//         client.emit('messages', 'Hello from server');
+//     });
+// });
 
 
 // require("./routes")(app);

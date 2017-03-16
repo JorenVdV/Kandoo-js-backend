@@ -19,12 +19,30 @@ chai.use(chaiHttp);
 describe('Session Controller tests', function () {
     let globalTestTheme;
     let globalTestUser;
+    let globalTestUser_token;
+
+
     before('create a testUser & test theme', async function () {
         globalTestUser = await userService.addUser('test', 'user', 'test.user@teamjs.xyz', 'TeamJS', 'test');
         assert.isOk(globalTestUser);
         globalTestTheme = await themeService.addTheme('testTheme', 'a theme to use in the test', 'test', 'false', globalTestUser, []);
         assert.isOk(globalTestTheme);
+        globalTestUser_token = 'bla';
     });
+
+    // before('Login the testUser', (done) => {
+    //     chai.request(server)
+    //         .post('/login')
+    //         .send({emailAddress: 'test.user@teamjs.xyz', password: "test"})
+    //         .end((err,res) => {
+    //             res.should.have.status(200);
+    //             res.body.should.have.property('token');
+    //             res.body.should.have.property('userId');
+    //             assert.strictEqual(res.body.userId.toString(), globalTestUser._id.toString());
+    //             globalTestUser_token = res.body.token;
+    //             done();
+    //         })
+    // });
 
     describe('/POST /theme/:themeId/session', function () {
         let created_session;
@@ -43,8 +61,10 @@ describe('Session Controller tests', function () {
                 startDate: null,
                 amountOfCircles: 5
             };
+            console.log('/POST /theme/:themeId/session');
             chai.request(server)
                 .post('/theme/' + globalTestTheme._id + '/session')
+                .set('X-Access-Token', globalTestUser_token)
                 .send(session)
                 .end((err, res) => {
                     res.should.have.status(201);
@@ -75,6 +95,7 @@ describe('Session Controller tests', function () {
             };
             chai.request(server)
                 .post('/theme/' + globalTestTheme._id + '/session')
+                .set('X-Access-Token', globalTestUser_token)
                 .send(session)
                 .end((err, res) => {
                     res.should.have.status(404);
@@ -103,6 +124,7 @@ describe('Session Controller tests', function () {
         it('Delete the session', function (done) {
             chai.request(server)
                 .delete('/session/' + GETSession_session._id + '/delete')
+                .set('X-Access-Token', globalTestUser_token)
                 .end((err, res) => {
                     res.should.have.status(204);
                     done();
@@ -112,6 +134,7 @@ describe('Session Controller tests', function () {
         it('Delete a non existing session', function (done) {
             chai.request(server)
                 .delete('/session/' + '00aa0aa000a000000a0000aa' + '/delete')
+                .set('X-Access-Token', globalTestUser_token)
                 .end((err, res) => {
                     res.should.have.status(404);
                     res.body.should.have.property('error');
@@ -133,10 +156,13 @@ describe('Session Controller tests', function () {
         });
 
         it('retrieve an existing session', function (done) {
+            console.log('Retrieve an existing session');
             chai.request(server)
                 .get('/session/' + GETSession_session._id)
+                .set('X-Access-Token', globalTestUser_token)
                 .send()
                 .end((err, res) => {
+                console.log(res.error.text);
                     res.should.have.status(200);
                     res.body.should.have.property('session');
                     let resSession = res.body.session;
@@ -151,6 +177,7 @@ describe('Session Controller tests', function () {
         it('retrieve a non existing session', function (done) {
             chai.request(server)
                 .get('/session/' + '00aa0aa000a000000a0000aa')
+                .set('X-Access-Token', globalTestUser_token)
                 .send()
                 .end((err, res) => {
                     res.should.have.status(404);
@@ -171,6 +198,7 @@ describe('Session Controller tests', function () {
         it('get all sessions - no existing sessions', function (done) {
             chai.request(server)
                 .get('/theme/' + globalTestTheme._id + '/sessions')
+                .set('X-Access-Token', globalTestUser_token)
                 .send()
                 .end((err, res) => {
                     res.should.have.status(200);
@@ -194,6 +222,7 @@ describe('Session Controller tests', function () {
             it('retrieve all sessions', function (done) {
                 chai.request(server)
                     .get('/theme/' + globalTestTheme._id + '/sessions')
+                    .set('X-Access-Token', globalTestUser_token)
                     .send()
                     .end((err, res) => {
                         res.should.have.status(200);
@@ -235,6 +264,7 @@ describe('Session Controller tests', function () {
             it('retrieve all sessions', function (done) {
                 chai.request(server)
                     .get('/theme/' + globalTestTheme._id + '/sessions')
+                    .set('X-Access-Token', globalTestUser_token)
                     .send()
                     .end((err, res) => {
                         res.should.have.status(200);
@@ -250,6 +280,7 @@ describe('Session Controller tests', function () {
             it('retrieve all sessions - by participant globalTestUser', function (done) {
                 chai.request(server)
                     .get('/user/' + globalTestUser._id + '/sessions/participating')
+                    .set('X-Access-Token', globalTestUser_token)
                     .send()
                     .end((err, res) => {
                         res.should.have.status(200);
@@ -263,6 +294,7 @@ describe('Session Controller tests', function () {
             it('retrieve all sessions - by participant user2', function (done) {
                 chai.request(server)
                     .get('/user/' + user2._id + '/sessions/participating')
+                    .set('X-Access-Token', globalTestUser_token)
                     .send()
                     .end((err, res) => {
                         res.should.have.status(200);
@@ -304,6 +336,7 @@ describe('Session Controller tests', function () {
             invitees.push(anotherUser.emailAddress);
             chai.request(server)
                 .put('/session/' + session._id + '/invitees')
+                .set('X-Access-Token', globalTestUser_token)
                 .send({invitees: invitees})
                 .end((err, res) => {
                     res.should.have.status(200);
@@ -322,6 +355,7 @@ describe('Session Controller tests', function () {
             invitees.push(globalTestUser.emailAddress);
             chai.request(server)
                 .put('/session/' + session._id + '/invitees')
+                .set('X-Access-Token', globalTestUser_token)
                 .send({invitees: invitees})
                 .end((err, res) => {
                     res.should.have.status(400);
@@ -339,6 +373,7 @@ describe('Session Controller tests', function () {
             };
             chai.request(server)
                 .put('/session/' + session._id + '/update')
+                .set('X-Access-Token', globalTestUser_token)
                 .send(updates)
                 .end((err, res) => {
                     res.should.have.status(200);
@@ -371,6 +406,7 @@ describe('Session Controller tests', function () {
             };
             chai.request(server)
                 .put('/session/' + session._id + '/update')
+                .set('X-Access-Token', globalTestUser_token)
                 .send(updates)
                 .end((err, res) => {
                     res.should.have.status(200);
@@ -420,6 +456,7 @@ describe('Session Controller tests', function () {
             console.log(' add tests for failures - accepting invite');
             chai.request(server)
                 .put('/session/' + session._id + '/accept')
+                .set('X-Access-Token', globalTestUser_token)
                 .send({userId: anotherUser._id})
                 .end((err, res) => {
                     res.should.have.status(204);
@@ -446,6 +483,7 @@ describe('Session Controller tests', function () {
         it('Start the session', (done) => {
             chai.request(server)
                 .put('/session/' + testSession._id + '/start')
+                .set('X-Access-Token', globalTestUser_token)
                 .send({userId: globalTestUser._id})
                 .end((err, res) => {
                     res.should.have.status(204);
@@ -481,6 +519,7 @@ describe('Session Controller tests', function () {
         it('pause the session', (done) => {
             chai.request(server)
                 .put('/session/' + testSession._id + '/pause')
+                .set('X-Access-Token', globalTestUser_token)
                 .send({userId: globalTestUser._id})
                 .end((err, res) => {
                     res.should.have.status(204);
@@ -516,6 +555,7 @@ describe('Session Controller tests', function () {
         it('Stop the session', (done) => {
             chai.request(server)
                 .put('/session/' + testSession._id + '/stop')
+                .set('X-Access-Token', globalTestUser_token)
                 .send({userId: globalTestUser._id})
                 .end((err, res) => {
                     res.should.have.status(204);
@@ -567,6 +607,7 @@ describe('Session Controller tests', function () {
         it('Pick cards of the session', (done) => {
             chai.request(server)
                 .put('/session/' + session._id + '/start')
+                .set('X-Access-Token', globalTestUser_token)
                 .send({userId: globalTestUser._id})
                 .end((err, res) => {
                     res.should.have.status(204);
@@ -683,6 +724,7 @@ describe('Session Controller tests', function () {
             let card = cards[3];
             chai.request(server)
                 .put('/session/' + session._id + '/turn')
+                .set('X-Access-Token', globalTestUser_token)
                 .send({userId: globalTestUser._id, cardId: card._id})
                 .end((err, res) => {
                     res.should.have.status(200);
@@ -742,6 +784,7 @@ describe('Session Controller tests', function () {
         it('Get sessions by invitee - anotherUser1', (done) => {
             chai.request(server)
                 .get('/user/' + anotherUser1._id + '/sessions/invited')
+                .set('X-Access-Token', globalTestUser_token)
                 .send()
                 .end((err, res) => {
                     res.should.have.status(200);
@@ -790,6 +833,7 @@ describe('Session Controller tests', function () {
         it('Get sessions by participant - anotherUser1', (done) => {
             chai.request(server)
                 .get('/user/' + anotherUser1._id + '/sessions/participating')
+                .set('X-Access-Token', globalTestUser_token)
                 .send()
                 .end((err, res) => {
                     res.should.have.status(200);
@@ -829,6 +873,7 @@ describe('Session Controller tests', function () {
         it('Copy the session', (done) => {
             chai.request(server)
                 .post('/session/' + session._id + '/copy')
+                .set('X-Access-Token', globalTestUser_token)
                 .send({})
                 .end((err, res) => {
                     res.should.have.status(201);
@@ -944,6 +989,7 @@ describe('Session Controller tests', function () {
         it('Retrieve the events of a session', (done) => {
             chai.request(server)
                 .get('/session/' + session._id + '/history')
+                .set('X-Access-Token', globalTestUser_token)
                 .send()
                 .end((err, res) => {
                     res.should.have.status(200);
