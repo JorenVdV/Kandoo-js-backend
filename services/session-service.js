@@ -298,6 +298,9 @@ class SessionService {
         let toUpdate = {};
 
         console.log('retrieved session - playTurn');
+        console.log('Params doorgegeven: ');
+        console.log('sessionId: ' + sessionId + ' userId: ' + userId + ' cardId: ' + cardId + ' circlePosition: ' + circlePosition);
+
         if (session.status === 'paused' || session.status === 'stopped')
             throw new Error('Cannot perform a turn when the session is paused or stopped');
 
@@ -306,6 +309,10 @@ class SessionService {
         console.log('Session:');
         console.log(session);
 
+        console.log('\n\n');
+        console.log('currentUser');
+        console.log(session.currentUser);
+        console.log(session.currentUser._id);
         if (session.currentUser._id.toString() !== userId.toString())
             throw new Error('Only the current user can complete his turn');
 
