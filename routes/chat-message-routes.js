@@ -8,6 +8,10 @@ module.exports = function(app){
         chatMessageController.addMessage(req,res);
     });
 
+    app.get('/session/:sessionId/messages/:messageLimit', function(req,res){
+        chatMessageController.readMessagesBySessionId(req,res);
+    });
+
     app.get('/session/:sessionId/messages', function(req,res){
         chatMessageController.readMessagesBySessionId(req,res);
     });

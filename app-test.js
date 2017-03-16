@@ -43,10 +43,10 @@ server.listen(port, function () {
 
 
 // require("./routes")(app);
-require("./routes/user-routes")(app,io);
-require("./routes/session-routes")(app,io);
-require("./routes/theme-routes")(app,io);
-require("./routes/card-routes")(app,io);
+require("./routes/user-routes")(app/*,io*/);
+require("./routes/session-routes")(app/*,io*/);
+require("./routes/theme-routes")(app/*,io*/);
+require("./routes/card-routes")(app/*,io*/);
 
 
 
