@@ -41,6 +41,47 @@ class UserController {
         this.userService.getUserByEmail(body.emailAddress.toLowerCase()).then(
             (user) => {
                 if (bcrypt.compareSync(body.password, user.password)) {
+
+                    //
+                    // var sendNotification = function(data) {
+                    //     var headers = {
+                    //         "Content-Type": "application/json; charset=utf-8",
+                    //         "Authorization": "Basic MzkyMWQzNDItNjk4ZC00M2E5LWE2OGMtY2U0ZjY3NzhiNjA0"
+                    //     };
+                    //
+                    //     var options = {
+                    //         host: "onesignal.com",
+                    //         port: 443,
+                    //         path: "/api/v1/notifications",
+                    //         method: "POST",
+                    //         headers: headers
+                    //     };
+                    //
+                    //     var https = require('https');
+                    //     var req = https.request(options, function(res) {
+                    //         res.on('data', function(data) {
+                    //             console.log("Response:");
+                    //             console.log(JSON.parse(data));
+                    //         });
+                    //     });
+                    //
+                    //     req.on('error', function(e) {
+                    //         console.log("ERROR:");
+                    //         console.log(e);
+                    //     });
+                    //
+                    //     req.write(JSON.stringify(data));
+                    //     req.end();
+                    // };
+                    //
+                    // var message = {
+                    //     app_id: "1557f220-f307-429b-a8d3-7e2e4f133cb0",
+                    //     contents: {"en": "The following user logged in: " + user},
+                    //     included_segments: ["All"]
+                    // };
+                    //
+                    // sendNotification(message);
+
                     res.status(200).send({user: convertToUserDTO(user)});
                 } else {
                     res.status(404).send({error: "Email address or password is incorrect"});
