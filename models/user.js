@@ -34,6 +34,7 @@ var UserSchema = new Schema({
     },
     organisation: String,
     settings: [],
+    token: String
 }, {timestamps: true}, {minimize: true});
 
 UserSchema.set('validateBeforeSave', true);

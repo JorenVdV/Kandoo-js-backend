@@ -53,6 +53,9 @@ class ThemeService {
 
     async removeOrganiser(id, organiserId) {
         let theme = await this.getTheme(id);
+        if(theme.organisers.length === 1){
+            throw new Error('Cannot remove the only organiser of a theme.')
+        }
         let index = theme.organisers.findIndex(org => org._id.toString() == organiserId.toString());
         theme.organisers.splice(index, 1);
         return await this.changeTheme(theme._id, {organisers: theme.organisers});

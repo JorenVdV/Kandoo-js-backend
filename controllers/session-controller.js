@@ -55,13 +55,13 @@ class SessionController {
     }
 
     getSessionsByParticipant(req, res) {
-        this.sessionService.getSessionsByParticipant(req.params.participantId)
+        this.sessionService.getSessionsByParticipant(req.params.userId)
             .then((sessions) => res.status(200).send({sessions: sessions}))
             .catch((err) => res.status(404).send({error: err.message}));
     }
 
     getSessionsByInvitee(req, res) {
-        this.sessionService.getSessionsByInvitee(req.params.inviteeId)
+        this.sessionService.getSessionsByInvitee(req.params.userId)
             .then((sessions) => res.status(200).send({sessions: sessions}))
             .catch((err) => res.status(404).send({error: err.message}));
     }
@@ -88,8 +88,6 @@ class SessionController {
 
     playTurn(req, res) {
         let body = req.body;
-        console.log('Controller - req.body: ');
-        console.log(req.body);
         this.sessionService.playTurn(req.params.sessionId, body.userId, body.cardId, body.circlePosition)
             .then((session) => {
                 res.status(200).send({currentUser: session.currentUser, cardPriorities: session.cardPriorities})

@@ -20,12 +20,12 @@ class ThemeController {
     }
 
     getTheme(req, res) {
-        try{
-            this.io.emit('themes');
-            console.log('SOCKET.IO - Emitted Themes event')
-        }catch(exception){
-            console.log(exception);
-        }
+        // try{
+        //     this.io.emit('themes');
+        //     console.log('SOCKET.IO - Emitted Themes event')
+        // }catch(exception){
+        //     console.log(exception);
+        // }
 
         this.themeService.getTheme(req.params.themeId)
             .then((theme) => res.status(200).send({theme: theme}))
@@ -33,7 +33,7 @@ class ThemeController {
     }
 
     getThemes(req, res) {
-        this.themeService.getThemes(req.params.organiserId)
+        this.themeService.getThemes(req.params.userId)
             .then((themes) => res.status(200).send({themes: themes}))
             .catch((err) => res.status(404).send({error: err.message}));
     }

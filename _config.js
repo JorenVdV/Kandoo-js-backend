@@ -17,7 +17,7 @@ config.mailCredentials = {
 config.jwt = {
     secret: '93MepG56l5o9c7Ui1y57pdE65',
     options : {
-        expiresIn: "12h",
+        expiresIn: "6h",
         issuer: "teamjs.xyz"
     }
 };

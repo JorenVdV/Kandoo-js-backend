@@ -206,16 +206,16 @@ describe('User Controller tests', function () {
                     .send({emailAddress: 'joren.vdv@kdg.be', password: 'Pudding'})
                     .end((err, res) => {
                         res.should.have.status(200);
-                        console.log('Fix me when adding token middleware! session-service nr 319');
-                        // res.body.should.have.property('userId');
-                        // res.body.should.have.property('token');
-                        // assert.isOk(res.body.userId, 'the user should be defined');
-                        // assert.isOk(res.body.token, 'the token should be defined');
-                        // let payload = jwt.verify(res.body.token, config.jwt.secret);
-                        // assert.strictEqual(payload.userId.toString(), res.body.userId.toString());
-                        assert.strictEqual(res.body.user.firstname, LOGINUser_user.firstname);
-                        assert.strictEqual(res.body.user.lastname, LOGINUser_user.lastname);
-                        assert.strictEqual(res.body.user.emailAddress, LOGINUser_user.emailAddress);
+                        // console.log('Fix me when adding token middleware! session-service nr 319');
+                        res.body.should.have.property('userId');
+                        res.body.should.have.property('token');
+                        assert.isOk(res.body.userId, 'the user should be defined');
+                        assert.isOk(res.body.token, 'the token should be defined');
+                        let payload = jwt.verify(res.body.token, config.jwt.secret);
+                        assert.strictEqual(payload.userId.toString(), res.body.userId.toString());
+                        // assert.strictEqual(res.body.user.firstname, LOGINUser_user.firstname);
+                        // assert.strictEqual(res.body.user.lastname, LOGINUser_user.lastname);
+                        // assert.strictEqual(res.body.user.emailAddress, LOGINUser_user.emailAddress);
                         // assert.strictEqual(res.body.user.password, LOGINUser_user.password);
                         // assert.strictEqual(res.body.user.organisation, LOGINUser_user.organisation);
                         done();
@@ -259,15 +259,31 @@ describe('User Controller tests', function () {
 
         describe('/DELETE delete', function () {
             let DELETEUser_user;
+            let user_token;
 
             before('Creating a user', async function () {
                 DELETEUser_user = await userService.addUser('Joren', 'Van de Vondel', 'joren.vdv@kdg.be', 'Big Industries', 'Pudding');
                 assert.isOk(DELETEUser_user);
             });
 
+            before('Login user', function (done) {
+                chai.request(server)
+                    .post('/login')
+                    .send({emailAddress: 'joren.vdv@kdg.be', password: "Pudding"})
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.have.property('token');
+                        res.body.should.have.property('userId');
+                        assert.strictEqual(res.body.userId.toString(), DELETEUser_user._id.toString());
+                        user_token = res.body.token;
+                        done();
+                    })
+            });
+
             it('Removing the user', function (done) {
                 chai.request(server)
                     .delete('/user/' + DELETEUser_user._id + '/delete')
+                    .set('X-Access-Token', user_token)
                     .send()
                     .end((err, res) => {
                         res.should.have.status(204);
@@ -278,30 +294,47 @@ describe('User Controller tests', function () {
             it('Removing a non existent user', function (done) {
                 chai.request(server)
                     .delete('/user/' + '00aa0aa000a000000a0000aa' + '/delete')
+                    .set('X-Access-Token', user_token)
                     .send()
                     .end((err, res) => {
                         res.should.have.status(404);
-                        res.body.should.have.property('error');
-                        assert.strictEqual(res.body.error, 'Unable to find user with id: ' + '00aa0aa000a000000a0000aa');
+                        // res.body.should.have.property('error');
+                        // assert.strictEqual(res.body.error, 'Unable to find user with id: ' + '00aa0aa000a000000a0000aa');
                         done();
                     });
             });
         });
     });
 
-    describe('/PUT user/:userId/update - password', function(){
+    describe('/PUT user/:userId/update - password', function () {
         let user;
+        let user_token;
         before('Create the user', async() => {
             user = await userService.addUser('Jos', 'Van Camp', 'jos.vancamp@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
             assert.isOk(user);
+        });
+
+        before('Login user', function (done) {
+            chai.request(server)
+                .post('/login')
+                .send({emailAddress: 'jos.vancamp@teamjs.xyz', password: "myAwesomePassword.123"})
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.have.property('token');
+                    res.body.should.have.property('userId');
+                    assert.strictEqual(res.body.userId.toString(), user._id.toString());
+                    user_token = res.body.token;
+                    done();
+                })
         });
 
         it('Update the users password', (done) => {
             let updates = {password: 'EenLeukNieuwWW', originalPassword: 'myAwesomePassword.123'};
             chai.request(server)
                 .put('/user/' + user._id + '/update')
+                .set('X-Access-Token', user_token)
                 .send(updates)
-                .end((err,res) => {
+                .end((err, res) => {
                     res.should.have.status(200);
                     res.body.should.have.property('user');
                     let newUser = res.body.user;
@@ -317,32 +350,48 @@ describe('User Controller tests', function () {
                 .send({emailAddress: 'jos.vancamp@teamjs.xyz', password: 'EenLeukNieuwWW'})
                 .end((err, res) => {
                     res.should.have.status(200);
-                    console.log('Fix me when adding token middleware! session-service nr 319');
-                    // res.body.should.have.property('userId');
-                    // assert.isOk(res.body.userId, 'the user should be defined');
-                    // assert.isOk(res.body.token, 'jos.vancamp@teamjs.xyz');
+                    // console.log('Fix me when adding token middleware! session-service nr 319');
+                    res.body.should.have.property('userId');
+                    assert.isOk(res.body.userId, 'the user should be defined');
+                    assert.isOk(res.body.token, 'received a token');
                     done();
                 });
         });
 
-        after('Remove the user', async () => {
+        after('Remove the user', async() => {
             let successful = await userService.removeUser(user._id);
             assert.isTrue(successful);
         })
     });
 
-    describe('/GET user/:userId', function() {
+    describe('/GET user/:userId', function () {
         let user;
+        let user_token;
         before('Create the user', async() => {
             user = await userService.addUser('Jos', 'Van Camp', 'jos.vancamp@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
             assert.isOk(user);
         });
 
+        before('Login user', function (done) {
+            chai.request(server)
+                .post('/login')
+                .send({emailAddress: 'jos.vancamp@teamjs.xyz', password: "myAwesomePassword.123"})
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.have.property('token');
+                    res.body.should.have.property('userId');
+                    assert.strictEqual(res.body.userId.toString(), user._id.toString());
+                    user_token = res.body.token;
+                    done();
+                })
+        });
+
         it('Get the user', (done) => {
             chai.request(server)
                 .get('/user/' + user._id)
+                .set('X-Access-Token', user_token)
                 .send()
-                .end((err,res) => {
+                .end((err, res) => {
                     res.should.have.status(200);
                     res.body.should.have.property('user');
                     let myUser = res.body.user;
@@ -351,7 +400,7 @@ describe('User Controller tests', function () {
                 });
         });
 
-        after('Remove the user', async () => {
+        after('Remove the user', async() => {
             let successful = await userService.removeUser(user._id);
             assert.isTrue(successful);
         })
@@ -359,17 +408,33 @@ describe('User Controller tests', function () {
 
     describe('/PUT user/:userId/update', function () {
         let user;
+        let user_token;
         beforeEach('Create the user', async() => {
             user = await userService.addUser('Jos', 'Van Camp', 'jos.vancamp@teamjs.xyz', 'Karel de Grote Hogeschool - TeamJS', 'myAwesomePassword.123');
             assert.isOk(user);
+        });
+
+        beforeEach('Login user', function (done) {
+            chai.request(server)
+                .post('/login')
+                .send({emailAddress: 'jos.vancamp@teamjs.xyz', password: "myAwesomePassword.123"})
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.have.property('token');
+                    res.body.should.have.property('userId');
+                    assert.strictEqual(res.body.userId.toString(), user._id.toString());
+                    user_token = res.body.token;
+                    done();
+                })
         });
 
         it('Update multiple user fields', (done) => {
             let updates = {firstname: 'Jonas', lastname: 'Janoke'};
             chai.request(server)
                 .put('/user/' + user._id + '/update')
+                .set('X-Access-Token', user_token)
                 .send(updates)
-                .end((err,res) => {
+                .end((err, res) => {
                     res.should.have.status(200);
                     res.body.should.have.property('user');
                     let newUser = res.body.user;
@@ -386,8 +451,9 @@ describe('User Controller tests', function () {
             let updates = {firstname: 'Jommeke'};
             chai.request(server)
                 .put('/user/' + user._id + '/update')
+                .set('X-Access-Token', user_token)
                 .send(updates)
-                .end((err,res) => {
+                .end((err, res) => {
                     res.should.have.status(200);
                     res.body.should.have.property('user');
                     let newUser = res.body.user;

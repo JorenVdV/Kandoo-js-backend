@@ -16,9 +16,24 @@ chai.use(chaiHttp);
 describe('Theme controller tests', function () {
 
     let THEME_globalTestUser;
+    let user_token;
     before('create testUser', async function () {
         THEME_globalTestUser = await userService.addUser("User1", "Test", "user1.test@teamjs.xyz", "TeamJS", "pwd");
         assert.isOk(THEME_globalTestUser);
+    });
+
+    before('Login user', function (done) {
+        chai.request(server)
+            .post('/login')
+            .send({emailAddress: 'user1.test@teamjs.xyz', password: "pwd"})
+            .end((err, res) => {
+                res.should.have.status(200);
+                res.body.should.have.property('token');
+                res.body.should.have.property('userId');
+                assert.strictEqual(res.body.userId.toString(), THEME_globalTestUser._id.toString());
+                user_token = res.body.token;
+                done();
+            })
     });
 
     describe('/POST newTheme', function () {
@@ -155,6 +170,7 @@ describe('Theme controller tests', function () {
             let GET_THEMES_theme1;
             let GET_THEMES_theme2;
             let user2;
+            let user2_token;
 
             before('Create themes and a second user', async function () {
                 GET_THEMES_theme1 = await themeService.addTheme('first theme', 'a description', [], true, THEME_globalTestUser, null);
@@ -165,6 +181,20 @@ describe('Theme controller tests', function () {
 
                 GET_THEMES_theme2 = await themeService.addTheme('second theme', 'a description', [], true, user2, null);
                 assert.isOk(GET_THEMES_theme2);
+            });
+
+            before('Login user2', function (done) {
+                chai.request(server)
+                    .post('/login')
+                    .send({emailAddress: 'test@blem.com', password: "test"})
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.have.property('token');
+                        res.body.should.have.property('userId');
+                        assert.strictEqual(res.body.userId.toString(), user2._id.toString());
+                        user2_token = res.body.token;
+                        done();
+                    })
             });
 
             it('Retrieve two themes', function (done) {
@@ -199,6 +229,7 @@ describe('Theme controller tests', function () {
             it('Retrieve themes from THEME_globalTestUser', function (done) {
                 chai.request(server)
                     .get('/user/' + THEME_globalTestUser._id + '/themes')
+                    .set('X-Access-Token', user_token)
                     .send()
                     .end((err, res) => {
                         res.should.have.status(200);
@@ -219,6 +250,7 @@ describe('Theme controller tests', function () {
             it('Retrieve themes from user2', function (done) {
                 chai.request(server)
                     .get('/user/' + user2._id + '/themes')
+                    .set('X-Access-Token', user2_token)
                     .send()
                     .end((err, res) => {
                         res.should.have.status(200);
@@ -300,6 +332,7 @@ describe('Theme controller tests', function () {
         it('delete a theme - existing id', (done) => {
             chai.request(server)
                 .delete('/theme/' + theme._id + '/delete')
+                .set('X-Access-Token', user_token)
                 .send()
                 .end((err, res) => {
                     res.should.have.status(204);
@@ -310,6 +343,7 @@ describe('Theme controller tests', function () {
         it('delete a theme - non existing id', (done) => {
             chai.request(server)
                 .delete('/theme/' + '00aa0aa000a000000a0000aa' + '/delete')
+                .set('X-Access-Token', user_token)
                 .send()
                 .end((err, res) => {
                     res.should.have.status(404);
@@ -333,6 +367,7 @@ describe('Theme controller tests', function () {
             it('Add an organiser', function (done) {
                 chai.request(server)
                     .put('/theme/' + theme._id + '/addorganiser')
+                    .set('X-Access-Token', user_token)
                     .send({organiserEmail: anotherUser.emailAddress})
                     .end((err, res) => {
                         res.should.have.status(200);
@@ -350,6 +385,7 @@ describe('Theme controller tests', function () {
             it('Remove an organiser', function (done) {
                 chai.request(server)
                     .put('/theme/' + theme._id + '/removeorganiser')
+                    .set('X-Access-Token', user_token)
                     .send({organiserId: THEME_globalTestUser._id})
                     .end((err, res) => {
                         res.should.have.status(200);
@@ -383,6 +419,7 @@ describe('Theme controller tests', function () {
                 let updates = {title: 'A fuzzy title', description: 'a weird description'};
                 chai.request(server)
                     .put('/theme/' + theme._id + '/update')
+                    .set('X-Access-Token', user_token)
                     .send(updates)
                     .end((err, res) => {
                         res.should.have.status(200);
@@ -402,6 +439,7 @@ describe('Theme controller tests', function () {
                 let updates = {tags: tags};
                 chai.request(server)
                     .put('/theme/' + theme._id + '/update')
+                    .set('X-Access-Token', user_token)
                     .send(updates)
                     .end((err, res) => {
                         res.should.have.status(200);

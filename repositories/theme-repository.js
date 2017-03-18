@@ -63,6 +63,7 @@ class ThemeRepository {
 
     async deleteTheme(theme) {
         try {
+
             await theme.remove();
         } catch (err) {
             throw new Error('Unexpected error occurred. ' + err);

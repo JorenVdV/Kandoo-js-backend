@@ -18,9 +18,15 @@ var ThemeSchema = new Schema({
 }, {timestamps: true}, {minimize: true});
 
 ThemeSchema.set('validateBeforeSave', true);
-ThemeSchema.pre('findOneAndUpdate', function(next) {
+ThemeSchema.pre('findOneAndUpdate', function (next) {
     this.options.runValidators = true;
     next();
+});
+
+ThemeSchema.pre('remove', function (next) {
+    this.model('Session').remove({theme: this._id})
+        .then((result) => this.model('Card').remove({theme: this._id}, next()))
+        .catch((err) => console.log(err));
 });
 
 module.exports = mongoose.model('Theme', ThemeSchema);

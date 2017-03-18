@@ -1,17 +1,15 @@
 /**
  * Created by steve on 2/10/2017.
  */
-const Auth = require('../controllers/authentication-controller');
+const auth = require('../controllers/authentication-controller');
 const userController = require('../controllers/user-controller');
 
 
 module.exports = function (app, io) {
 
-    const userController = require('../controllers/user-controller');
-
-
-
-    userController.setIO(io);
+    // const userController = require('../controllers/user-controller');
+    //
+    // userController.setIO(io);
 
     app.post('/register', function (req, res) {
         userController.createUser(req, res);
@@ -24,15 +22,15 @@ module.exports = function (app, io) {
         userController.login(req, res);
     });
 
-    app.get('/user/:userId', function(req,res){
-        userController.getUser(req,res);
+    app.get('/user/:userId', auth.userAccess, function (req, res) {
+        userController.getUser(req, res);
     });
 
-    app.put('/user/:userId/update', function (req, res) {
+    app.put('/user/:userId/update', auth.userAccess, function (req, res) {
         userController.updateUser(req, res);
     });
 
-    app.delete('/user/:userId/delete', function (req, res) {
+    app.delete('/user/:userId/delete', auth.userAccess, function (req, res) {
         userController.deleteUser(req, res);
     });
 };

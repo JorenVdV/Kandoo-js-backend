@@ -27,22 +27,34 @@ describe('Session Controller tests', function () {
         assert.isOk(globalTestUser);
         globalTestTheme = await themeService.addTheme('testTheme', 'a theme to use in the test', 'test', 'false', globalTestUser, []);
         assert.isOk(globalTestTheme);
-        globalTestUser_token = 'bla';
     });
 
-    // before('Login the testUser', (done) => {
-    //     chai.request(server)
-    //         .post('/login')
-    //         .send({emailAddress: 'test.user@teamjs.xyz', password: "test"})
-    //         .end((err,res) => {
-    //             res.should.have.status(200);
-    //             res.body.should.have.property('token');
-    //             res.body.should.have.property('userId');
-    //             assert.strictEqual(res.body.userId.toString(), globalTestUser._id.toString());
-    //             globalTestUser_token = res.body.token;
-    //             done();
-    //         })
-    // });
+    before('Login the testUser', (done) => {
+        chai.request(server)
+            .post('/login')
+            .send({emailAddress: 'test.user@teamjs.xyz', password: "test"})
+            .end((err,res) => {
+                res.should.have.status(200);
+                res.body.should.have.property('token');
+                res.body.should.have.property('userId');
+                assert.strictEqual(res.body.userId.toString(), globalTestUser._id.toString());
+                globalTestUser_token = res.body.token;
+                done();
+            })
+    });
+
+    before('Login the testUser v2 check token equality', (done) => {
+        chai.request(server)
+            .post('/login')
+            .send({emailAddress: 'test.user@teamjs.xyz', password: "test"})
+            .end((err,res) => {
+                res.should.have.status(200);
+                res.body.should.have.property('token');
+                res.body.should.have.property('userId');
+                assert.strictEqual(res.body.token.toString(), globalTestUser_token.toString());
+                done();
+            })
+    });
 
     describe('/POST /theme/:themeId/session', function () {
         let created_session;
@@ -156,13 +168,11 @@ describe('Session Controller tests', function () {
         });
 
         it('retrieve an existing session', function (done) {
-            console.log('Retrieve an existing session');
             chai.request(server)
                 .get('/session/' + GETSession_session._id)
                 .set('X-Access-Token', globalTestUser_token)
                 .send()
                 .end((err, res) => {
-                console.log(res.error.text);
                     res.should.have.status(200);
                     res.body.should.have.property('session');
                     let resSession = res.body.session;
@@ -245,6 +255,7 @@ describe('Session Controller tests', function () {
         describe('get all sessions - two existing sessions', function () {
             let GETSessions_session1;
             let user2;
+            let user2_token;
             let GETSessions_session2;
             before('Create the sessions & second testuser', async function () {
                 GETSessions_session1 = await sessionService.addSession('Welke pudding eten we deze week?', 'Test om sessie aan te maken', 'opportunity',
@@ -259,6 +270,20 @@ describe('Session Controller tests', function () {
                     2, 5, [],
                     true, false, [user2], globalTestTheme, user2, new Date(), null, null);
                 assert.isOk(GETSessions_session2);
+            });
+
+            before('Login user2', function (done) {
+                chai.request(server)
+                    .post('/login')
+                    .send({emailAddress: 'test.user1@teamjs.xyz', password: "test"})
+                    .end((err,res) => {
+                        res.should.have.status(200);
+                        res.body.should.have.property('token');
+                        res.body.should.have.property('userId');
+                        assert.strictEqual(res.body.userId.toString(), user2._id.toString());
+                        user2_token = res.body.token;
+                        done();
+                    })
             });
 
             it('retrieve all sessions', function (done) {
@@ -294,7 +319,7 @@ describe('Session Controller tests', function () {
             it('retrieve all sessions - by participant user2', function (done) {
                 chai.request(server)
                     .get('/user/' + user2._id + '/sessions/participating')
-                    .set('X-Access-Token', globalTestUser_token)
+                    .set('X-Access-Token', user2_token)
                     .send()
                     .end((err, res) => {
                         res.should.have.status(200);
@@ -438,6 +463,7 @@ describe('Session Controller tests', function () {
     describe('/PUT /session/:sessionId/accept', function () {
         let session;
         let anotherUser;
+        let anotherUser_token;
         before('Create a session & invite anotherUser to the session', async() => {
             session = await sessionService.addSession('Test session', 'test session creation', 'opportunity', 3, 5, [],
                 true, false, [globalTestUser], globalTestTheme, globalTestUser, null, null, null);
@@ -452,11 +478,25 @@ describe('Session Controller tests', function () {
             assert.isOk(session);
         });
 
+        before('Login anotherUser', function (done) {
+            chai.request(server)
+                .post('/login')
+                .send({emailAddress: 'blemkalob@iets.be', password: "blemkalbo"})
+                .end((err,res) => {
+                    res.should.have.status(200);
+                    res.body.should.have.property('token');
+                    res.body.should.have.property('userId');
+                    assert.strictEqual(res.body.userId.toString(), anotherUser._id.toString());
+                    anotherUser_token = res.body.token;
+                    done();
+                })
+        });
+
         it('Accept the invite to the session', (done) => {
             console.log(' add tests for failures - accepting invite');
             chai.request(server)
                 .put('/session/' + session._id + '/accept')
-                .set('X-Access-Token', globalTestUser_token)
+                .set('X-Access-Token', anotherUser_token)
                 .send({userId: anotherUser._id})
                 .end((err, res) => {
                     res.should.have.status(204);
@@ -757,6 +797,7 @@ describe('Session Controller tests', function () {
         let session1;
         let session2;
         let anotherUser1;
+        let anotherUser1_token;
 
         before('Create the users', async() => {
             anotherUser1 = await userService.addUser('blem', 'Kalob', 'blemkalob@iets.be', null, 'blemkalbo');
@@ -781,10 +822,24 @@ describe('Session Controller tests', function () {
             assert.isTrue(session1.invitees.includes(anotherUser1.emailAddress));
         });
 
+        before('Login anotherUser1', function (done) {
+            chai.request(server)
+                .post('/login')
+                .send({emailAddress: 'blemkalob@iets.be', password: "blemkalbo"})
+                .end((err,res) => {
+                    res.should.have.status(200);
+                    res.body.should.have.property('token');
+                    res.body.should.have.property('userId');
+                    assert.strictEqual(res.body.userId.toString(), anotherUser1._id.toString());
+                    anotherUser1_token = res.body.token;
+                    done();
+                })
+        });
+
         it('Get sessions by invitee - anotherUser1', (done) => {
             chai.request(server)
                 .get('/user/' + anotherUser1._id + '/sessions/invited')
-                .set('X-Access-Token', globalTestUser_token)
+                .set('X-Access-Token', anotherUser1_token)
                 .send()
                 .end((err, res) => {
                     res.should.have.status(200);
@@ -814,6 +869,7 @@ describe('Session Controller tests', function () {
         let session1;
         let session2;
         let anotherUser1;
+        let anotherUser1_token;
 
         before('Create the users', async() => {
             anotherUser1 = await userService.addUser('blem', 'Kalob', 'blemkalob@iets.be', null, 'blemkalbo');
@@ -830,10 +886,24 @@ describe('Session Controller tests', function () {
             assert.isOk(session2);
         });
 
+        before('Login anotherUser1', function (done) {
+            chai.request(server)
+                .post('/login')
+                .send({emailAddress: 'blemkalob@iets.be', password: "blemkalbo"})
+                .end((err,res) => {
+                    res.should.have.status(200);
+                    res.body.should.have.property('token');
+                    res.body.should.have.property('userId');
+                    assert.strictEqual(res.body.userId.toString(), anotherUser1._id.toString());
+                    anotherUser1_token = res.body.token;
+                    done();
+                })
+        });
+
         it('Get sessions by participant - anotherUser1', (done) => {
             chai.request(server)
                 .get('/user/' + anotherUser1._id + '/sessions/participating')
-                .set('X-Access-Token', globalTestUser_token)
+                .set('X-Access-Token', anotherUser1_token)
                 .send()
                 .end((err, res) => {
                     res.should.have.status(200);
