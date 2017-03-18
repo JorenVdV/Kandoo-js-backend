@@ -75,7 +75,7 @@ class SessionRepository {
     async readSessions(query) {
         let sessions;
         try {
-            sessions = await this.sessionDao.find(query).populate('participants', '_id firstname lastname emailAddress').populate('currentUser', '_id firstname lastname').populate('theme', 'organisers').populate('cardPriorities', 'card priority circlePosition').populate('cardPriorities.card');
+            sessions = await this.sessionDao.find(query).populate('participants', '_id firstname lastname emailAddress').populate('sessionCards').populate('currentUser', '_id firstname lastname').populate('theme', 'organisers').populate('cardPriorities', 'card priority circlePosition').populate('cardPriorities.card');
         } catch (err) {
             throw new Error('Unexpected error occurred. ' + err);
         }

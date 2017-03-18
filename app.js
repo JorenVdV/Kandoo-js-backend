@@ -56,7 +56,7 @@ require("./routes/user-routes")(app);
 require("./routes/session-routes")(app);
 require("./routes/theme-routes")(app);
 require("./routes/card-routes")(app);
-
+require("./routes/chat-message-routes")(app);
 
 //make a user/theme/session on the production server
 require('./init-example');
