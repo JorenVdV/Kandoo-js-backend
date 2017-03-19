@@ -94,8 +94,13 @@ class UserController {
                 if (bcrypt.compareSync(body.password, user.password)) {
                     let token;
                     if (user.token) {
-                        let decoded = jwt.verify(user.token, config.jwt.secret);
-                        if (decoded.exp >= ((+(new Date()) / 1000 ) + 900))
+                        let decoded;
+                        try{
+                            decoded = jwt.verify(user.token, config.jwt.secret);
+                        } catch(err){
+                            // jwt expired
+                        }
+                        if (decoded && decoded.exp >= ((+(new Date()) / 1000 ) + 900))
                             token = user.token;
                     }
                     if (!token) {
