@@ -172,6 +172,13 @@ class SessionService {
         if (!session.participants.map(user => user._id.toString()).includes(userId.toString()))
             throw new Error('User is not a participant of this session');
 
+        if(!Array.isArray(cards)){
+            throw new Error('picked cards should be an array.');
+        }
+        if(cards.length < session.minCardsPerParticipant || cards.length > session.maxCardsPerParticipant){
+            throw new Error('Insufficient cards picked: ' + cards.length + ' | min: ' + session.minCardsPerParticipant + ' - max: ' + session.maxCardsPerParticipant);
+        }
+
         let toUpdate = {};
         toUpdate.pickedCards = session.pickedCards;
         if (toUpdate.pickedCards.findIndex(pc => pc.userId.toString() === userId.toString()) !== -1) {
