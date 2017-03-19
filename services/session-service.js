@@ -291,8 +291,8 @@ class SessionService {
         let session = await this.getSession(sessionId);
         let toUpdate = {};
 
-        if (session.status === 'paused' || session.status === 'stopped')
-            throw new Error('Cannot perform a turn when the session is paused or stopped');
+        if (session.status === 'paused' || session.status === 'finished')
+            throw new Error('Cannot perform a turn when the session is paused or finished');
 
         if (session.currentUser._id.toString() !== userId.toString())
             throw new Error('Only the current user can complete his turn');
