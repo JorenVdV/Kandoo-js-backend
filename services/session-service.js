@@ -320,6 +320,8 @@ class SessionService {
 
 
             toUpdate.cardPriorities[cardIndex].priority++;
+            if(toUpdate.cardPriorities[cardIndex].priority >= session.amountOfCircles)
+                throw new Error('Max priority is ' + session.amountOfCircles-1);
             toUpdate.cardPriorities[cardIndex].circlePosition = circlePosition;
         } else {
             toUpdate.events.push(this.getEvent(userId, 'emptyTurn'));
