@@ -4,9 +4,7 @@
 const auth = require('../controllers/authentication-controller');
 const themeController = require('../controllers/theme-controller');
 
-module.exports = function (app, io) {
-
-    // themeController.setIO(io);
+module.exports = function (app) {
 
     app.post('/theme', function (req, res) {
         themeController.createTheme(req, res);

@@ -1,6 +1,6 @@
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
-const saltRounds = 10; // 15 = 1.8 - 2+ seconds
+const saltRounds = 10;
 
 const replaceUndefinedOrNullOrEmptyObject = require('../_helpers/replacers');
 
@@ -21,7 +21,6 @@ class UserService {
             newUser.lastname = lastname;
             newUser.emailAddress = emailAddress;
             newUser.organisation = organisation ? organisation : "";
-            newUser.plainTextPassword = password;
             let salt = bcrypt.genSaltSync(saltRounds);
             newUser.password = bcrypt.hashSync(password, salt);
 
@@ -66,11 +65,6 @@ class UserService {
     async getUsers() {
         return await this.userRepo.readUsers();
     }
-
-    // sendSocketMessage(user, name, data) {
-    //     var socket = socketService.getSocketofUser(user._id);
-    //     socketService.sendNotification(socket, name, data)
-    // }
 
 }
 

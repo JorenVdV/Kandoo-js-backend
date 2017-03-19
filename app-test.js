@@ -30,23 +30,11 @@ server.listen(port, function () {
     console.log("App is running on port " + port);
 });
 
-// global.io = require('socket.io')(server);
-// var io = require('socket.io')(server);
-// io.on('connection', function(client) {
-//     console.log('Client connected...');
-//
-//     client.on('join', function(data) {
-//         console.log(data);
-//         client.emit('messages', 'Hello from server');
-//     });
-// });
 
-
-// require("./routes")(app);
-require("./routes/user-routes")(app/*,io*/);
-require("./routes/session-routes")(app/*,io*/);
-require("./routes/theme-routes")(app/*,io*/);
-require("./routes/card-routes")(app/*,io*/);
+require("./routes/user-routes")(app);
+require("./routes/session-routes")(app);
+require("./routes/theme-routes")(app);
+require("./routes/card-routes")(app);
 
 
 

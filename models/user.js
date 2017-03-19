@@ -15,11 +15,6 @@ var UserSchema = new Schema({
         required: [true, 'Lastname is required'],
         minlength: [3, 'Lastname should contain more than 3 characters.']
     },
-    plainTextPassword: {
-        type: String,
-        required: [true, 'Password is required'],
-        minlength: [3, 'Password should contain more than 3 characters.']
-    },
     password: {
         type: String,
         required: [true, 'Password is required']

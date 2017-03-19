@@ -34,7 +34,6 @@ class MailService {
 
 
     sendMail() {
-
         let mailOptions = {
             from: '"Fred Foo 👻" <foo@blurdybloop.com>', // sender address
             to: 'bar@blurdybloop.com, baz@blurdybloop.com', // list of receivers
@@ -70,7 +69,6 @@ class MailService {
             if (error) {
                 return console.log(error);
             }
-            // console.log(info);
         });
     }
 

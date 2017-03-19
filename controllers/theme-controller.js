@@ -8,9 +8,6 @@ class ThemeController {
 
 
     }
-    setIO(io){
-        this.io = io;
-    }
 
     createTheme(req, res) {
         let body = req.body;
@@ -20,13 +17,6 @@ class ThemeController {
     }
 
     getTheme(req, res) {
-        // try{
-        //     this.io.emit('themes');
-        //     console.log('SOCKET.IO - Emitted Themes event')
-        // }catch(exception){
-        //     console.log(exception);
-        // }
-
         this.themeService.getTheme(req.params.themeId)
             .then((theme) => res.status(200).send({theme: theme}))
             .catch((err) => res.status(404).send({error: err.message}));

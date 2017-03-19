@@ -46,12 +46,6 @@ server.listen(port, function () {
     console.log("App is running on port " + port);
 });
 
-
-// let SocketService = require('./services/socket-service');
-// global.sockets = [];
-// global.io = require('socket.io')(server);
-// global.socketService = new SocketService(require('socket.io')(server));
-
 require("./routes/user-routes")(app);
 require("./routes/session-routes")(app);
 require("./routes/theme-routes")(app);

@@ -13,25 +13,13 @@ exports.adminAccess = function (req, res, next) {
 };
 
 exports.organiserAccess = function (req, res, next) {
-    // console.log(req.originalUrl);
-    // console.log(req.headers);
-
     let token = req.body.token || req.headers['x-access-token'];
-
-    // console.log('token');
-    // console.log(token);
-
     let payload;
     try {
         payload = jwt.verify(token, config.jwt.secret);
     } catch (err) {
         handleTokenError(err, res);
     }
-
-    // console.log('payload');
-    // console.log(payload);
-
-
     if (payload) {
         let themeId = req.params.themeId || req.body.themeId;
         let sessionId = req.params.sessionId || req.body.sessionId;
@@ -61,25 +49,13 @@ exports.organiserAccess = function (req, res, next) {
 };
 
 exports.participantAccess = function (req, res, next) {
-
-    // console.log(req.originalUrl);
-    // console.log(req.headers);
-
     let token = req.body.token || req.headers['x-access-token'];
-
-    // console.log('token');
-    // console.log(token);
-
     let payload;
     try {
         payload = jwt.verify(token, config.jwt.secret);
     } catch (err) {
         handleTokenError(err, res);
     }
-
-    // console.log('payload');
-    // console.log(payload);
-
     if (payload) {
         let sessionId = req.params.sessionId || req.body.sessionId;
         if (sessionId) {
@@ -104,19 +80,11 @@ exports.participantAccess = function (req, res, next) {
             res.sendStatus(404);
         }
     }
-
 };
 
 exports.userAccess = function (req, res, next) {
-
-    // console.log(req.originalUrl);
-    // console.log(req.headers);
-
     let token = req.body.token || req.headers['x-access-token'];
     let userId = req.body.userId || req.params.userId;
-
-    // console.log('token');
-    // console.log(token);
 
     let payload;
     try {
@@ -124,10 +92,6 @@ exports.userAccess = function (req, res, next) {
     } catch (err) {
         handleTokenError(err, res);
     }
-
-    // console.log('payload');
-    // console.log(payload);
-
     if (payload) {
         userService.getUserById(payload.userId)
             .then((user) => {

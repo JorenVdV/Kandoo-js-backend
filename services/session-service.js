@@ -4,7 +4,6 @@
 const Session = require('../models/session');
 
 const replaceUndefinedOrNullOrEmptyObject = require('../_helpers/replacers');
-const socketService = require('../services/socket-service');
 const userService = require('../services/user-service');
 
 
@@ -14,8 +13,6 @@ class SessionService {
         this.userService = require('../services/user-service');
         this.mailService = require('../services/mail-service');
         this.cardService = require('../services/card-service');
-        this.socketService = require('../services/socket-service');
-        // this.themeService = require('../services/theme-service');
     }
 
     async addSession(title, description, circleType, minCardsPerParticipant, maxCardsPerParticipant, cards, canReviewCards, canAddCards,
@@ -43,13 +40,6 @@ class SessionService {
             session.pickedCards = [];
             session.events = [];
 
-            // let event = {
-            //     eventType: 'create',
-            //     content: true,
-            //     userId: creator,
-            //     timestamp: Date.now()
-            // };
-            // session.events = [event];
             session.status = 'created';
 
             return await this.sessionRepo.createSession(session);
@@ -229,7 +219,6 @@ class SessionService {
             for (let y = 0; y < currUserCards.length; y++) {
                 if (toUpdate.cardPriorities.findIndex(cardPriority => cardPriority.card.toString() === currUserCards[y].toString()) === -1) {
                     toUpdate.cardPriorities.push({priority: 0, card: currUserCards[y], circlePosition: ''});
-                    // console.log('toUpdate.cardPriorities did not yet contain card with id: ' + currUserCards[y].toString());
                 }
 
             }
@@ -238,7 +227,6 @@ class SessionService {
 
         session.populate('participants');
 
-        // this.socketService.sendNotification('', "session_started", session);
 
         return await this.sessionRepo.updateSession(sessionId, toUpdate)
     }

@@ -5,11 +5,7 @@ const auth = require('../controllers/authentication-controller');
 const userController = require('../controllers/user-controller');
 
 
-module.exports = function (app, io) {
-
-    // const userController = require('../controllers/user-controller');
-    //
-    // userController.setIO(io);
+module.exports = function (app) {
 
     app.post('/register', function (req, res) {
         userController.createUser(req, res);

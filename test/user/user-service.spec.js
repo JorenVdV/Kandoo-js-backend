@@ -18,7 +18,7 @@ describe('User service tests', function () {
         assert.strictEqual(user.lastname, 'Van Camp', 'the family name of the user should be "Van Camp"');
         assert.strictEqual(user.emailAddress, 'jos.vancamp@teamjs.xyz', 'the email address of the user should be "jos.vancamp@teamjs.xyz"');
         assert.strictEqual(user.organisation, 'Karel de Grote Hogeschool - TeamJS', 'the organisation of the user should be "Karel de Grote Hogeschool - TeamJS"');
-        assert.strictEqual(user.plainTextPassword, 'myAwesomePassword.123', 'the password of the user should be "myAwesomePassword.123"');
+        // assert.strictEqual(user.plainTextPassword, 'myAwesomePassword.123', 'the password of the user should be "myAwesomePassword.123"');
         assert.isTrue(bcrypt.compareSync('myAwesomePassword.123', user.password), 'myAwesomePassword.123 should be allowed by the hash');
 
         let successful = await userService.removeUser(user._id);
@@ -89,7 +89,7 @@ describe('User service tests', function () {
             assert.strictEqual(user.lastname, 'Van Camp', 'the family name of the user should be "Van Camp"');
             assert.strictEqual(user.emailAddress, 'jos.vancamp@teamjs.xyz', 'the email address of the user should be "jos.vancamp@teamjs.xyz"');
             assert.strictEqual(user.organisation, 'Karel de Grote Hogeschool - TeamJS', 'the organisation of the user should be "Karel de Grote Hogeschool - TeamJS"');
-            assert.strictEqual(user.plainTextPassword, 'myAwesomePassword.123', 'the password of the user should be "myAwesomePassword.123"');
+            // assert.strictEqual(user.plainTextPassword, 'myAwesomePassword.123', 'the password of the user should be "myAwesomePassword.123"');
         });
 
         it('by email - non existing email', async function () {
@@ -109,7 +109,7 @@ describe('User service tests', function () {
             assert.strictEqual(user.lastname, 'Van Camp', 'the family name of the user should be "Van Camp"');
             assert.strictEqual(user.emailAddress, 'jos.vancamp@teamjs.xyz', 'the email address of the user should be "jos.vancamp@teamjs.xyz"');
             assert.strictEqual(user.organisation, 'Karel de Grote Hogeschool - TeamJS', 'the organisation of the user should be "Karel de Grote Hogeschool - TeamJS"');
-            assert.strictEqual(user.plainTextPassword, 'myAwesomePassword.123', 'the password of the user should be "myAwesomePassword.123"');
+            // assert.strictEqual(user.plainTextPassword, 'myAwesomePassword.123', 'the password of the user should be "myAwesomePassword.123"');
         });
 
         it('by id - non existing id', async function () {
@@ -171,7 +171,7 @@ describe('User service tests', function () {
             assert.strictEqual(newUser.lastname, user.lastname);
             assert.strictEqual(newUser.emailAddress, user.emailAddress);
             assert.strictEqual(newUser.organisation, user.organisation);
-            assert.strictEqual(newUser.plainTextPassword, 'EenLeukNieuwWW');
+            // assert.strictEqual(newUser.plainTextPassword, 'EenLeukNieuwWW');
             assert.isTrue(bcrypt.compareSync('EenLeukNieuwWW', newUser.password), 'validate whether the hash has been updated');
             user = newUser;
         });
@@ -184,7 +184,7 @@ describe('User service tests', function () {
             assert.strictEqual(newUser.lastname, updates.lastname);
             assert.strictEqual(newUser.emailAddress, user.emailAddress);
             assert.strictEqual(newUser.organisation, user.organisation);
-            assert.strictEqual(newUser.plainTextPassword, user.plainTextPassword);
+            assert.strictEqual(newUser.password, user.password);
             user = newUser;
         });
 
@@ -196,7 +196,7 @@ describe('User service tests', function () {
             assert.strictEqual(newUser.lastname, user.lastname);
             assert.strictEqual(newUser.emailAddress, user.emailAddress);
             assert.strictEqual(newUser.organisation, user.organisation);
-            assert.strictEqual(newUser.plainTextPassword, user.plainTextPassword);
+            assert.strictEqual(newUser.password, user.password);
             user = newUser;
         });
 

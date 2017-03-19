@@ -3,7 +3,6 @@
  */
 
 let ChatMessage = require('../models/chat-message');
-let chatMessageService = require('../services/chat-message-service');
 
 class ChatMessageService {
     constructor() {
