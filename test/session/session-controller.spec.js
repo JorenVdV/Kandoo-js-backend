@@ -43,17 +43,20 @@ describe('Session Controller tests', function () {
             })
     });
 
-    before('Login the testUser v2 check token equality', (done) => {
-        chai.request(server)
-            .post('/login')
-            .send({emailAddress: 'test.user@teamjs.xyz', password: "test"})
-            .end((err,res) => {
-                res.should.have.status(200);
-                res.body.should.have.property('token');
-                res.body.should.have.property('userId');
-                assert.strictEqual(res.body.token.toString(), globalTestUser_token.toString());
-                done();
-            })
+    before('Login the testUser v2 check token equality', function(done) {
+        this.timeout(30000);
+        setTimeout(function(){
+            chai.request(server)
+                .post('/login')
+                .send({emailAddress: 'test.user@teamjs.xyz', password: "test"})
+                .end((err,res) => {
+                    res.should.have.status(200);
+                    res.body.should.have.property('token');
+                    res.body.should.have.property('userId');
+                    assert.strictEqual(res.body.token.toString(), globalTestUser_token.toString());
+                    done();
+                })
+        }, 15000);
     });
 
     describe('/POST /theme/:themeId/session', function () {

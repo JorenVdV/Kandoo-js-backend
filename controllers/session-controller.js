@@ -32,25 +32,43 @@ class SessionController {
             body.minCardsPerParticipant, body.maxCardsPerParticipant, body.cards,
             body.cardsCanBeReviewed, body.cardsCanBeAdded,
             [body.creator], req.params.themeId, body.creator, body.startDate, body.amountOfCircles, body.turnDuration)
-            .then((session) => res.status(201).send({session: session}))
+            .then((session) => {
+                session.events = undefined;
+                session.snapshots = undefined;
+                res.status(201).send({session: session})
+            })
             .catch((err) => res.status(404).send({error: err.message}));
     }
 
     copySession(req, res) {
         this.sessionService.copySession(req.params.sessionId, req.body.userId)
-            .then((session) => res.status(201).send({session: session}))
+            .then((session) => {
+                session.events = undefined;
+                session.snapshots = undefined;
+                res.status(201).send({session: session})
+            })
             .catch((err) => res.status(400).send({error: err.message}));
     }
 
     getSession(req, res) {
         this.sessionService.getSession(req.params.sessionId)
-            .then((session) => res.status(200).send({session: session}))
+            .then((session) => {
+                session.events = undefined;
+                session.snapshots = undefined;
+                res.status(200).send({session: session})
+            })
             .catch((err) => res.status(404).send({error: err.message}));
     }
 
     getSessionsByTheme(req, res) {
         this.sessionService.getSessionsByTheme(req.params.themeId)
-            .then((sessions) => res.status(200).send({sessions: sessions}))
+            .then((sessions) => {
+                sessions.forEach((session) => {
+                    session.events = undefined;
+                    session.snapshots = undefined;
+                });
+                res.status(200).send({sessions: sessions})
+            })
             .catch((err) => res.status(404).send({error: err.message}));
     }
 
@@ -62,7 +80,13 @@ class SessionController {
 
     getSessionsByInvitee(req, res) {
         this.sessionService.getSessionsByInvitee(req.params.userId)
-            .then((sessions) => res.status(200).send({sessions: sessions}))
+            .then((sessions) => {
+                sessions.forEach((session) => {
+                    session.events = undefined;
+                    session.snapshots = undefined;
+                });
+                res.status(200).send({sessions: sessions})
+            })
             .catch((err) => res.status(404).send({error: err.message}));
     }
 
@@ -120,7 +144,11 @@ class SessionController {
         let body = req.body;
         let toUpdate = bodyToUpdateDTO(body);
         this.sessionService.changeSession(req.params.sessionId, toUpdate)
-            .then((session) => res.status(200).send({session: session}))
+            .then((session) => {
+                session.events = undefined;
+                session.snapshots = undefined;
+                res.status(200).send({session: session})
+            })
             .catch((err) => res.status(400).send({error: err.message}))
     }
 

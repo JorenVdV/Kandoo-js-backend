@@ -125,6 +125,8 @@ class SessionService {
 
     async updateInvitees(sessionId, invitees) {
         let session = await this.getSession(sessionId);
+        if(session.status !== 'created')
+            throw new Error('No longer able to join this session');
 
         let newInvitees = [];
         for (let i = 0; i <= invitees.length; i++) {
@@ -158,6 +160,8 @@ class SessionService {
 
     async acceptInviteToSession(sessionId, userId) {
         let session = await this.getSession(sessionId);
+        if(session.status !== 'created')
+            throw new Error('No longer able to join this session');
         let user = await this.userService.getUserById(userId);
         if (session.participants.includes(user._id))
             throw new Error(user.emailAddress + ' is already participating in the session.');
@@ -203,6 +207,8 @@ class SessionService {
             throw new Error('User is not an organiser of this session');
 
         let toUpdate = {};
+
+        toUpdate.invitees = [];
 
         if (session.status !== 'created') {
             throw new Error('Unable to start an already started/finished session');
